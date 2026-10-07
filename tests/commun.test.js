@@ -8,6 +8,7 @@ import { champCsv, lireCsv, EcrivainCsv } from '../src/commun/csv.js';
 import { dateIso, dateHeureIso, nombreFr, texte } from '../src/commun/dates.js';
 import { lireZip } from '../src/commun/zip.js';
 import { lireElements, lireCollection } from '../src/commun/json-flux.js';
+import { recupererPage, recupererTexte } from '../src/commun/telecharger.js';
 import { construireZip, dossierTemp } from './_util.js';
 
 test('champCsv protège séparateur, guillemets et retours à la ligne', () => {
@@ -106,4 +107,23 @@ test('lireElements fonctionne quand un élément est coupé entre deux morceaux 
   for await (const o of lireCollection(chemin, 'pmej')) objets.push(o);
   assert.equal(objets.length, 300);
   assert.deepEqual(objets[299], gros.pmej[299]);
+});
+
+test('recupererPage rend le contenu quel que soit le code ; recupererTexte garde le code dans l’erreur', async () => {
+  const vrai = globalThis.fetch;
+  globalThis.fetch = async (url) => new Response(`<p>${url}</p>`, { status: url.endsWith('/casse') ? 500 : 200 });
+  try {
+    const casse = await recupererPage('https://exemple.test/casse');
+    assert.equal(casse.statut, 500);
+    assert.equal(casse.ok, false);
+    assert.equal(casse.texte, '<p>https://exemple.test/casse</p>', 'la page est lue malgré le code');
+
+    const bonne = await recupererPage('https://exemple.test/bonne');
+    assert.equal(bonne.ok, true);
+
+    await assert.rejects(() => recupererTexte('https://exemple.test/casse'), (e) => e.statut === 500 && /500/.test(e.message));
+    assert.equal(await recupererTexte('https://exemple.test/bonne'), '<p>https://exemple.test/bonne</p>');
+  } finally {
+    globalThis.fetch = vrai;
+  }
 });

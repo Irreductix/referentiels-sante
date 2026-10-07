@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { formaterRapport, verifierTout } from '../src/verifier/index.js';
+import { formaterRapport, verifierTout, controleFichier } from '../src/verifier/index.js';
 import { versionEnVigueur } from '../src/ccam/index.js';
 import { VERSIONS_CONNUES, SOURCES } from '../src/cnam/index.js';
 import { dictionnairePour, documenterTable } from '../src/cnam/colonnes.js';
@@ -62,4 +62,39 @@ test('les versions de repli CNAM couvrent chaque source', () => {
     assert.ok(VERSIONS_CONNUES[nom].fichiers.length > 0);
     for (const f of VERSIONS_CONNUES[nom].fichiers) assert.match(f.url, /^http:\/\/www\.codage\.ext\.cnamts\.fr\//);
   }
+});
+
+test('un 403 est un avertissement, pas un échec : l’adresse est refusée, le fichier n’a pas disparu', () => {
+  const refuse = controleFichier('ccam', 'CCAM08400_DBF_PART1.zip', { statut: 403, ok: false, type: 'text/html' });
+  assert.equal(refuse.ok, true);
+  assert.equal(refuse.avertissement, true);
+  assert.match(refuse.detail, /403/);
+
+  const disparu = controleFichier('ghs', 'campagne 2026', { statut: 404, ok: false, type: null });
+  assert.equal(disparu.ok, false);
+
+  const html = controleFichier('nos', 'TRE_R66', { statut: 200, ok: true, type: 'text/html' });
+  assert.equal(html.ok, false, 'une page HTML à la place d’un fichier de données est un échec');
+
+  const bon = controleFichier('nos', 'TRE_R66', { statut: 200, ok: true, type: 'application/zip' });
+  assert.equal(bon.ok, true);
+  assert.equal(bon.avertissement, false);
+});
+
+test('le rapport distingue OK, AVERT et ECHEC, et compte les avertissements', () => {
+  const texte = formaterRapport({
+    resultats: [
+      { source: 'ccam', controle: 'page ameli', ok: true, avertissement: true, detail: 'page servie avec le code 500 mais complète' },
+      { source: 'ghs', controle: 'campagne 2026', ok: false, detail: '404' },
+      { source: 'nos', controle: 'TRE_R66', ok: true, detail: '200' },
+    ],
+    echecs: [{}],
+    avertissements: [{}],
+    date: '2026-10-07T00:00:00Z',
+  });
+  const lignes = texte.split('\n');
+  assert.ok(lignes[0].startsWith('AVERT '));
+  assert.ok(lignes[1].startsWith('ECHEC '));
+  assert.ok(lignes[2].startsWith('OK    '));
+  assert.equal(lignes.at(-1), '3 contrôles, 1 échec(s), 1 avertissement(s), 2026-10-07T00:00:00Z');
 });

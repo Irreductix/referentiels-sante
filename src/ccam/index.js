@@ -19,7 +19,7 @@
 import { join, basename } from 'node:path';
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
 
-import { telecharger, recupererTexte } from '../commun/telecharger.js';
+import { telecharger, recupererPage } from '../commun/telecharger.js';
 import { extraireZip } from '../commun/zip.js';
 import { lireDbf, chargerDbf, lireEnteteDbf } from '../commun/dbf.js';
 import { EcrivainCsv } from '../commun/csv.js';
@@ -38,25 +38,28 @@ export const ARCHIVES_CONNUES = {
   ],
 };
 
-/** Repère sur la page ameli les archives DBF de la version courante. */
-export async function trouverArchives({ journal = () => {} } = {}) {
-  let html;
+/**
+ * Repère sur la page ameli les archives DBF de la version courante. La page est
+ * lue même servie sous un code d'erreur : ameli répond 500 avec le contenu complet.
+ */
+export async function trouverArchives({ journal = () => {}, lirePage = recupererPage } = {}) {
+  let page;
   try {
-    html = await recupererTexte(PAGE_TELECHARGEMENT);
+    page = await lirePage(PAGE_TELECHARGEMENT);
   } catch (erreur) {
     journal(`page ameli injoignable (${erreur.message}), utilisation de la version connue ${ARCHIVES_CONNUES.version}`);
-    return ARCHIVES_CONNUES;
+    return { ...ARCHIVES_CONNUES, repli: true };
   }
-  const urls = [...html.matchAll(/href="([^"]*\/CCAM0?(\d{4,5})_DBF_PART(\d)\.zip)"/gi)]
+  const urls = [...page.texte.matchAll(/href="([^"]*\/CCAM0?(\d{4,5})_DBF_PART(\d)\.zip)"/gi)]
     .map((m) => ({ url: m[1].startsWith('http') ? m[1] : BASE + m[1], version: m[2].padStart(5, '0'), partie: Number(m[3]) }))
     .sort((a, b) => a.partie - b.partie);
   if (!urls.length) {
-    journal(`aucune archive reconnue sur la page ameli, utilisation de la version connue ${ARCHIVES_CONNUES.version}`);
-    return ARCHIVES_CONNUES;
+    journal(`aucune archive reconnue sur la page ameli (${page.statut}), utilisation de la version connue ${ARCHIVES_CONNUES.version}`);
+    return { ...ARCHIVES_CONNUES, repli: true, statut: page.statut };
   }
   const version = urls[0].version;
   journal(`CCAM version ${version} : ${urls.length} archives`);
-  return { version, archives: urls.filter((u) => u.version === version).map((u) => u.url) };
+  return { version, archives: urls.filter((u) => u.version === version).map((u) => u.url), repli: false, statut: page.statut };
 }
 
 /**

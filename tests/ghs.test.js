@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { convertirArchive, exporterTarifs } from '../src/ghs/index.js';
+import { convertirArchive, exporterTarifs, trouverArchive, ARCHIVES, pageCampagne } from '../src/ghs/index.js';
 import { lireCsv } from '../src/commun/csv.js';
 import { construireZip, dossierTemp } from './_util.js';
 
@@ -62,4 +62,43 @@ test('exporterTarifs écrit les CSV et le JSON depuis une archive locale', async
   const json = JSON.parse(readFileSync(join(sortie, 'tarifs.json'), 'utf8'));
   assert.equal(json.resume.campagne, 2026);
   assert.equal(json.ghs[0].tarif, 4203.57);
+});
+
+const page = (texte, statut = 200) => async () => ({ statut, ok: statut < 400, texte });
+
+test('trouverArchive lit l’adresse de l’archive sur la page de campagne de l’ATIH', async () => {
+  const html = '<a href="/sites/default/files/content/documents/2026%20-%20ghs_web_20260101.zip">Tarifs</a>';
+  const journal = [];
+  const r = await trouverArchive(2026, { lirePage: page(html), journal: (m) => journal.push(m) });
+  assert.equal(r.url, 'https://www.atih.sante.fr/sites/default/files/content/documents/2026%20-%20ghs_web_20260101.zip');
+  assert.equal(r.repli, false, 'l’adresse vient de la page, pas du repli');
+  assert.ok(journal.some((m) => m.includes('campagne 2026')));
+});
+
+test('trouverArchive retient l’archive la plus récente quand la page en liste plusieurs', async () => {
+  const html = '<a href="https://www.atih.sante.fr/d/2025%20-%20ghs_web_20250301_1.zip">v1</a>'
+    + '<a href="https://www.atih.sante.fr/d/2025%20-%20ghs_web_20250701.zip">v2</a>';
+  const r = await trouverArchive(2025, { lirePage: page(html) });
+  assert.match(r.url, /ghs_web_20250701\.zip$/);
+});
+
+test('trouverArchive se rabat sur l’adresse connue si la page ne répond pas ou ne contient rien', async () => {
+  const injoignable = await trouverArchive(2026, { lirePage: async () => { throw new Error('réseau'); } });
+  assert.equal(injoignable.url, ARCHIVES[2026]);
+  assert.equal(injoignable.repli, true);
+
+  const vide = await trouverArchive(2026, { lirePage: page('<p>plus de fichiers ici</p>') });
+  assert.equal(vide.url, ARCHIVES[2026]);
+  assert.equal(vide.repli, true);
+  assert.equal(vide.statut, 200, 'le code reçu est conservé pour le vérificateur');
+
+  const refusee = await trouverArchive(2026, { lirePage: page('', 403) });
+  assert.equal(refusee.statut, 403);
+});
+
+test('les adresses de repli GHS suivent la nouvelle organisation du site de l’ATIH', () => {
+  for (const [annee, url] of Object.entries(ARCHIVES)) {
+    assert.match(url, new RegExp(`/sites/default/files/content/documents/${annee}%20-%20ghs_web_\\d{8}`), annee);
+  }
+  assert.match(pageCampagne(2026), /campagne-de-financement-des-etablissements-mco-et-had-2026$/);
 });

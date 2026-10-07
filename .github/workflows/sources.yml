@@ -24,7 +24,9 @@ jobs:
       - name: Vérification
         id: verification
         continue-on-error: true
-        run: node src/cli.js verifier | tee rapport.txt
+        run: |
+          set -o pipefail
+          node src/cli.js verifier | tee rapport.txt
       - name: Ticket en cas d'échec
         if: steps.verification.outcome == 'failure'
         env:

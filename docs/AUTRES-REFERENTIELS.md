@@ -102,9 +102,17 @@ referentiels-sante verifier ccam cnam  # une partie
 Pour chaque source, la commande lit la page de téléchargement, résout les
 fichiers attendus et envoie une requête d'en-tête sur chacun, sans rien
 télécharger de lourd. Elle vérifie aussi que les adresses de repli embarquées
-(CCAM, NABM, LPP, UCD) correspondent encore à la version publiée. Le code de
-sortie vaut 1 dès qu'un contrôle échoue ; un workflow hebdomadaire l'exécute et
-ouvre un ticket en cas d'échec.
+(CCAM, NABM, LPP, UCD, GHS) correspondent encore à ce que publient les pages.
+Le code de sortie vaut 1 dès qu'un contrôle échoue ; un workflow hebdomadaire
+l'exécute et ouvre un ticket en cas d'échec.
+
+Chaque ligne porte l'un de trois états. `OK` et `ECHEC` parlent d'eux-mêmes.
+`AVERT` signale ce qui mérite un œil sans être une panne : un fichier qui répond
+403, parce que certains sites refusent les serveurs d'intégration continue tout
+en servant les mêmes fichiers à un poste en France (la CCAM d'ameli) ; ou une
+page servie sous un code d'erreur mais complète, que l'outil lit quand même.
+Lancée depuis un poste de l'établissement, la commande voit ce que la CI ne
+peut pas voir : c'est le bon endroit pour vérifier la CCAM.
 
 ## Ce qui manque encore
 

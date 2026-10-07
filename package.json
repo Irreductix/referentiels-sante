@@ -1,6 +1,6 @@
 {
   "name": "referentiels-sante",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Référentiels publics de la santé en France (FINESS+, NOS, CCAM, CIM-10, médicaments, NABM, LPP, UCD, tarifs GHS) convertis en CSV et JSON propres, sans dépendance",
   "keywords": [
     "finess",
@@ -46,7 +46,7 @@
     "./commun/xml": "./src/commun/xml.js"
   },
   "bin": {
-    "referentiels-sante": "./src/cli.js"
+    "referentiels-sante": "src/cli.js"
   },
   "files": [
     "src",

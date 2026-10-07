@@ -43,6 +43,20 @@ export async function telecharger(url, destination, options = {}) {
 /** Récupère un petit fichier texte en mémoire (tables de codes, pages d'index). */
 export async function recupererTexte(url) {
   const reponse = await fetch(url, { headers: { 'user-agent': AGENT_UTILISATEUR }, redirect: 'follow' });
-  if (!reponse.ok) throw new Error(`récupération impossible (${reponse.status}) : ${url}`);
+  if (!reponse.ok) {
+    const erreur = new Error(`récupération impossible (${reponse.status}) : ${url}`);
+    erreur.statut = reponse.status;
+    throw erreur;
+  }
   return reponse.text();
+}
+
+/**
+ * Lit une page quel que soit son code de réponse. Certains sites servent une page
+ * complète sous un code d'erreur (ameli répond 500 avec la liste des archives CCAM) :
+ * c'est à l'appelant de juger sur le contenu.
+ */
+export async function recupererPage(url) {
+  const reponse = await fetch(url, { headers: { 'user-agent': AGENT_UTILISATEUR }, redirect: 'follow' });
+  return { statut: reponse.status, ok: reponse.ok, texte: await reponse.text() };
 }

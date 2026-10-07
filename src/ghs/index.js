@@ -13,19 +13,49 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { lireZip } from '../commun/zip.js';
 import { lireCsv, EcrivainCsv } from '../commun/csv.js';
 import { dateIso, nombreFr, texte } from '../commun/dates.js';
-import { telecharger } from '../commun/telecharger.js';
+import { telecharger, recupererPage } from '../commun/telecharger.js';
 
-const BASE = 'https://www.atih.sante.fr/sites/default/files/public/content/1568';
+const DOCUMENTS = 'https://www.atih.sante.fr/sites/default/files/content/documents';
 
-/** Archives connues, par année de campagne tarifaire. */
+/** Adresses connues par campagne, utilisées si la page de l'ATIH ne répond plus. */
 export const ARCHIVES = {
-  2026: `${BASE}/ghs_web_20260101.zip`,
-  2025: `${BASE}/ghs_web_20250301_1.zip`,
-  2024: `${BASE}/ghs_web_20240301.zip`,
-  2023: `${BASE}/ghs_web_20230301.zip`,
+  2026: `${DOCUMENTS}/2026%20-%20ghs_web_20260101.zip`,
+  2025: `${DOCUMENTS}/2025%20-%20ghs_web_20250301_1.zip`,
+  2024: `${DOCUMENTS}/2024%20-%20ghs_web_20240301.zip`,
+  2023: `${DOCUMENTS}/2023%20-%20ghs_web_20230301.zip`,
 };
 
 export const PAGE_ATIH = 'https://www.atih.sante.fr/tarifs-mco-et-had';
+export const pageCampagne = (annee) =>
+  `https://www.atih.sante.fr/campagnes-de-financement/campagne-de-financement-des-etablissements-mco-et-had-${annee}`;
+
+/**
+ * Repère l'archive ghs_web sur la page de campagne de l'ATIH. L'adresse des
+ * fichiers a déjà changé sans préavis : on la lit sur la page, et l'adresse
+ * connue ne sert que de repli.
+ */
+export async function trouverArchive(annee, { journal = () => {}, lirePage = recupererPage } = {}) {
+  const connue = ARCHIVES[annee];
+  const repli = connue ? ", utilisation de l'adresse connue" : '';
+  let page;
+  try {
+    page = await lirePage(pageCampagne(annee));
+  } catch (erreur) {
+    journal(`page ATIH ${annee} injoignable (${erreur.message})${repli}`);
+    return { url: connue, repli: true };
+  }
+  // Plusieurs archives peuvent coexister sur une page ; la plus récente porte la date la plus haute.
+  const urls = [...page.texte.matchAll(/href="([^"]*ghs_web_\d{8}(?:_\d+)?\.zip)"/gi)]
+    .map((m) => new URL(m[1].replace(/&amp;/g, '&'), pageCampagne(annee)).toString())
+    .sort()
+    .reverse();
+  if (!urls.length) {
+    journal(`aucune archive ghs_web sur la page ATIH ${annee} (${page.statut})${repli}`);
+    return { url: connue, repli: true, statut: page.statut };
+  }
+  journal(`campagne ${annee} : ${urls[0]}`);
+  return { url: urls[0], repli: false, statut: page.statut };
+}
 
 const SECTEURS = { pub: 'public', pri: 'prive' };
 
@@ -88,9 +118,11 @@ export async function exporterTarifs({ annee, source, sortie = 'data/ghs', cache
   let chemin;
   if (source && !/^https?:/.test(source)) chemin = source;
   else {
-    const url = source ?? ARCHIVES[annee];
+    const url = source ?? (annee ? (await trouverArchive(annee, { journal })).url : undefined);
     if (!url) throw new Error(`campagne ${annee} inconnue : indiquez l'URL de l'archive ATIH (voir ${PAGE_ATIH})`);
-    chemin = join(cache, 'ghs', url.split('/').pop());
+    // L'ATIH préfixe le nom de l'année et d'un tiret : on garde la partie stable pour le cache.
+    const nom = url.match(/ghs_web_\d{8}(?:_\d+)?\.zip/i)?.[0] ?? decodeURIComponent(url.split('/').pop());
+    chemin = join(cache, 'ghs', nom);
     await telecharger(url, chemin, { forcer, journal });
   }
   const donnees = convertirArchive(readFileSync(chemin));

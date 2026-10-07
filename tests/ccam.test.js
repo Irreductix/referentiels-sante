@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { convertirDbf, chapitres, concatener, convertirTableDbf } from '../src/ccam/index.js';
+import { convertirDbf, chapitres, concatener, convertirTableDbf, trouverArchives, ARCHIVES_CONNUES } from '../src/ccam/index.js';
 import { lireCsv } from '../src/commun/csv.js';
 import { construireDbf } from './_dbf.js';
 import { dossierTemp } from './_util.js';
@@ -143,4 +143,27 @@ test('convertirTableDbf convertit un DBF quelconque en CSV', async () => {
   assert.deepEqual(r.colonnes, ['code', 'libelle']);
   const lignes = lireCsv(readFileSync(join(dossier, 'sortie', 'nabm_fiche_tot105.csv'), 'utf8'));
   assert.deepEqual(lignes[1], { code: '9105', libelle: 'Glycémie à jeun' });
+});
+
+const PAGE_AMELI = [1, 2, 3].map((n) => `<a href="/fileadmin/user_upload/documents/CCAM08400_DBF_PART${n}.zip">Partie ${n}</a>`).join('');
+const page = (texte, statut = 200) => async () => ({ statut, ok: statut < 400, texte });
+
+test('trouverArchives lit la page ameli même servie sous un code 500', async () => {
+  const journal = [];
+  const r = await trouverArchives({ lirePage: page(PAGE_AMELI, 500), journal: (m) => journal.push(m) });
+  assert.equal(r.version, '08400');
+  assert.equal(r.archives.length, 3);
+  assert.equal(r.repli, false, 'les liens sont là : ce n’est pas un repli');
+  assert.equal(r.statut, 500);
+});
+
+test('trouverArchives se rabat sur la version connue sans lien ou sans page', async () => {
+  const sansLien = await trouverArchives({ lirePage: page('<p>rien</p>', 500) });
+  assert.equal(sansLien.repli, true);
+  assert.equal(sansLien.version, ARCHIVES_CONNUES.version);
+  assert.equal(sansLien.statut, 500);
+
+  const injoignable = await trouverArchives({ lirePage: async () => { throw new Error('réseau'); } });
+  assert.equal(injoignable.repli, true);
+  assert.deepEqual(injoignable.archives, ARCHIVES_CONNUES.archives);
 });

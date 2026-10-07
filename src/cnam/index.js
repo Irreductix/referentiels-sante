@@ -56,12 +56,13 @@ export const VERSIONS_CONNUES = {
       .map((nom) => ({ nom, url: `${HOTE}/codif/nabm/download_file.php?filename=nabm/${nom}` })),
   },
   lpp: {
-    version: '901',
-    fichiers: [{ nom: 'LPP901.zip', url: `${HOTE}/codif/tips/download_file.php?filename=tips/LPP901.zip` }],
+    version: '904',
+    fichiers: [{ nom: 'LPP904.zip', url: `${HOTE}/codif/tips/download_file.php?filename=tips/LPP904.zip` }],
   },
   ucd: {
-    version: '00802',
-    fichiers: ['ucd_total_00802_20260907.dbf', 'ucd_histo_prix_00802_20260907.dbf', 'retro_histo_taux_00802_20260907.dbf', 'retro_histo_cout_sup_00802_20260907.dbf']
+    version: '00805',
+    fichiers: ['ucd_total_00805_20260929.dbf', 'ucd_maj_00805_20260929.dbf', 'ucd_histo_prix_00805_20260929.dbf',
+      'retro_histo_taux_00805_20260929.dbf', 'retro_histo_cout_sup_00805_20260929.dbf']
       .map((nom) => ({ nom, url: `${HOTE}/codif/bdm_it/download_file.php?filename=bdm_it/${nom}` })),
   },
 };
@@ -75,7 +76,7 @@ export async function trouverFichiers(nom, { journal = () => {} } = {}) {
     html = await recupererTexte(source.page);
   } catch (erreur) {
     journal(`page injoignable (${erreur.message}), utilisation de la version connue ${VERSIONS_CONNUES[nom].version}`);
-    return { ...VERSIONS_CONNUES[nom], repli: true };
+    return { ...VERSIONS_CONNUES[nom], repli: true, statut: erreur.statut };
   }
   const fichiers = [];
   for (const m of html.matchAll(source.motif)) {

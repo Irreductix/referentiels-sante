@@ -58,7 +58,7 @@ Tables utilisées pour FINESS+ :
 | | |
 |---|---|
 | Producteur | Agence technique de l'information sur l'hospitalisation (ATIH) |
-| Adresse | <https://www.atih.sante.fr/tarifs-mco-et-had> (archives `ghs_web_*.zip`) |
+| Adresse | pages de campagne, une par année : <https://www.atih.sante.fr/campagnes-de-financement/campagne-de-financement-des-etablissements-mco-et-had-2026> (archive `ghs_web_*.zip`). L'outil lit l'adresse de l'archive sur la page ; l'adresse connue ne sert que si la page ne répond plus |
 | Origine juridique | annexes des arrêtés annuels fixant les tarifs des prestations d'hospitalisation, publiés au Journal officiel |
 | Licence | le site de l'ATIH porte une mention « tous droits réservés » ; les tarifs eux-mêmes sont le contenu d'un acte réglementaire. L'outil télécharge l'archive à la source et ne la redistribue pas |
 

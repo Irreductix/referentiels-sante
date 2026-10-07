@@ -9,7 +9,7 @@
 import { AGENT_UTILISATEUR } from '../commun/telecharger.js';
 import { JEUX, URL_STABLES, trouverRessource } from '../finess/sources.js';
 import { TABLES, urlTable } from '../nos/index.js';
-import { ARCHIVES } from '../ghs/index.js';
+import { ARCHIVES, trouverArchive } from '../ghs/index.js';
 import { trouverArchives, ARCHIVES_CONNUES } from '../ccam/index.js';
 import { EDITIONS } from '../cim10/index.js';
 import { FICHIERS, BASE as BASE_BDPM } from '../bdpm/index.js';
@@ -35,10 +35,31 @@ export async function sonder(url, { delai = 20000 } = {}) {
   }
 }
 
-const resultat = (source, controle, ok, detail = '') => ({ source, controle, ok, detail });
+const resultat = (source, controle, ok, detail = '', avertissement = false) => ({ source, controle, ok, detail, avertissement });
 
 /** Un fichier de données ne doit pas être une page HTML. */
 const estDonnee = (s) => s.ok && !(s.type ?? '').includes('text/html');
+
+/**
+ * Un 403 dit seulement que cette adresse est refusée, pas que le fichier a disparu :
+ * ameli refuse les serveurs d'intégration continue et sert les mêmes fichiers à un
+ * poste en France. On le signale sans le compter en échec, sinon la CCAM crierait
+ * chaque lundi et plus personne ne lirait le ticket.
+ */
+export function controleFichier(source, controle, s) {
+  if (s.statut === 403) return resultat(source, controle, true, "403 : refusé depuis cette adresse, non vérifiable d'ici", true);
+  return resultat(source, controle, estDonnee(s), `${s.statut ?? s.erreur}`);
+}
+
+/** Même règle pour une page lue par un module : repli sur 403, avertissement ; page servie en erreur mais complète, avertissement. */
+function controlePage(source, controle, trouve, detail) {
+  if (trouve.repli) {
+    if (trouve.statut === 403) return resultat(source, controle, true, "403 : page refusée depuis cette adresse, repli sur l'adresse connue", true);
+    return resultat(source, controle, false, detail);
+  }
+  if (trouve.statut && trouve.statut >= 500) return resultat(source, controle, true, `page servie avec le code ${trouve.statut} mais complète ; ${detail}`, true);
+  return resultat(source, controle, true, detail);
+}
 
 export async function verifierFiness() {
   const r = [];
@@ -51,7 +72,7 @@ export async function verifierFiness() {
       r.push(resultat('finess', `${type} : API data.gouv.fr`, false, e.message));
     }
     const s = await sonder(URL_STABLES[type]);
-    r.push(resultat('finess', `${type} : URL stable de repli`, estDonnee(s), `${s.statut ?? s.erreur}`));
+    r.push(controleFichier('finess', `${type} : URL stable de repli`, s));
   }
   return r;
 }
@@ -60,37 +81,38 @@ export async function verifierNos() {
   const r = [];
   for (const nom of Object.values(TABLES)) {
     const s = await sonder(urlTable(nom));
-    r.push(resultat('nos', nom, estDonnee(s), `${s.statut ?? s.erreur}`));
+    r.push(controleFichier('nos', nom, s));
   }
   return r;
 }
 
 export async function verifierGhs() {
   const r = [];
-  for (const [annee, url] of Object.entries(ARCHIVES)) {
-    const s = await sonder(url);
-    r.push(resultat('ghs', `campagne ${annee}`, estDonnee(s), `${s.statut ?? s.erreur}`));
+  for (const [annee, connue] of Object.entries(ARCHIVES)) {
+    const journal = [];
+    const trouve = await trouverArchive(annee, { journal: (m) => journal.push(m) });
+    r.push(controlePage('ghs', `campagne ${annee} : page ATIH`, trouve, journal.join(' ; ')));
+    if (!trouve.repli && trouve.url !== connue) {
+      r.push(resultat('ghs', `campagne ${annee} : adresse de repli à jour`, false, `page : ${trouve.url}, repli : ${connue}`));
+    }
+    const s = await sonder(trouve.url);
+    r.push(controleFichier('ghs', `campagne ${annee} : ${decodeURIComponent(trouve.url.split('/').pop())}`, s));
   }
   return r;
 }
 
 export async function verifierCcam() {
   const r = [];
-  let trouve;
-  try {
-    const journal = [];
-    trouve = await trouverArchives({ journal: (m) => journal.push(m) });
-    const replie = journal.some((m) => m.includes('version connue'));
-    r.push(resultat('ccam', 'page ameli', !replie, journal.join(' ; ')));
-    if (!replie && trouve.version !== ARCHIVES_CONNUES.version) {
-      r.push(resultat('ccam', 'version de repli à jour', false, `page : ${trouve.version}, repli : ${ARCHIVES_CONNUES.version}`));
-    } else if (!replie) r.push(resultat('ccam', 'version de repli à jour', true, trouve.version));
-  } catch (e) {
-    r.push(resultat('ccam', 'page ameli', false, e.message));
+  const journal = [];
+  const trouve = await trouverArchives({ journal: (m) => journal.push(m) });
+  r.push(controlePage('ccam', 'page ameli', trouve, journal.join(' ; ')));
+  if (!trouve.repli) {
+    const aJour = trouve.version === ARCHIVES_CONNUES.version;
+    r.push(resultat('ccam', 'version de repli à jour', aJour, aJour ? trouve.version : `page : ${trouve.version}, repli : ${ARCHIVES_CONNUES.version}`));
   }
-  for (const url of (trouve ?? ARCHIVES_CONNUES).archives) {
+  for (const url of trouve.archives) {
     const s = await sonder(url);
-    r.push(resultat('ccam', url.split('/').pop(), estDonnee(s), `${s.statut ?? s.erreur}`));
+    r.push(controleFichier('ccam', url.split('/').pop(), s));
   }
   return r;
 }
@@ -99,7 +121,7 @@ export async function verifierCim10() {
   const r = [];
   for (const [edition, url] of Object.entries(EDITIONS)) {
     const s = await sonder(url);
-    r.push(resultat('cim10', `édition ${edition}`, estDonnee(s), `${s.statut ?? s.erreur}`));
+    r.push(controleFichier('cim10', `édition ${edition}`, s));
   }
   return r;
 }
@@ -108,7 +130,7 @@ export async function verifierBdpm() {
   const r = [];
   for (const [cle, d] of Object.entries(FICHIERS)) {
     const s = await sonder(d.url ?? `${BASE_BDPM}/download/file/${d.fichier}`);
-    r.push(resultat('bdpm', cle, estDonnee(s), `${s.statut ?? s.erreur}`));
+    r.push(controleFichier('bdpm', cle, s));
   }
   return r;
 }
@@ -117,13 +139,17 @@ export async function verifierCnam() {
   const r = [];
   for (const nom of Object.keys(SOURCES)) {
     try {
-      const { version, fichiers } = await trouverFichiers(nom);
-      r.push(resultat(nom, 'page de téléchargement', true, `version ${version}, ${fichiers.length} fichier(s)`));
-      const connue = VERSIONS_CONNUES[nom]?.version;
-      r.push(resultat(nom, 'version de repli à jour', connue === version, `page : ${version}, repli : ${connue}`));
+      const journal = [];
+      const trouve = await trouverFichiers(nom, { journal: (m) => journal.push(m) });
+      const { version, fichiers } = trouve;
+      r.push(controlePage(nom, 'page de téléchargement', trouve, trouve.repli ? journal.join(' ; ') : `version ${version}, ${fichiers.length} fichier(s)`));
+      if (!trouve.repli) {
+        const connue = VERSIONS_CONNUES[nom]?.version;
+        r.push(resultat(nom, 'version de repli à jour', connue === version, `page : ${version}, repli : ${connue}`));
+      }
       for (const f of fichiers) {
         const s = await sonder(f.url);
-        r.push(resultat(nom, f.nom, estDonnee(s), `${s.statut ?? s.erreur}`));
+        r.push(controleFichier(nom, f.nom, s));
       }
     } catch (e) {
       r.push(resultat(nom, 'page de téléchargement', false, e.message));
@@ -146,12 +172,15 @@ export async function verifierTout({ sources, journal = () => {} } = {}) {
     resultats.push(...(await tout[cle]()));
   }
   const echecs = resultats.filter((x) => !x.ok);
-  return { resultats, echecs, ok: echecs.length === 0, date: new Date().toISOString() };
+  const avertissements = resultats.filter((x) => x.ok && x.avertissement);
+  return { resultats, echecs, avertissements, ok: echecs.length === 0, date: new Date().toISOString() };
 }
 
 /** Rapport texte, une ligne par contrôle. */
-export function formaterRapport({ resultats, echecs, date }) {
-  const lignes = resultats.map((x) => `${x.ok ? 'OK    ' : 'ECHEC '} ${x.source.padEnd(7)} ${x.controle}${x.detail ? ` (${x.detail})` : ''}`);
-  lignes.push('', `${resultats.length} contrôles, ${echecs.length} échec(s), ${date}`);
+export function formaterRapport({ resultats, echecs, avertissements = [], date }) {
+  const etat = (x) => (!x.ok ? 'ECHEC ' : x.avertissement ? 'AVERT ' : 'OK    ');
+  const lignes = resultats.map((x) => `${etat(x)} ${x.source.padEnd(7)} ${x.controle}${x.detail ? ` (${x.detail})` : ''}`);
+  const bilan = `${resultats.length} contrôles, ${echecs.length} échec(s)${avertissements.length ? `, ${avertissements.length} avertissement(s)` : ''}, ${date}`;
+  lignes.push('', bilan);
   return lignes.join('\n');
 }
