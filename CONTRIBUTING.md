@@ -28,7 +28,7 @@ Merci de l'intérêt porté au projet. Les contributions les plus utiles :
 ## Développement
 
 ```bash
-git clone https://github.com/QuentinCazier/referentiels-sante.git
+git clone https://github.com/Irreductix/referentiels-sante.git
 cd referentiels-sante
 npm test
 node src/cli.js finess --structures tests/fixtures/finess-structures-exemple.json --sans-libelles --sortie /tmp/essai

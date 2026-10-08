@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://quentincazier.github.io/referentiels-sante/sitemap.xml
+Sitemap: https://referentiels-sante.irreductix.fr/sitemap.xml

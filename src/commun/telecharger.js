@@ -11,7 +11,7 @@ import { dirname } from 'node:path';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 
-export const AGENT_UTILISATEUR = 'referentiels-sante (+https://github.com/QuentinCazier/referentiels-sante)';
+export const AGENT_UTILISATEUR = 'referentiels-sante (+https://github.com/Irreductix/referentiels-sante)';
 
 /**
  * @param {string} url

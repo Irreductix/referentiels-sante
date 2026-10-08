@@ -22,11 +22,11 @@
     "referentiel",
     "nomenclature"
   ],
-  "homepage": "https://github.com/QuentinCazier/referentiels-sante#readme",
-  "bugs": "https://github.com/QuentinCazier/referentiels-sante/issues",
+  "homepage": "https://github.com/Irreductix/referentiels-sante#readme",
+  "bugs": "https://github.com/Irreductix/referentiels-sante/issues",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/QuentinCazier/referentiels-sante.git"
+    "url": "git+https://github.com/Irreductix/referentiels-sante.git"
   },
   "license": "MIT",
   "author": "Quentin Cazier",

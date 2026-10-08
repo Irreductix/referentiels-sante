@@ -6,11 +6,11 @@
 <title>FINESS en CSV, CCAM et CIM-10 en fichiers propres · referentiels-sante</title>
 <meta name="description" content="Obtenir le fichier FINESS en CSV, la CCAM, la CIM-10 et la base des médicaments en fichiers propres. Outil libre et gratuit, une commande, sans dépendance.">
 <meta name="author" content="Quentin Cazier">
-<link rel="canonical" href="https://quentincazier.github.io/referentiels-sante/">
+<link rel="canonical" href="https://referentiels-sante.irreductix.fr/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="FINESS en CSV, CCAM et CIM-10 en fichiers propres">
 <meta property="og:description" content="Les référentiels publics de la santé en France convertis en CSV et JSON : FINESS+, CCAM, CIM-10, médicaments, NABM, LPP, UCD, tarifs GHS. Outil libre, une commande.">
-<meta property="og:url" content="https://quentincazier.github.io/referentiels-sante/">
+<meta property="og:url" content="https://referentiels-sante.irreductix.fr/">
 <meta property="og:locale" content="fr_FR">
 <meta name="twitter:card" content="summary">
 <meta name="color-scheme" content="light dark">
@@ -21,7 +21,7 @@
   "@type": "SoftwareApplication",
   "name": "referentiels-sante",
   "description": "Convertit les référentiels publics de la santé en France (FINESS+, CCAM, CIM-10, base des médicaments, NABM, LPP, UCD, tarifs GHS) en fichiers CSV et JSON.",
-  "url": "https://quentincazier.github.io/referentiels-sante/",
+  "url": "https://referentiels-sante.irreductix.fr/",
   "downloadUrl": "https://www.npmjs.com/package/referentiels-sante",
   "applicationCategory": "DeveloperApplication",
   "operatingSystem": "Windows, macOS, Linux",
@@ -31,7 +31,7 @@
   "isAccessibleForFree": true,
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
   "author": { "@type": "Person", "name": "Quentin Cazier", "url": "https://github.com/QuentinCazier" },
-  "codeRepository": "https://github.com/QuentinCazier/referentiels-sante"
+  "codeRepository": "https://github.com/Irreductix/referentiels-sante"
 }
 </script>
 <style>
@@ -136,9 +136,9 @@
   <div class="col">
     <a class="nom" href="./">referentiels-sante</a>
     <nav aria-label="Liens du projet">
-      <a href="https://github.com/QuentinCazier/referentiels-sante">Code source</a>
+      <a href="https://github.com/Irreductix/referentiels-sante">Code source</a>
       <a href="https://www.npmjs.com/package/referentiels-sante">npm</a>
-      <a href="https://github.com/QuentinCazier/referentiels-sante/blob/main/docs/FINESS.md">Documentation</a>
+      <a href="https://github.com/Irreductix/referentiels-sante/blob/main/docs/FINESS.md">Documentation</a>
     </nav>
   </div>
 </header>
@@ -188,7 +188,7 @@
 </table>
 </div>
 
-<p>Chaque colonne est rattachée au champ FINESS+ dont elle provient dans le <a href="https://github.com/QuentinCazier/referentiels-sante/blob/main/docs/FINESS.md">dictionnaire des colonnes</a>. Les libellés (catégorie d'établissement, statut juridique, département) viennent des nomenclatures officielles de l'Agence du Numérique en Santé.</p>
+<p>Chaque colonne est rattachée au champ FINESS+ dont elle provient dans le <a href="https://github.com/Irreductix/referentiels-sante/blob/main/docs/FINESS.md">dictionnaire des colonnes</a>. Les libellés (catégorie d'établissement, statut juridique, département) viennent des nomenclatures officielles de l'Agence du Numérique en Santé.</p>
 
 <h2 id="referentiels">Les autres référentiels</h2>
 
@@ -220,7 +220,7 @@
   <li>Pour une partie des adresses, les coordonnées projetées et géographiques sont inversées. <a href="https://github.com/ansforge/finess/issues/24">Ticket de l'ANS</a>. Les colonnes latitude et longitude sont à contrôler avant un usage cartographique.</li>
 </ul>
 
-<p>La comparaison complète avec l'ancienne extraction, champ par champ, est détaillée dans la <a href="https://github.com/QuentinCazier/referentiels-sante/blob/main/docs/FINESS.md">documentation FINESS</a>.</p>
+<p>La comparaison complète avec l'ancienne extraction, champ par champ, est détaillée dans la <a href="https://github.com/Irreductix/referentiels-sante/blob/main/docs/FINESS.md">documentation FINESS</a>.</p>
 
 <h2 id="questions">Questions fréquentes</h2>
 
@@ -231,7 +231,7 @@
 <p>Pour FINESS+, oui : chaque exécution télécharge le flux du jour, et le fichier <code>structures-resume.json</code> indique la date exacte des données. Pour la CCAM, la page de téléchargement de l'Assurance Maladie est lue à chaque exécution. Pour la CIM-10 et les tarifs GHS, l'outil connaît les éditions publiées à la date de sa version, aujourd'hui la CIM-10 FR 2025 et les tarifs 2026.</p>
 
 <h3>Puis-je réutiliser les fichiers produits ?</h3>
-<p>FINESS+ et la base publique des médicaments sont publiés sous Licence Ouverte : la réutilisation est libre, en citant la source et la date. Les autres référentiels ont leurs propres conditions, détaillées dans la <a href="https://github.com/QuentinCazier/referentiels-sante/blob/main/docs/SOURCES.md">page des sources et licences</a>. L'outil ne redistribue aucune donnée : il la télécharge à la source au moment où vous le lancez.</p>
+<p>FINESS+ et la base publique des médicaments sont publiés sous Licence Ouverte : la réutilisation est libre, en citant la source et la date. Les autres référentiels ont leurs propres conditions, détaillées dans la <a href="https://github.com/Irreductix/referentiels-sante/blob/main/docs/SOURCES.md">page des sources et licences</a>. L'outil ne redistribue aucune donnée : il la télécharge à la source au moment où vous le lancez.</p>
 
 <h3>Faut-il des droits d'administrateur ?</h3>
 <p>Pour installer Node.js sur Windows, en général oui. Une fois Node.js présent, l'outil lui-même ne demande aucun droit particulier et n'installe aucune autre dépendance.</p>
@@ -266,14 +266,14 @@ for await (const entite of lireCollection('finess-structures.json.gz', 'pmej')) 
 const categories = await nos.chargerTable('TRE_R66-CategorieEtablissement');
 nos.indexLibelles(categories).get('355'); // 'Centre hospitalier (CH)'</code></pre>
 
-<p>Code sous licence MIT, 46 tests, testé sur Linux et Windows avec Node.js 22, 24 et 26. Les signalements d'écarts, les référentiels manquants et les contributions sont bienvenus sur <a href="https://github.com/QuentinCazier/referentiels-sante">GitHub</a>.</p>
+<p>Code sous licence MIT, 46 tests, testé sur Linux et Windows avec Node.js 22, 24 et 26. Les signalements d'écarts, les référentiels manquants et les contributions sont bienvenus sur <a href="https://github.com/Irreductix/referentiels-sante">GitHub</a>.</p>
 
 </main>
 
 <footer>
   <div class="col">
     <p>Écrit et maintenu par <a href="https://github.com/QuentinCazier">Quentin Cazier</a>. Code sous licence MIT. Les données produites restent la propriété de leurs producteurs et sont soumises à leurs licences ; la source et la date d'extraction sont inscrites dans chaque fichier <code>*-resume.json</code>.</p>
-    <p>Du même auteur : <a href="https://quentincazier.github.io/guide-sih/">Le SIH pour les développeurs</a>, un guide du système d'information hospitalier, et <a href="https://github.com/QuentinCazier/Registris">Registris</a>, un registre des habilitations pour les établissements de santé.</p>
+    <p>Du même village : <a href="https://registris.irreductix.fr/">Registris</a>, un registre des habilitations et coffre à preuves d'audit pour les établissements de santé. Les deux sont publiés par <a href="https://irreductix.fr/">Irréductix</a>, un collectif qui construit des outils libres pour le service public.</p>
   </div>
 </footer>
 
