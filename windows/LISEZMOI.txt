@@ -1,0 +1,36 @@
+referentiels-sante, version Windows sans installation
+=====================================================
+
+Les referentiels publics de la sante (FINESS+, CCAM, CIM-10, base des
+medicaments, NABM, LPP, UCD, tarifs GHS) convertis en CSV lisibles dans Excel.
+Rien a installer, aucun droit d'administrateur : Node.js est fourni dans le
+dossier "node".
+
+Pour commencer
+--------------
+1. Decompressez toute l'archive dans un dossier ou vous pouvez ecrire,
+   par exemple Documents\referentiels-sante.
+2. Double-cliquez sur Convertir.cmd et choisissez un referentiel.
+3. Le dossier "donnees" s'ouvre a la fin : les CSV sont en UTF-8 avec
+   separateur point-virgule, ils s'ouvrent directement dans Excel.
+
+Pour les habitues de la ligne de commande, referentiels-sante.cmd accepte
+les memes arguments que la commande npx referentiels-sante (--aide pour la
+liste).
+
+A savoir
+--------
+- Les donnees sont telechargees a leur source officielle au moment de la
+  conversion. Derriere le proxy d'un etablissement, les telechargements
+  peuvent etre bloques : voyez avec votre DSI.
+- Les fichiers produits restent soumis a la licence de leur source, detaillee
+  dans app\docs\SOURCES.md. FINESS+ et la base des medicaments sont sous
+  Licence Ouverte ; les autres ne doivent pas etre rediffuses sans verifier
+  leurs conditions.
+- Le fichier node.exe est celui publie par nodejs.org (signe par l'OpenJS
+  Foundation), verifie par sa somme SHA-256 au moment de la construction.
+  Sa licence est dans node\LICENSE.
+
+Code source, documentation et signalements :
+https://github.com/irreductix/referentiels-sante
+Presentation : https://irreductix.fr/outils/referentiels-sante

@@ -1,0 +1,77 @@
+name: Version Windows sans installation
+
+# Assemble une archive qui contient l'outil et le Node.js officiel pour Windows,
+# vérifié par les sommes publiées sur nodejs.org. Un agent la décompresse et lance
+# Convertir.cmd : ni installation, ni droit d'administrateur. L'archive ne contient
+# aucune donnée : les référentiels sont téléchargés à la source lors de la conversion.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'windows/**'
+      - '.github/workflows/windows-portable.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm test
+
+      - name: Fins de ligne CRLF des scripts Windows
+        run: >-
+          node -e "for (const f of process.argv.slice(1)) if (/(^|[^\r])\n/.test(require('fs').readFileSync(f, 'latin1'))) { console.log('::error file=' + f + '::fin de ligne LF, cmd.exe exige CRLF'); process.exitCode = 1; }"
+          windows/*.cmd windows/*.txt
+
+      - name: Node.js pour Windows, vérifié par les sommes de nodejs.org
+        run: |
+          v=$(curl -fsSL https://nodejs.org/dist/index.json | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.parse(s).find(r=>r.version.startsWith('v24.')&&r.lts).version))")
+          curl -fsSLO "https://nodejs.org/dist/$v/node-$v-win-x64.zip"
+          curl -fsSL "https://nodejs.org/dist/$v/SHASUMS256.txt" | grep " node-$v-win-x64.zip\$" | sha256sum -c -
+          unzip -q "node-$v-win-x64.zip"
+          echo "NODE_WIN=$v" >> "$GITHUB_ENV"
+
+      - name: Assemblage de l'archive
+        run: |
+          version=$(node -p "require('./package.json').version")
+          d="referentiels-sante-$version-windows"
+          mkdir -p "$d/node" "$d/app"
+          cp "node-$NODE_WIN-win-x64/node.exe" "node-$NODE_WIN-win-x64/LICENSE" "$d/node/"
+          printf '%s\r\n' "$NODE_WIN" > "$d/node/VERSION.txt"
+          cp -r src docs package.json README.md LICENSE "$d/app/"
+          cp windows/Convertir.cmd windows/referentiels-sante.cmd windows/LISEZMOI.txt "$d/"
+          # L'outil se lance depuis l'archive comme depuis le dépôt.
+          node "$d/app/src/cli.js" --aide > /dev/null
+          zip -q -r -9 "$d.zip" "$d"
+          sha256sum "$d.zip" > "$d.zip.sha256"
+          ls -la "$d.zip"
+          echo "ARCHIVE=$d.zip" >> "$GITHUB_ENV"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+
+      - name: Archive conservée avec le run
+        uses: actions/upload-artifact@v4
+        with:
+          name: referentiels-sante-windows
+          path: |
+            ${{ env.ARCHIVE }}
+            ${{ env.ARCHIVE }}.sha256
+
+      - name: Jointe à la release de la version
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          etiquette="v$VERSION"
+          if ! gh release view "$etiquette" > /dev/null 2>&1; then
+            gh release create "$etiquette" --title "referentiels-sante $VERSION" --notes "Version Windows sans installation : décompressez l'archive, lancez Convertir.cmd. Node.js $NODE_WIN (nodejs.org) est fourni dans le dossier node. Aucune donnée n'est incluse : les référentiels sont téléchargés à leur source officielle au moment de la conversion."
+          fi
+          gh release upload "$etiquette" "$ARCHIVE" "$ARCHIVE.sha256" --clobber

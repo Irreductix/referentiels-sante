@@ -1,0 +1,20 @@
+name: Poser une question
+description: Sur l'installation, une colonne, une source, ou ce que l'outil ne fait pas.
+title: "Question : "
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Le détail des colonnes est dans docs/FINESS.md, docs/CCAM.md et docs/AUTRES-REFERENTIELS.md. Si la réponse n'y est pas, c'est une bonne question.
+  - type: textarea
+    id: question
+    attributes:
+      label: La question
+    validations:
+      required: true
+  - type: input
+    id: contexte
+    attributes:
+      label: Contexte
+      placeholder: "Windows 11, Node.js 24, derrière le proxy de l'établissement"

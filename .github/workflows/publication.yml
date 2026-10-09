@@ -1,8 +1,11 @@
 name: Publication mensuelle des fichiers convertis
 
-# Le 2 de chaque mois, convertit l'instantané mensuel FINESS+ et publie les
-# fichiers produits en pièces jointes d'une release. Les données restent sous
-# Licence Ouverte 2.0 (ANS) ; la mention de source est dans le résumé joint.
+# Le 2 de chaque mois, convertit l'instantané mensuel FINESS+ et la base publique
+# des médicaments, et publie les fichiers produits en pièces jointes de deux
+# releases. Seules ces deux sources sont rediffusées : elles sont sous Licence
+# Ouverte (ANS ; ANSM, HAS, UNCAM). La mention de source est dans le résumé joint.
+# Les autres référentiels n'ont pas de licence de réutilisation explicite et ne
+# sont jamais publiés ici (voir docs/SOURCES.md).
 
 on:
   schedule:
@@ -38,3 +41,17 @@ jobs:
           notes="Fichiers FINESS+ convertis (instantané mensuel). Source : Agence du Numérique en Santé, data.gouv.fr, Licence Ouverte 2.0. Détail des colonnes : docs/FINESS.md."
           gh release delete "$etiquette" --yes --cleanup-tag 2>/dev/null || true
           gh release create "$etiquette" "sortie/${etiquette}.zip" sortie/finess/structures-resume.json sortie/finess/activites-resume.json --title "FINESS+ $(date -u +%Y-%m)" --notes "$notes"
+
+      # La base des médicaments passe après FINESS : son échec ne doit pas
+      # empêcher la publication de FINESS, qui est déjà faite à ce stade.
+      - name: Conversion de la base publique des médicaments
+        run: node src/cli.js bdpm --sortie sortie/bdpm
+      - name: Archive et release des médicaments
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          etiquette="bdpm-$(date -u +%Y%m)"
+          (cd sortie/bdpm && zip -q -9 "../${etiquette}.zip" ./*)
+          notes="Base de données publique des médicaments convertie en CSV UTF-8 : spécialités, présentations, compositions, avis SMR et ASMR, génériques, conditions de prescription, informations importantes, disponibilité. Source : ANSM, HAS, UNCAM, base-donnees-publique.medicaments.gouv.fr, Licence Ouverte. Détail des colonnes : docs/AUTRES-REFERENTIELS.md."
+          gh release delete "$etiquette" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$etiquette" "sortie/${etiquette}.zip" sortie/bdpm/bdpm-resume.json --title "Médicaments (BDPM) $(date -u +%Y-%m)" --notes "$notes"
