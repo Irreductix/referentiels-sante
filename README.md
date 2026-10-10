@@ -32,6 +32,23 @@ aussi un fichier au **format de l'ancien flux** (32 colonnes `structureet`),
 comparé champ par champ à la dernière extraction Etalab : les écarts restants
 sont documentés et viennent de la source ([docs/FINESS.md](docs/FINESS.md)).
 
+## Sans rien installer
+
+**Les fichiers déjà convertis.** FINESS+ et la base publique des médicaments
+sont sous Licence Ouverte : ils sont convertis et publiés le 2 de chaque mois
+dans les [releases](https://github.com/irreductix/referentiels-sante/releases)
+(`finess-AAAAMM`, `bdpm-AAAAMM`). L'archive FINESS du mois a aussi une adresse
+stable : <https://irreductix.fr/telecharger/finess.zip>. Les autres
+référentiels ne sont jamais publiés tout convertis : leur licence ne le permet
+pas ([docs/SOURCES.md](docs/SOURCES.md)).
+
+**La version Windows.** Pour tous les référentiels, chaque version publie une
+archive `referentiels-sante-x.y.z-windows.zip` qui contient l'outil et le
+Node.js officiel : on la décompresse, on double-clique sur `Convertir.cmd`, on
+choisit le référentiel. Ni installation, ni droit d'administrateur. Les données
+sont téléchargées à la source au moment de la conversion, sur le poste de
+l'agent.
+
 ## Démarrage
 
 Prérequis : [Node.js](https://nodejs.org) 22 ou plus récent. Rien d'autre.

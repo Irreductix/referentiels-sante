@@ -1,0 +1,28 @@
+name: Proposer un référentiel
+description: Une source publique de la santé que l'outil devrait convertir.
+title: "Référentiel : "
+labels: [referentiel]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Avant d'écrire du code, on discute ici de la source, de sa licence et du format cible. La liste des sources envisagées ou écartées est dans docs/SOURCES.md.
+  - type: input
+    id: source
+    attributes:
+      label: Source officielle
+      description: Producteur et adresse de téléchargement.
+    validations:
+      required: true
+  - type: input
+    id: licence
+    attributes:
+      label: Licence ou conditions de réutilisation
+      placeholder: "Licence Ouverte 2.0, mention sur la page de téléchargement"
+  - type: textarea
+    id: usage
+    attributes:
+      label: À quoi servira le fichier converti ?
+      description: Qui s'en sert, pour faire quoi. C'est ce qui décide des colonnes à produire.
+    validations:
+      required: true

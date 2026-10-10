@@ -1,0 +1,55 @@
+name: Signaler un écart avec la source
+description: Une valeur produite ne correspond pas à la source officielle, ou à l'ancien fichier FINESS.
+title: "Écart : "
+labels: [ecart]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Merci. Pas besoin de joindre de fichier : le numéro concerné et les deux valeurs suffisent pour reproduire.
+  - type: dropdown
+    id: referentiel
+    attributes:
+      label: Référentiel
+      options:
+        - FINESS+ structures
+        - FINESS+ activités
+        - CCAM
+        - CIM-10
+        - Médicaments (BDPM)
+        - NABM, LPP ou UCD
+        - Tarifs GHS
+        - NOS
+    validations:
+      required: true
+  - type: input
+    id: identifiant
+    attributes:
+      label: Identifiant concerné
+      description: Numéro FINESS, code d'acte, code CIM-10, code CIS...
+      placeholder: "590000105"
+    validations:
+      required: true
+  - type: input
+    id: colonne
+    attributes:
+      label: Fichier et colonne
+      placeholder: "etablissements.csv, colonne code_postal"
+    validations:
+      required: true
+  - type: textarea
+    id: valeurs
+    attributes:
+      label: Les deux valeurs
+      description: Ce que produit l'outil, et ce que dit la source (ou l'ancien fichier).
+      placeholder: |
+        Produit : ...
+        Source : ...
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version de l'outil et date des données
+      description: La date figure dans le fichier *-resume.json.
+      placeholder: "0.3.3, flux du 9 octobre 2026"

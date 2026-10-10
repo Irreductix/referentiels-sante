@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Par où commencer pour contribuer
+    url: https://irreductix.fr/contribuer
+    about: Les tâches qui attendent un coup de main, avec le profil attendu pour chacune.
+  - name: Écrire au collectif
+    url: https://irreductix.fr/contact
+    about: Pour une question qui ne tient pas dans un ticket, ou si vous n'avez pas de compte GitHub.
