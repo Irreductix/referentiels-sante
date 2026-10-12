@@ -1,8 +1,9 @@
 name: Surveillance des sources
 
-# Chaque lundi, vérifie que les pages et fichiers sources répondent encore et
-# que les versions de repli sont à jour. En cas d'échec, ouvre ou met à jour un
-# ticket avec le rapport.
+# Chaque lundi, vérifie que les pages et fichiers sources répondent encore. Un
+# échec ouvre ou complète un ticket, refermé quand la vérification repasse. Une
+# nouvelle version publiée par une source donne une pull request qui met à jour
+# les versions de repli (src/replis.json).
 
 on:
   schedule:
@@ -10,8 +11,9 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   issues: write
+  pull-requests: write
 
 jobs:
   verifier:
@@ -37,6 +39,46 @@ jobs:
           gh label create sources --description "Surveillance automatique des sources" --color D93F0B --force
           existant=$(gh issue list --label sources --state open --json number --jq '.[0].number')
           if [ -n "$existant" ]; then gh issue comment "$existant" --body "$corps"; else gh issue create --title "$titre" --body "$corps" --label sources; fi
+      - name: Ticket refermé quand la vérification repasse
+        if: steps.verification.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for numero in $(gh issue list --label sources --state open --json number --jq '.[].number'); do
+            gh issue close "$numero" --comment "La vérification du $(date -u +%Y-%m-%d) repasse sans échec."
+          done
+      - name: Versions de repli
+        run: |
+          set -o pipefail
+          node src/cli.js replis --ecrire --silencieux | tee replis.txt
+      - name: Pull request des versions de repli
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet -- src/replis.json; then
+            for numero in $(gh issue list --label replis --state open --json number --jq '.[].number'); do
+              gh issue close "$numero" --comment "Les versions de repli sont à jour."
+            done
+            exit 0
+          fi
+          npm test
+          branche=replis/mise-a-jour
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -C "$branche"
+          git add src/replis.json
+          git commit -m "Versions de repli mises à jour d'après les pages des sources"
+          git push --force origin "$branche"
+          corps="$(printf 'La surveillance du %s a trouvé de nouvelles versions publiées par les sources.\n\n```\n%s\n```\n\nChaque fichier des nouvelles versions répond, et les tests passent avec le fichier mis à jour. Il suffit de fusionner.\n' "$(date -u +%Y-%m-%d)" "$(cat replis.txt)")"
+          existante=$(gh pr list --head "$branche" --state open --json number --jq '.[0].number')
+          if [ -n "$existante" ]; then gh pr edit "$existante" --body "$corps"; exit 0; fi
+          if gh pr create --base main --head "$branche" --title "Versions de repli à mettre à jour" --body "$corps"; then exit 0; fi
+          # Si l'organisation interdit aux workflows d'ouvrir des pull requests, un ticket donne le lien pour l'ouvrir.
+          lien="https://github.com/${GITHUB_REPOSITORY}/compare/main...${branche}?expand=1"
+          corps="$(printf '%s\nLa branche %s est prête. Ouvrir la pull request : %s\n' "$corps" "$branche" "$lien")"
+          gh label create replis --description "Versions de repli à mettre à jour" --color 0E8A16 --force
+          ticket=$(gh issue list --label replis --state open --json number --jq '.[0].number')
+          if [ -n "$ticket" ]; then gh issue edit "$ticket" --body "$corps"; else gh issue create --title "Versions de repli à mettre à jour" --body "$corps" --label replis; fi
       - name: Échec du job si la vérification a échoué
         if: steps.verification.outcome == 'failure'
         run: exit 1

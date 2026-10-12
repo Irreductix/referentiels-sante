@@ -18,6 +18,7 @@ import { telecharger, recupererTexte } from '../commun/telecharger.js';
 import { extraireZip } from '../commun/zip.js';
 import { convertirTableDbf } from '../ccam/index.js';
 import { documenterTable } from './colonnes.js';
+import { REPLIS } from '../replis.js';
 
 const HOTE = 'http://www.codage.ext.cnamts.fr';
 
@@ -44,28 +45,8 @@ export const SOURCES = {
   },
 };
 
-/**
- * Dernières versions connues au moment de la publication, utilisées si la page
- * de téléchargement est injoignable ou méconnaissable. La commande `verifier`
- * signale quand elles sont dépassées.
- */
-export const VERSIONS_CONNUES = {
-  nabm: {
-    version: '105',
-    fichiers: ['NABM_FICHE_TOT105.dbf', 'NABM_HISTO_TOT105.dbf', 'NABM_INCOMP_TOT105.dbf']
-      .map((nom) => ({ nom, url: `${HOTE}/codif/nabm/download_file.php?filename=nabm/${nom}` })),
-  },
-  lpp: {
-    version: '904',
-    fichiers: [{ nom: 'LPP904.zip', url: `${HOTE}/codif/tips/download_file.php?filename=tips/LPP904.zip` }],
-  },
-  ucd: {
-    version: '00805',
-    fichiers: ['ucd_total_00805_20260929.dbf', 'ucd_maj_00805_20260929.dbf', 'ucd_histo_prix_00805_20260929.dbf',
-      'retro_histo_taux_00805_20260929.dbf', 'retro_histo_cout_sup_00805_20260929.dbf']
-      .map((nom) => ({ nom, url: `${HOTE}/codif/bdm_it/download_file.php?filename=bdm_it/${nom}` })),
-  },
-};
+// Dernières versions connues (src/replis.json), utilisées si la page est injoignable ou méconnaissable.
+export const VERSIONS_CONNUES = REPLIS.cnam;
 
 /** Lit la page de téléchargement et renvoie les fichiers « total » courants. */
 export async function trouverFichiers(nom, { journal = () => {} } = {}) {

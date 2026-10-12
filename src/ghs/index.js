@@ -14,16 +14,10 @@ import { lireZip } from '../commun/zip.js';
 import { lireCsv, EcrivainCsv } from '../commun/csv.js';
 import { dateIso, nombreFr, texte } from '../commun/dates.js';
 import { telecharger, recupererPage } from '../commun/telecharger.js';
+import { REPLIS } from '../replis.js';
 
-const DOCUMENTS = 'https://www.atih.sante.fr/sites/default/files/content/documents';
-
-/** Adresses connues par campagne, utilisées si la page de l'ATIH ne répond plus. */
-export const ARCHIVES = {
-  2026: `${DOCUMENTS}/2026%20-%20ghs_web_20260101.zip`,
-  2025: `${DOCUMENTS}/2025%20-%20ghs_web_20250301_1.zip`,
-  2024: `${DOCUMENTS}/2024%20-%20ghs_web_20240301.zip`,
-  2023: `${DOCUMENTS}/2023%20-%20ghs_web_20230301.zip`,
-};
+// Adresses connues par campagne (src/replis.json), utilisées si la page de l'ATIH ne répond plus.
+export const ARCHIVES = REPLIS.ghs;
 
 export const PAGE_ATIH = 'https://www.atih.sante.fr/tarifs-mco-et-had';
 export const pageCampagne = (annee) =>

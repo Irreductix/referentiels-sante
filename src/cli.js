@@ -16,6 +16,7 @@ import { exporterCim10, EDITIONS } from './cim10/index.js';
 import { exporterBdpm } from './bdpm/index.js';
 import { exporterTableCnam, SOURCES } from './cnam/index.js';
 import { verifierTout, formaterRapport } from './verifier/index.js';
+import { actualiserReplis, formaterReplis } from './verifier/replis.js';
 import { extraireZip } from './commun/zip.js';
 
 const AIDE = `referentiels-sante : référentiels publics de la santé en CSV et JSON propres
@@ -31,6 +32,7 @@ Usage
   referentiels-sante nabm | lpp | ucd          tables de codage de l'Assurance Maladie
   referentiels-sante dbf       <fichier.dbf | archive.zip> [--encodage cp850|latin1|utf8]
   referentiels-sante verifier  [SOURCE ...]    contrôle que pages et fichiers sources répondent (code de sortie 1 sinon)
+  referentiels-sante replis    [--ecrire]      compare les versions de repli aux pages ; --ecrire met src/replis.json à jour
 
 Options communes
   --sortie <dossier>   dossier de sortie (défaut : data/<commande>)
@@ -69,6 +71,7 @@ const options = {
   brut: { type: 'boolean', default: false },
   'dossier-dbf': { type: 'string' },
   encodage: { type: 'string', default: 'cp850' },
+  ecrire: { type: 'boolean', default: false },
   aide: { type: 'boolean', short: 'h', default: false },
 };
 
@@ -123,6 +126,12 @@ async function principal(argv) {
     const rapport = await verifierTout({ sources: reste, journal });
     process.stdout.write(formaterRapport(rapport) + '\n');
     return rapport.ok ? 0 : 1;
+  }
+
+  if (commande === 'replis') {
+    const bilan = await actualiserReplis({ ecrire: values.ecrire, journal });
+    process.stdout.write(formaterReplis(bilan) + '\n');
+    return 0;
   }
 
   if (commande === 'cim10') {

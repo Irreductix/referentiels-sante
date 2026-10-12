@@ -89,7 +89,9 @@ npx referentiels-sante --aide
 Les sources sont des pages web, pas des API : elles changent sans prévenir.
 `verifier` contrôle chaque semaine en intégration continue que les pages ont
 encore la forme attendue, que chaque fichier répond, et que les adresses de
-repli embarquées sont à jour ; un échec ouvre un ticket.
+repli embarquées sont à jour ; un échec ouvre un ticket. Quand une source publie
+une nouvelle version, la même tâche ouvre une pull request qui met à jour les
+replis (`npx referentiels-sante replis`).
 
 Détail des colonnes : [docs/FINESS.md](docs/FINESS.md), [docs/CCAM.md](docs/CCAM.md),
 [docs/AUTRES-REFERENTIELS.md](docs/AUTRES-REFERENTIELS.md) (CIM-10, médicaments, NABM, LPP, UCD).

@@ -76,9 +76,9 @@ et des valeurs observées, et signalées comme telles. Trois colonnes de
 l'historique LPP (`pecp01` à `pecp03`) restent non documentées.
 
 Si la page de téléchargement est injoignable ou méconnaissable, l'outil se
-rabat sur la dernière version connue au moment de la publication et le dit
-dans son journal. La commande `verifier` signale quand cette version de repli
-est dépassée.
+rabat sur la dernière version connue, inscrite dans `src/replis.json`, et le
+dit dans son journal. La commande `verifier` signale quand cette version de
+repli est dépassée, et la commande `replis` la met à jour (voir plus bas).
 
 ## N'importe quel DBF
 
@@ -104,15 +104,34 @@ fichiers attendus et envoie une requête d'en-tête sur chacun, sans rien
 télécharger de lourd. Elle vérifie aussi que les adresses de repli embarquées
 (CCAM, NABM, LPP, UCD, GHS) correspondent encore à ce que publient les pages.
 Le code de sortie vaut 1 dès qu'un contrôle échoue ; un workflow hebdomadaire
-l'exécute et ouvre un ticket en cas d'échec.
+l'exécute, ouvre un ticket en cas d'échec et le referme quand la vérification
+repasse.
 
 Chaque ligne porte l'un de trois états. `OK` et `ECHEC` parlent d'eux-mêmes.
 `AVERT` signale ce qui mérite un œil sans être une panne : un fichier qui répond
 403, parce que certains sites refusent les serveurs d'intégration continue tout
 en servant les mêmes fichiers à un poste en France (la CCAM d'ameli) ; ou une
-page servie sous un code d'erreur mais complète, que l'outil lit quand même.
+page servie sous un code d'erreur mais complète, que l'outil lit quand même ;
+ou une version de repli en retard sur la page mais dont les fichiers se
+téléchargent encore. Un repli dont les fichiers ne répondent plus est un échec.
 Lancée depuis un poste de l'établissement, la commande voit ce que la CI ne
 peut pas voir : c'est le bon endroit pour vérifier la CCAM.
+
+## Mettre à jour les versions de repli
+
+```bash
+referentiels-sante replis            # ce qui a changé sur les pages
+referentiels-sante replis --ecrire   # met src/replis.json à jour
+```
+
+La commande compare chaque repli embarqué à la page de sa source (NABM, LPP,
+UCD, CCAM, GHS, plus la campagne GHS suivante dès que l'ATIH publie son
+archive). Une nouvelle version n'est retenue que si tous ses fichiers
+répondent. Le workflow hebdomadaire la lance avec `--ecrire` : s'il y a du
+changement, il passe les tests et ouvre, ou met à jour, une pull request
+« Versions de repli à mettre à jour » ; il suffit de la fusionner. La CCAM,
+refusée aux serveurs d'intégration continue, se met à jour depuis un poste en
+France avec la même commande.
 
 ## Ce qui manque encore
 

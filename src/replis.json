@@ -1,0 +1,69 @@
+{
+  "cnam": {
+    "nabm": {
+      "version": "105",
+      "fichiers": [
+        {
+          "nom": "NABM_FICHE_TOT105.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/nabm/download_file.php?filename=nabm/NABM_FICHE_TOT105.dbf"
+        },
+        {
+          "nom": "NABM_HISTO_TOT105.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/nabm/download_file.php?filename=nabm/NABM_HISTO_TOT105.dbf"
+        },
+        {
+          "nom": "NABM_INCOMP_TOT105.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/nabm/download_file.php?filename=nabm/NABM_INCOMP_TOT105.dbf"
+        }
+      ]
+    },
+    "lpp": {
+      "version": "905",
+      "fichiers": [
+        {
+          "nom": "LPP905.zip",
+          "url": "http://www.codage.ext.cnamts.fr/codif/tips/download_file.php?filename=tips/LPP905.zip"
+        }
+      ]
+    },
+    "ucd": {
+      "version": "00806",
+      "fichiers": [
+        {
+          "nom": "ucd_total_00806_20261008.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/ucd_total_00806_20261008.dbf"
+        },
+        {
+          "nom": "ucd_maj_00806_20261008.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/ucd_maj_00806_20261008.dbf"
+        },
+        {
+          "nom": "ucd_histo_prix_00806_20261008.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/ucd_histo_prix_00806_20261008.dbf"
+        },
+        {
+          "nom": "retro_histo_taux_00806_20261008.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/retro_histo_taux_00806_20261008.dbf"
+        },
+        {
+          "nom": "retro_histo_cout_sup_00806_20261008.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/retro_histo_cout_sup_00806_20261008.dbf"
+        }
+      ]
+    }
+  },
+  "ccam": {
+    "version": "08400",
+    "archives": [
+      "https://www.ameli.fr/fileadmin/user_upload/documents/CCAM08400_DBF_PART1.zip",
+      "https://www.ameli.fr/fileadmin/user_upload/documents/CCAM8400_DBF_PART2.zip",
+      "https://www.ameli.fr/fileadmin/user_upload/documents/CCAM08400_DBF_PART3.zip"
+    ]
+  },
+  "ghs": {
+    "2023": "https://www.atih.sante.fr/sites/default/files/content/documents/2023%20-%20ghs_web_20230301.zip",
+    "2024": "https://www.atih.sante.fr/sites/default/files/content/documents/2024%20-%20ghs_web_20240301.zip",
+    "2025": "https://www.atih.sante.fr/sites/default/files/content/documents/2025%20-%20ghs_web_20250301_1.zip",
+    "2026": "https://www.atih.sante.fr/sites/default/files/content/documents/2026%20-%20ghs_web_20260101.zip"
+  }
+}

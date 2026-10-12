@@ -24,19 +24,13 @@ import { extraireZip } from '../commun/zip.js';
 import { lireDbf, chargerDbf, lireEnteteDbf } from '../commun/dbf.js';
 import { EcrivainCsv } from '../commun/csv.js';
 import { texte } from '../commun/dates.js';
+import { REPLIS } from '../replis.js';
 
 export const PAGE_TELECHARGEMENT = 'https://www.ameli.fr/accueil-de-la-ccam/telechargement/fichiers-informatiques-nouvelle-structure/index.php';
 const BASE = 'https://www.ameli.fr';
 
-/** Dernière version connue au moment de la publication, utilisée si la page ameli est injoignable. */
-export const ARCHIVES_CONNUES = {
-  version: '08400',
-  archives: [
-    `${BASE}/fileadmin/user_upload/documents/CCAM08400_DBF_PART1.zip`,
-    `${BASE}/fileadmin/user_upload/documents/CCAM8400_DBF_PART2.zip`,
-    `${BASE}/fileadmin/user_upload/documents/CCAM08400_DBF_PART3.zip`,
-  ],
-};
+// Dernière version connue (src/replis.json), utilisée si la page ameli est injoignable.
+export const ARCHIVES_CONNUES = REPLIS.ccam;
 
 /**
  * Repère sur la page ameli les archives DBF de la version courante. La page est

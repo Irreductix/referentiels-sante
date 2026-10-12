@@ -38,7 +38,21 @@ export async function sonder(url, { delai = 20000 } = {}) {
 const resultat = (source, controle, ok, detail = '', avertissement = false) => ({ source, controle, ok, detail, avertissement });
 
 /** Un fichier de données ne doit pas être une page HTML. */
-const estDonnee = (s) => s.ok && !(s.type ?? '').includes('text/html');
+export const estDonnee = (s) => s.ok && !(s.type ?? '').includes('text/html');
+
+async function sonderTout(urls) {
+  const sondes = [];
+  for (const url of urls) sondes.push(await sonder(url));
+  return sondes;
+}
+
+// Un repli en retard qui se télécharge encore n'est pas une panne : avertissement, et la CI propose la mise à jour.
+export function controleRepli(source, controle, page, repli, sondes = []) {
+  if (page === repli) return resultat(source, controle, true, `page : ${page}, repli : ${repli}`);
+  const ko = sondes.filter((s) => !estDonnee(s) && s.statut !== 403);
+  if (!ko.length) return resultat(source, controle, true, `page : ${page}, repli : ${repli}, encore téléchargeable`, true);
+  return resultat(source, controle, false, `page : ${page}, repli : ${repli}, repli injoignable (${ko.map((s) => s.statut ?? s.erreur).join(', ')})`);
+}
 
 /**
  * Un 403 dit seulement que cette adresse est refusée, pas que le fichier a disparu :
@@ -93,7 +107,8 @@ export async function verifierGhs() {
     const trouve = await trouverArchive(annee, { journal: (m) => journal.push(m) });
     r.push(controlePage('ghs', `campagne ${annee} : page ATIH`, trouve, journal.join(' ; ')));
     if (!trouve.repli && trouve.url !== connue) {
-      r.push(resultat('ghs', `campagne ${annee} : adresse de repli à jour`, false, `page : ${trouve.url}, repli : ${connue}`));
+      const nom = (url) => decodeURIComponent(String(url).split('/').pop());
+      r.push(controleRepli('ghs', `campagne ${annee} : adresse de repli à jour`, nom(trouve.url), nom(connue), await sonderTout([connue])));
     }
     const s = await sonder(trouve.url);
     r.push(controleFichier('ghs', `campagne ${annee} : ${decodeURIComponent(trouve.url.split('/').pop())}`, s));
@@ -107,8 +122,8 @@ export async function verifierCcam() {
   const trouve = await trouverArchives({ journal: (m) => journal.push(m) });
   r.push(controlePage('ccam', 'page ameli', trouve, journal.join(' ; ')));
   if (!trouve.repli) {
-    const aJour = trouve.version === ARCHIVES_CONNUES.version;
-    r.push(resultat('ccam', 'version de repli à jour', aJour, aJour ? trouve.version : `page : ${trouve.version}, repli : ${ARCHIVES_CONNUES.version}`));
+    const sondes = trouve.version === ARCHIVES_CONNUES.version ? [] : await sonderTout(ARCHIVES_CONNUES.archives);
+    r.push(controleRepli('ccam', 'version de repli à jour', trouve.version, ARCHIVES_CONNUES.version, sondes));
   }
   for (const url of trouve.archives) {
     const s = await sonder(url);
@@ -144,8 +159,9 @@ export async function verifierCnam() {
       const { version, fichiers } = trouve;
       r.push(controlePage(nom, 'page de téléchargement', trouve, trouve.repli ? journal.join(' ; ') : `version ${version}, ${fichiers.length} fichier(s)`));
       if (!trouve.repli) {
-        const connue = VERSIONS_CONNUES[nom]?.version;
-        r.push(resultat(nom, 'version de repli à jour', connue === version, `page : ${version}, repli : ${connue}`));
+        const connue = VERSIONS_CONNUES[nom];
+        const sondes = connue?.version === version ? [] : await sonderTout((connue?.fichiers ?? []).map((f) => f.url));
+        r.push(controleRepli(nom, 'version de repli à jour', version, connue?.version, connue ? sondes : [{ statut: 'aucun repli' }]));
       }
       for (const f of fichiers) {
         const s = await sonder(f.url);
