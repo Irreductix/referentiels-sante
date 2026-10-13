@@ -153,12 +153,18 @@ export async function exporterBdpm({ fichiers, sortie = 'data/bdpm', cache = '.c
     journal(`page de téléchargement illisible (${erreur.message}) : dates de mise à jour inconnues`);
   }
   resume.miseAJour = dates.base;
+  let cacheUtilise = false;
 
   for (const cle of cles) {
     const definition = FICHIERS[cle];
     const url = definition.url ?? `${BASE}/download/file/${definition.fichier}`;
     const chemin = join(cache, 'bdpm', definition.fichier);
-    await telecharger(url, chemin, { forcer, journal });
+    const { telecharge } = await telecharger(url, chemin, { forcer, journal });
+    // Un fichier du cache peut dater d'avant la page lue : sa date est inconnue.
+    if (!telecharge) {
+      cacheUtilise = true;
+      journal(`${definition.fichier} pris dans le cache : date de mise à jour inconnue (--forcer pour la connaître)`);
+    }
     const lignes = convertirTexte(decoderTexte(readFileSync(chemin)), definition);
     const nomCsv = `bdpm-${cle.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase())}.csv`;
     const colonnes = [...definition.colonnes];
@@ -166,9 +172,10 @@ export async function exporterBdpm({ fichiers, sortie = 'data/bdpm', cache = '.c
     const csv = new EcrivainCsv(join(sortie, nomCsv), colonnes);
     for (const l of lignes) await csv.ecrire(l);
     await csv.fermer();
-    resume.fichiers[cle] = { source: definition.fichier, fichier: nomCsv, lignes: lignes.length, miseAJour: dates.fichiers[cle] ?? null };
+    resume.fichiers[cle] = { source: definition.fichier, fichier: nomCsv, lignes: lignes.length, miseAJour: telecharge ? (dates.fichiers[cle] ?? null) : null };
     journal(`${cle} : ${lignes.length} lignes`);
   }
+  if (cacheUtilise) resume.miseAJour = null;
   writeFileSync(join(sortie, 'bdpm-resume.json'), JSON.stringify(resume, null, 2) + '\n');
   return resume;
 }

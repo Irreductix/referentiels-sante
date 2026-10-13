@@ -1,7 +1,7 @@
 // Écrit MENTION-SOURCE.txt à côté des fichiers convertis avant leur publication :
 // la Licence Ouverte demande de citer la source et la date de dernière mise à jour.
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { basename, join, resolve } from 'node:path';
+import { existsSync, readFileSync, realpathSync, writeFileSync } from 'node:fs';
+import { basename, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const DEPOT = 'https://github.com/Irreductix/referentiels-sante';
@@ -18,7 +18,7 @@ export function mentionFiness({ structures, activites, version }) {
     'Source : Agence du Numérique en Santé (ANS), flux FINESS+ publié sur data.gouv.fr',
     '  FINESS - Structures : https://www.data.gouv.fr/datasets/finess-structures-1',
     '  FINESS - Activités : https://www.data.gouv.fr/datasets/finess-activites-1',
-    'Licence : Licence Ouverte 2.0, https://www.etalab.gouv.fr/licence-ouverte-open-licence/',
+    'Licence : Licence Ouverte 2.0, https://www.data.gouv.fr/pages/legal/licences/etalab-2.0',
     "Libellés des codes : Nomenclatures des objets de santé (NOS) de l'ANS, https://mos.esante.gouv.fr/NOS/",
     '  tables utilisées listées dans structures-resume.json',
     `Instantané des structures : ${basename(structures.source)}, produit par l'ANS le ${jour(structures.generatedAt)}`,
@@ -38,6 +38,8 @@ export function mentionFiness({ structures, activites, version }) {
 }
 
 export function mentionBdpm({ resume, version }) {
+  const fichiers = Object.values(resume.fichiers ?? {}).map((f) =>
+    `  ${f.fichier} (${f.source}) : ${f.miseAJour ? `mis à jour le ${f.miseAJour}` : 'date non affichée par la source'}`);
   return [
     `Base de données publique des médicaments convertie en CSV par referentiels-sante ${version}`,
     '',
@@ -46,6 +48,7 @@ export function mentionBdpm({ resume, version }) {
     '  Jeu data.gouv.fr : https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-base-officielle',
     'Licence : Licence Ouverte',
     `Dernière mise à jour de la base : ${jour(resume.miseAJour)}, date affichée sur sa page de téléchargement`,
+    ...(fichiers.length ? ['Mise à jour de chaque fichier, selon la même page :', ...fichiers] : []),
     `Données téléchargées à la source le ${jour(resume.converti)}`,
     '',
     "Ces fichiers transforment les fichiers d'origine : en-têtes ajoutés, encodage UTF-8, dates au",
@@ -77,7 +80,7 @@ export function ecrireMention(type, dossier, version) {
   return chemin;
 }
 
-if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+if (process.argv[1] && realpathSync(process.argv[1]) === realpathSync(fileURLToPath(import.meta.url))) {
   const [type, dossier] = process.argv.slice(2);
   const { version } = JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8'));
   console.log(`${ecrireMention(type, dossier, version)} écrit`);

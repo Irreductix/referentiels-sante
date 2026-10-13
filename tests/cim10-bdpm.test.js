@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { convertirClaml, exporterCim10 } from '../src/cim10/index.js';
@@ -112,18 +112,30 @@ test('lireDatesMiseAJour lit la date de la base et celle de chaque fichier sur l
   assert.deepEqual(lireDatesMiseAJour(''), { base: null, fichiers: Object.fromEntries(Object.keys(FICHIERS).map((c) => [c, null])) });
 });
 
-test('exporterBdpm inscrit la date de mise à jour lue sur la page, et continue si la page est illisible', async () => {
-  const sortie = dossierTemp();
-  const cache = dossierTemp();
-  mkdirSync(join(cache, 'bdpm'), { recursive: true });
-  writeFileSync(join(cache, 'bdpm', 'CIS_CIP_Dispo_Spec.txt'), '60000001\t3400930000001\t1\tRupture de stock\t01/10/2026\t02/10/2026\thttps://ansm.sante.fr\n');
+test('exporterBdpm inscrit les dates lues sur la page pour un fichier téléchargé, pas pour un fichier du cache', async () => {
+  const contenu = '60000001\t3400930000001\t1\tRupture de stock\t01/10/2026\t02/10/2026\thttps://ansm.sante.fr\n';
   const page = 'Dernière mise à jour le 29/09/2026 <a href="/download/file/CIS_CIP_Dispo_Spec.txt">Fichier des ruptures de stocks (Date de mise à jour : 12/10/2026, 151 Ko)</a>';
-  const resume = await exporterBdpm({ fichiers: ['disponibilite'], sortie, cache, lirePage: async () => ({ ok: true, statut: 200, texte: page }) });
-  assert.equal(resume.miseAJour, '2026-09-29');
-  assert.equal(resume.fichiers.disponibilite.miseAJour, '2026-10-12');
-  assert.equal(JSON.parse(readFileSync(join(sortie, 'bdpm-resume.json'), 'utf8')).miseAJour, '2026-09-29');
+  const lirePage = async () => ({ ok: true, statut: 200, texte: page });
+  const vrai = globalThis.fetch;
+  globalThis.fetch = async () => new Response(contenu, { status: 200 });
+  try {
+    const sortie = dossierTemp();
+    const cache = dossierTemp();
+    const resume = await exporterBdpm({ fichiers: ['disponibilite'], sortie, cache, lirePage });
+    assert.equal(resume.miseAJour, '2026-09-29');
+    assert.equal(resume.fichiers.disponibilite.miseAJour, '2026-10-12');
+    assert.equal(resume.fichiers.disponibilite.lignes, 1);
+    assert.equal(JSON.parse(readFileSync(join(sortie, 'bdpm-resume.json'), 'utf8')).miseAJour, '2026-09-29');
 
-  const sansPage = await exporterBdpm({ fichiers: ['disponibilite'], sortie: dossierTemp(), cache, lirePage: async () => { throw new Error('hors ligne'); } });
-  assert.equal(sansPage.miseAJour, null);
-  assert.equal(sansPage.fichiers.disponibilite.lignes, 1);
+    // Second passage : le fichier vient du cache, il peut dater d'avant la page lue.
+    const duCache = await exporterBdpm({ fichiers: ['disponibilite'], sortie: dossierTemp(), cache, lirePage });
+    assert.equal(duCache.miseAJour, null);
+    assert.equal(duCache.fichiers.disponibilite.miseAJour, null);
+
+    const sansPage = await exporterBdpm({ fichiers: ['disponibilite'], sortie: dossierTemp(), cache: dossierTemp(), lirePage: async () => { throw new Error('hors ligne'); } });
+    assert.equal(sansPage.miseAJour, null);
+    assert.equal(sansPage.fichiers.disponibilite.lignes, 1);
+  } finally {
+    globalThis.fetch = vrai;
+  }
 });
