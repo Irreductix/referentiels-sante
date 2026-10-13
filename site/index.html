@@ -224,7 +224,7 @@
 
 <ul>
   <li>Dans 1 364 adresses d'établissements du fichier du 14 septembre 2026, la séquence « TH » avait été remplacée par « E » : « rue de la Catherinette » était devenue « Caeerinette », « Thoiry » « Eoiry ». Quelques adresses restent touchées dans le fichier du 13 octobre, comme « rue Paul Bereelot ». <a href="https://github.com/ansforge/finess/issues/28">Ticket de l'ANS</a>.</li>
-  <li>Pour une partie des adresses, les coordonnées projetées et géographiques étaient inversées. Aucune inversion ne subsiste pour les établissements de métropole dans le fichier du 13 octobre. <a href="https://github.com/ansforge/finess/issues/24">Ticket de l'ANS</a>.</li>
+  <li>Pour la majorité des adresses, les coordonnées projetées et géographiques étaient permutées entre leurs colonnes. Elles sont à leur place pour tous les établissements géolocalisés de métropole dans le fichier du 13 octobre. <a href="https://github.com/ansforge/finess/issues/24">Ticket de l'ANS</a>.</li>
 </ul>
 
 <p>Les fichiers produits à partir d'un flux antérieur au 6 octobre 2026, dont le fichier du mois publié en octobre, contiennent encore ces défauts.</p>
@@ -240,7 +240,7 @@
 <p>Pour FINESS+, oui : chaque exécution télécharge le flux du jour, et le fichier <code>structures-resume.json</code> indique la date exacte des données. Le fichier du mois, lui, contient l'instantané mensuel de l'ANS, daté dans <code>MENTION-SOURCE.txt</code>. Pour la CCAM, la page de téléchargement de l'Assurance Maladie est lue à chaque exécution. Pour les tarifs GHS, la page de campagne de l'ATIH est lue à chaque exécution. Pour la CIM-10, l'outil connaît les éditions que l'ATIH publie au format ClaML, aujourd'hui la CIM-10 FR 2025 : l'édition 2026 n'est diffusée qu'en PDF, elle sera ajoutée dès la publication de son fichier ClaML.</p>
 
 <h3>Puis-je réutiliser les fichiers produits ?</h3>
-<p>FINESS+ et la base publique des médicaments sont publiés sous Licence Ouverte : la réutilisation est libre, en citant la source et la date. Les autres référentiels ont leurs propres conditions, détaillées dans la <a href="https://github.com/Irreductix/referentiels-sante/blob/main/docs/SOURCES.md">page des sources et licences</a>. L'outil télécharge les données à la source au moment où vous le lancez. Seuls FINESS+ et la base des médicaments sont aussi republiés déjà convertis, chaque mois, avec leur mention de source ; les autres référentiels ne sont jamais republiés.</p>
+<p>FINESS+ et la base publique des médicaments sont publiés sous Licence Ouverte : la réutilisation est libre, en citant la source et la date. Les autres référentiels ont leurs propres conditions, détaillées dans la <a href="https://github.com/Irreductix/referentiels-sante/blob/main/docs/SOURCES.md">page des sources et licences</a>. L'outil télécharge les données à la source au moment où vous le lancez. Seuls FINESS+ et la base des médicaments sont aussi republiés déjà convertis, chaque mois, avec leur mention de source ; les autres référentiels ne sont jamais republiés, hormis les libellés et agrégats des nomenclatures NOS inclus dans les fichiers FINESS.</p>
 
 <h3>Faut-il des droits d'administrateur ?</h3>
 <p>Non avec la version Windows : l'archive contient Node.js et s'utilise après une simple décompression. Pour installer Node.js soi-même, en général oui. L'outil lui-même ne demande aucun droit particulier et n'installe aucune autre dépendance.</p>

@@ -45,8 +45,8 @@ jointure.
 | departement, code_commune | déduits du COG | `2A`, `2B`, `971` à `989` traités |
 | departement_historique, code_commune_historique | déduits du COG | codage de l'ancien flux : `9A` Guadeloupe, `9B` Martinique, `9C` Guyane, `9D` La Réunion, `9E` Saint-Pierre-et-Miquelon, `9F` Mayotte, `9J` Wallis-et-Futuna, commune sur trois caractères |
 | departement_libelle | TRE_G09 | |
-| latitude, longitude | coordonneesGeographique.directionLatitude, directionLongitude | WGS 84, en degrés décimaux |
-| coordonnee_x, coordonnee_y | coordonneesGeographique.coordonneeX, coordonneeY | recopiées telles quelles. Dans les flux antérieurs au 6 octobre 2026, ces deux valeurs étaient inversées pour une partie des adresses, à rebours de la convention Lambert 93 (X vers l'est, Y vers le nord) : voir « Anomalies observées dans la source » |
+| latitude, longitude | coordonneesGeographique.directionLatitude, directionLongitude | WGS 84, en degrés décimaux, sauf dans les fichiers produits depuis un flux antérieur au 6 octobre 2026 (voir la ligne suivante) |
+| coordonnee_x, coordonnee_y | coordonneesGeographique.coordonneeX, coordonneeY | Lambert 93, recopiées telles quelles. Avant le 6 octobre 2026, pour la majorité des adresses, `coordonnee_x` et `coordonnee_y` contenaient la longitude et la latitude en degrés, et `latitude` et `longitude` les coordonnées Lambert 93 en mètres : les deux couples étaient permutés. Voir « Anomalies observées dans la source » |
 | cle_ban, score_ban | cleInInteropBAN, scoreBAN | rapprochement avec la Base adresse nationale |
 | telephone, telecopie, courriel | contact[] | contact de rôle `01` si présent, sinon le premier |
 | numero_education_nationale, numero_reference_externe | idem | |
@@ -158,7 +158,8 @@ première ligne `finess;finess-plus;<version du schéma>;<date du flux>`, puis
 La section `geolocalisation` de l'ancien jeu `etalab_cs1100507` n'est pas
 reproduite, à cause de l'incertitude sur l'orientation des coordonnées
 projetées signalée plus haut. Les coordonnées WGS 84 sont dans
-`etablissements.csv`.
+`etablissements.csv` (permutées avec les coordonnées Lambert dans les fichiers
+produits depuis un flux antérieur au 6 octobre 2026).
 
 ### Écarts mesurés avec la dernière extraction Etalab
 
@@ -193,10 +194,12 @@ fermé). Dans le flux du 13 octobre, quelques adresses restent touchées, par
 exemple « R PAUL BEREELOT ». L'outil recopie la source sans la corriger.
 
 Dans les mêmes flux, `coordonneeX` et `coordonneeY` portaient selon les adresses
-tantôt les coordonnées Lambert, tantôt des valeurs inversées
+tantôt les coordonnées Lambert, tantôt la longitude et la latitude, les champs
+de latitude et de longitude portant alors le Lambert
 ([ticket 24](https://github.com/ansforge/finess/issues/24), fermé le 5 octobre
-2026). Dans le flux du 13 octobre, aucune inversion ne subsiste pour les
-établissements de métropole.
+2026). Dans le flux du 13 octobre, les deux couples sont à leur place pour tous
+les établissements géolocalisés de métropole. Pour un fichier produit avant cette date,
+vérifiez la plage de valeurs avant tout usage cartographique.
 
 Les fichiers produits à partir d'un flux antérieur au 6 octobre 2026 contiennent
 encore ces deux défauts, y compris l'archive `finess-202610`, construite depuis

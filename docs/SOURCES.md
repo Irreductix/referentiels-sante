@@ -37,9 +37,11 @@ sert de modèle au fichier `etablissements-format-historique.csv`.
 | Licence | conditions d'utilisation de l'ANS, publiées avec chaque terminologie ; consultez-les avant toute redistribution |
 
 L'outil télécharge les tables au moment de l'exécution et ne les redistribue
-pas. Les fichiers FINESS publiés chaque mois contiennent seulement, à côté de
-chaque code, le libellé tiré de ces tables, comme le faisait l'ancienne
-extraction FINESS ; leur `MENTION-SOURCE.txt` cite les NOS. La fixture `tests/fixtures/nos-TRE_R66-exemple.tabs` est un extrait de
+pas. Les fichiers FINESS publiés chaque mois contiennent, à côté de chaque
+code, le libellé tiré de ces tables, comme le faisait l'ancienne extraction
+FINESS, ainsi que le domaine et les agrégats de catégorie et de statut
+juridique tirés des associations `ASS_X10` et `ASS_X11` ; leur
+`MENTION-SOURCE.txt` cite les NOS. La fixture `tests/fixtures/nos-TRE_R66-exemple.tabs` est un extrait de
 quatorze lignes de la table des catégories d'établissement, à titre de test.
 
 Tables utilisées pour FINESS+ :
@@ -110,9 +112,11 @@ Tables utilisées pour FINESS+ :
 ## Mention de source
 
 Les commandes `finess`, `bdpm`, `ccam`, `cim10`, `ghs`, `nabm`, `lpp` et `ucd`
-écrivent un fichier `*-resume.json` avec la page ou le fichier d'origine et la
-date de conversion ; pour FINESS+, il donne aussi la date de génération du flux
-par l'ANS. Les tables NOS portent leur date de mise à jour dans chaque fichier
+écrivent un fichier `*-resume.json` avec la page d'origine ou le chemin du
+fichier téléchargé (pour la CCAM, le dossier des tables extraites et la
+version) et la date de conversion ; pour FINESS+, il donne aussi la date de
+génération du flux par l'ANS, et pour la base des médicaments la date de mise à
+jour affichée par la source. Les tables NOS portent leur date de mise à jour dans chaque fichier
 JSON. Les archives publiées chaque mois contiennent en plus `MENTION-SOURCE.txt`,
 qui nomme le producteur, la licence et la date des données. Reprenez ces
 mentions lorsque vous rediffusez des fichiers produits.
