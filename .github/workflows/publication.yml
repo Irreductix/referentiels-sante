@@ -1,19 +1,40 @@
 name: Publication mensuelle des fichiers convertis
 
 # Le 2 de chaque mois, convertit l'instantané mensuel FINESS+ et la base publique
-# des médicaments, et publie les fichiers produits en pièces jointes de deux
-# releases. Seules ces deux sources sont rediffusées : elles sont sous Licence
-# Ouverte (ANS ; ANSM, HAS, UNCAM). La mention de source est dans le résumé joint.
-# Les autres référentiels n'ont pas de licence de réutilisation explicite et ne
-# sont jamais publiés ici (voir docs/SOURCES.md).
+# des médicaments, et les publie dans les releases du mois (finess-AAAAMM,
+# bdpm-AAAAMM) et dans la release donnees-du-mois, dont les adresses ne changent
+# jamais. Seules ces deux sources, sous Licence Ouverte, sont rediffusées ; chaque
+# archive contient MENTION-SOURCE.txt. Les autres référentiels n'ont pas de licence
+# de réutilisation explicite et ne sont jamais publiés ici (voir docs/SOURCES.md).
+# Lancé à la main, il ne touche pas aux fichiers d'un mois déjà publié, sauf si
+# « refaire » est coché ; même alors, les adresses restent valides.
 
 on:
   schedule:
     - cron: '0 5 2 * *'
   workflow_dispatch:
+    inputs:
+      cibles:
+        description: Référentiels à publier
+        type: choice
+        options: [tous, finess, bdpm]
+        default: tous
+      refaire:
+        description: Reconvertir et remplacer les fichiers si la release du mois existe déjà
+        type: boolean
+        default: false
 
 permissions:
   contents: write
+
+concurrency:
+  group: publication
+  cancel-in-progress: false
+
+env:
+  GH_TOKEN: ${{ github.token }}
+  REFAIRE: ${{ inputs.refaire }}
+  STABLE: donnees-du-mois
 
 jobs:
   publier:
@@ -23,35 +44,64 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 24
-      - name: Conversion FINESS+ (structures et activités)
-        run: node src/cli.js finess --activites --mensuel --sortie sortie/finess
-      - name: Archive
-        id: archive
+
+      - name: Release à adresse fixe
+        run: |
+          if ! gh release view "$STABLE" > /dev/null 2>&1; then
+            base="https://github.com/${GITHUB_REPOSITORY}/releases/download/${STABLE}"
+            gh release create "$STABLE" --latest=false --title "Fichiers du mois, adresse fixe" \
+              --notes "Dernières archives converties, toujours aux mêmes adresses : ${base}/finess.zip et ${base}/bdpm.zip. Elles sont remplacées le 2 de chaque mois. L'historique mois par mois est dans les releases finess-AAAAMM et bdpm-AAAAMM."
+          fi
+
+      - name: FINESS+ (structures et activités)
+        if: inputs.cibles != 'bdpm'
         run: |
           etiquette="finess-$(date -u +%Y%m)"
-          echo "etiquette=$etiquette" >> "$GITHUB_OUTPUT"
-          cd sortie/finess
-          zip -q -9 "../${etiquette}.zip" ./*
-          ls -la ..
-      - name: Release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          etiquette="${{ steps.archive.outputs.etiquette }}"
-          notes="Fichiers FINESS+ convertis (instantané mensuel). Source : Agence du Numérique en Santé, data.gouv.fr, Licence Ouverte 2.0. Détail des colonnes : docs/FINESS.md."
-          gh release delete "$etiquette" --yes --cleanup-tag 2>/dev/null || true
-          gh release create "$etiquette" "sortie/${etiquette}.zip" sortie/finess/structures-resume.json sortie/finess/activites-resume.json --title "FINESS+ $(date -u +%Y-%m)" --notes "$notes"
+          archive="sortie/${etiquette}.zip"
+          notes="Fichiers FINESS+ convertis (instantané mensuel). Source : Agence du Numérique en Santé, data.gouv.fr, Licence Ouverte 2.0. Source et dates dans MENTION-SOURCE.txt. Détail des colonnes : docs/FINESS.md."
+          mkdir -p sortie
+          if gh release view "$etiquette" > /dev/null 2>&1 && [ "$REFAIRE" != "true" ]; then
+            echo "La release $etiquette existe déjà : elle est conservée telle quelle."
+            gh release download "$etiquette" --pattern "${etiquette}.zip" --dir sortie --clobber
+          else
+            node src/cli.js finess --activites --mensuel --sortie sortie/finess
+            node .github/scripts/mention-source.mjs finess sortie/finess
+            (cd sortie/finess && zip -q -9 "../${etiquette}.zip" ./*)
+            if gh release view "$etiquette" > /dev/null 2>&1; then
+              for f in "$archive" sortie/finess/structures-resume.json sortie/finess/activites-resume.json; do
+                bash .github/scripts/remplacer-piece.sh "$etiquette" "$f"
+              done
+              gh release edit "$etiquette" --notes "$notes"
+            else
+              gh release create "$etiquette" "$archive" sortie/finess/structures-resume.json sortie/finess/activites-resume.json \
+                --latest=false --title "FINESS+ $(date -u +%Y-%m)" --notes "$notes"
+            fi
+          fi
+          bash .github/scripts/remplacer-piece.sh "$STABLE" "$archive" finess.zip
 
-      # La base des médicaments passe après FINESS : son échec ne doit pas
-      # empêcher la publication de FINESS, qui est déjà faite à ce stade.
-      - name: Conversion de la base publique des médicaments
-        run: node src/cli.js bdpm --sortie sortie/bdpm
-      - name: Archive et release des médicaments
-        env:
-          GH_TOKEN: ${{ github.token }}
+      # La base des médicaments passe après FINESS et tourne même si FINESS échoue.
+      - name: Base publique des médicaments
+        if: ${{ !cancelled() && inputs.cibles != 'finess' }}
         run: |
           etiquette="bdpm-$(date -u +%Y%m)"
-          (cd sortie/bdpm && zip -q -9 "../${etiquette}.zip" ./*)
-          notes="Base de données publique des médicaments convertie en CSV UTF-8 : spécialités, présentations, compositions, avis SMR et ASMR, génériques, conditions de prescription, informations importantes, disponibilité. Source : ANSM, HAS, UNCAM, base-donnees-publique.medicaments.gouv.fr, Licence Ouverte. Détail des colonnes : docs/AUTRES-REFERENTIELS.md."
-          gh release delete "$etiquette" --yes --cleanup-tag 2>/dev/null || true
-          gh release create "$etiquette" "sortie/${etiquette}.zip" sortie/bdpm/bdpm-resume.json --title "Médicaments (BDPM) $(date -u +%Y-%m)" --notes "$notes"
+          archive="sortie/${etiquette}.zip"
+          notes="Base de données publique des médicaments convertie en CSV UTF-8 : spécialités, présentations, compositions, avis SMR et ASMR, génériques, conditions de prescription, informations importantes, disponibilité. Source : ANSM, HAS, UNCAM, base-donnees-publique.medicaments.gouv.fr, Licence Ouverte. Source et date dans MENTION-SOURCE.txt. Détail des colonnes : docs/AUTRES-REFERENTIELS.md."
+          mkdir -p sortie
+          if gh release view "$etiquette" > /dev/null 2>&1 && [ "$REFAIRE" != "true" ]; then
+            echo "La release $etiquette existe déjà : elle est conservée telle quelle."
+            gh release download "$etiquette" --pattern "${etiquette}.zip" --dir sortie --clobber
+          else
+            node src/cli.js bdpm --sortie sortie/bdpm
+            node .github/scripts/mention-source.mjs bdpm sortie/bdpm
+            (cd sortie/bdpm && zip -q -9 "../${etiquette}.zip" ./*)
+            if gh release view "$etiquette" > /dev/null 2>&1; then
+              for f in "$archive" sortie/bdpm/bdpm-resume.json; do
+                bash .github/scripts/remplacer-piece.sh "$etiquette" "$f"
+              done
+              gh release edit "$etiquette" --notes "$notes"
+            else
+              gh release create "$etiquette" "$archive" sortie/bdpm/bdpm-resume.json \
+                --latest=false --title "Médicaments (BDPM) $(date -u +%Y-%m)" --notes "$notes"
+            fi
+          fi
+          bash .github/scripts/remplacer-piece.sh "$STABLE" "$archive" bdpm.zip
