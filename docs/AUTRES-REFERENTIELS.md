@@ -33,7 +33,7 @@ Licence Ouverte. Fichiers tabulés sans en-tête, dans des encodages variables
 selon le fichier (détectés automatiquement), dates à la française.
 
 ```bash
-referentiels-sante bdpm                         # tous les fichiers
+referentiels-sante bdpm                         # les dix fichiers pris en charge
 referentiels-sante bdpm specialites presentations
 ```
 
@@ -129,7 +129,9 @@ UCD, CCAM, GHS, plus la campagne GHS suivante dès que l'ATIH publie son
 archive). Une nouvelle version n'est retenue que si tous ses fichiers
 répondent. Le workflow hebdomadaire la lance avec `--ecrire` : s'il y a du
 changement, il passe les tests et ouvre, ou met à jour, une pull request
-« Versions de repli à mettre à jour » ; il suffit de la fusionner. La CCAM,
+« Versions de repli à mettre à jour » ; il suffit de la fusionner. Si
+l'organisation interdit aux workflows d'ouvrir des pull requests, il ouvre à la
+place un ticket « replis » avec le lien pour la créer. La CCAM,
 refusée aux serveurs d'intégration continue, se met à jour depuis un poste en
 France avec la même commande.
 
@@ -142,3 +144,6 @@ France avec la même commande.
 - **CIM-10 FR 2026** en ClaML, dès que l'ATIH la publie.
 - Les fichiers texte à longueur fixe « TOT » de la LPP et des UCD (mêmes
   données que les DBF, autre format) ne sont pas lus.
+- Le fichier des médicaments d'intérêt thérapeutique majeur (`CIS_MITM.txt`),
+  publié avec la base des médicaments, n'est pas encore lu par la commande
+  `bdpm`, qui prend en charge les dix autres fichiers.

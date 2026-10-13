@@ -19,7 +19,7 @@ import { verifierTout, formaterRapport } from './verifier/index.js';
 import { actualiserReplis, formaterReplis } from './verifier/replis.js';
 import { extraireZip } from './commun/zip.js';
 
-const AIDE = `referentiels-sante : référentiels publics de la santé en CSV et JSON propres
+const AIDE = `referentiels-sante : référentiels publics de la santé en CSV propres, et en JSON pour FINESS+, NOS, CIM-10 et GHS
 
 Usage
   referentiels-sante finess    [--activites] [--structures <fichier>] [--fichier-activites <fichier>]
@@ -28,7 +28,7 @@ Usage
   referentiels-sante ghs       [--annee 2026 | --source <zip ou URL>]
   referentiels-sante ccam      [--brut] [--date AAAA-MM-JJ] [--dossier-dbf <dossier>]
   referentiels-sante cim10     [--edition 2025 | --source <zip ou xml>]
-  referentiels-sante bdpm      [FICHIER ...]   (défaut : tous : specialites, presentations, compositions…)
+  referentiels-sante bdpm      [FICHIER ...]   (défaut : les dix fichiers pris en charge : specialites, presentations, compositions…)
   referentiels-sante nabm | lpp | ucd          tables de codage de l'Assurance Maladie
   referentiels-sante dbf       <fichier.dbf | archive.zip> [--encodage cp850|latin1|utf8]
   referentiels-sante verifier  [SOURCE ...]    contrôle que pages et fichiers sources répondent (code de sortie 1 sinon)

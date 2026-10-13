@@ -52,7 +52,8 @@ export async function trouverRessource(type, { periodicite = 'journalier' } = {}
 
 /**
  * Télécharge le flux dans le cache et renvoie son chemin local.
- * Si l'API est injoignable, retombe sur l'URL stable de la ressource quotidienne.
+ * Si l'API est injoignable, retombe sur l'URL stable de la ressource quotidienne,
+ * pour le flux du jour seulement : un instantané mensuel ou annuel n'a pas de repli.
  */
 export async function telechargerFlux(type, { cache = '.cache', forcer = false, periodicite = 'journalier', journal = () => {} } = {}) {
   let url = URL_STABLES[type];
@@ -63,6 +64,9 @@ export async function telechargerFlux(type, { cache = '.cache', forcer = false, 
     nom = ressource.titre.endsWith('.json.gz') ? ressource.titre : `${ressource.titre}.json.gz`;
     journal(`ressource : ${ressource.titre} (${ressource.dateModification ?? 'date inconnue'})`);
   } catch (erreur) {
+    if (periodicite !== 'journalier') {
+      throw new Error(`instantané ${periodicite} introuvable (${erreur.message}) : le flux du jour ne le remplace pas`);
+    }
     journal(`API data.gouv.fr indisponible (${erreur.message}), utilisation de l'URL stable`);
   }
   const chemin = join(cache, 'finess', nom);
