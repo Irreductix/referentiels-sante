@@ -17,6 +17,7 @@ test('la mention FINESS cite le producteur, la licence et la date de chaque inst
   const texte = mentionFiness({ structures, activites, version: '1.2.3' });
   assert.match(texte, /Agence du Numérique en Santé/);
   assert.match(texte, /Licence Ouverte 2\.0/);
+  assert.match(texte, /Nomenclatures des objets de santé \(NOS\)/, 'les libellés ajoutés viennent des NOS');
   assert.match(texte, /finess-structures-mensuel-202609\.json\.gz, produit par l'ANS le 2026-10-01/);
   assert.match(texte, /finess-activites-mensuel-202609\.json\.gz, produit par l'ANS le 2026-10-01/);
   assert.match(texte, /Conversion : 2026-10-02/);
@@ -26,12 +27,14 @@ test('la mention FINESS cite le producteur, la licence et la date de chaque inst
 });
 
 test('la mention BDPM cite les producteurs, la licence et la date de téléchargement', () => {
-  const resume = { source: 'https://base-donnees-publique.medicaments.gouv.fr/telechargement', converti: '2026-10-13T08:00:00.000Z' };
+  const resume = { source: 'https://base-donnees-publique.medicaments.gouv.fr/telechargement', miseAJour: '2026-09-29', converti: '2026-10-13T08:00:00.000Z' };
   const texte = mentionBdpm({ resume, version: '1.2.3' });
   assert.match(texte, /ANSM, HAS, UNCAM/);
   assert.match(texte, /Licence Ouverte/);
   assert.match(texte, /base-donnees-publique\.medicaments\.gouv\.fr\/telechargement/);
+  assert.match(texte, /Dernière mise à jour de la base : 2026-09-29/);
   assert.match(texte, /téléchargées à la source le 2026-10-13/);
+  assert.match(mentionBdpm({ resume: { ...resume, miseAJour: null }, version: '1.2.3' }), /mise à jour de la base : inconnue/);
 });
 
 test('ecrireMention lit les résumés du dossier et refuse un dossier incomplet', () => {

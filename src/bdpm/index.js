@@ -11,7 +11,7 @@
 import { join } from 'node:path';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 
-import { telecharger } from '../commun/telecharger.js';
+import { recupererPage, telecharger } from '../commun/telecharger.js';
 import { EcrivainCsv } from '../commun/csv.js';
 import { dateIso, nombreFr, texte } from '../commun/dates.js';
 
@@ -115,17 +115,47 @@ export function convertirTexte(contenu, definition) {
 }
 
 /**
+ * Lit sur la page de téléchargement la date de mise à jour de la base et celle
+ * de chaque fichier, que la Licence Ouverte demande de citer. Date absente : null.
+ */
+export function lireDatesMiseAJour(html) {
+  const plat = String(html ?? '').replace(/\s+/g, ' ');
+  const echapper = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const base = plat.match(/Derni[eè]re mise [àa] jour le (\d{2}\/\d{2}\/\d{4})/i);
+  const fichiers = {};
+  for (const [cle, definition] of Object.entries(FICHIERS)) {
+    const lien = plat.match(new RegExp(`href="[^"]*${echapper(definition.fichier)}"[^>]*>(.*?)</a>`, 'i'));
+    const date = lien?.[1].match(/Date de mise [àa] jour : (\d{2}\/\d{2}\/\d{4})/i);
+    fichiers[cle] = date ? dateIso(date[1]) : null;
+  }
+  return { base: base ? dateIso(base[1]) : null, fichiers };
+}
+
+/**
  * Télécharge tous les fichiers (ou ceux demandés) et écrit un CSV par fichier
  * plus un résumé. Renvoie le résumé.
  */
-export async function exporterBdpm({ fichiers, sortie = 'data/bdpm', cache = '.cache', forcer = false, journal = () => {} }) {
+export async function exporterBdpm({ fichiers, sortie = 'data/bdpm', cache = '.cache', forcer = false, journal = () => {}, lirePage = recupererPage }) {
   const cles = fichiers?.length ? fichiers : Object.keys(FICHIERS);
+  for (const cle of cles) {
+    if (!FICHIERS[cle]) throw new Error(`fichier BDPM inconnu : ${cle} (choix : ${Object.keys(FICHIERS).join(', ')})`);
+  }
   mkdirSync(sortie, { recursive: true });
-  const resume = { source: PAGE, licence: 'Licence Ouverte (ANSM, HAS, UNCAM)', converti: new Date().toISOString(), fichiers: {} };
+  const resume = {
+    source: PAGE, producteurs: 'ANSM, HAS, UNCAM', licence: 'Licence Ouverte (ANSM, HAS, UNCAM)',
+    miseAJour: null, converti: new Date().toISOString(), fichiers: {},
+  };
+  let dates = { base: null, fichiers: {} };
+  try {
+    const page = await lirePage(PAGE);
+    if (page.ok) dates = lireDatesMiseAJour(page.texte);
+  } catch (erreur) {
+    journal(`page de téléchargement illisible (${erreur.message}) : dates de mise à jour inconnues`);
+  }
+  resume.miseAJour = dates.base;
 
   for (const cle of cles) {
     const definition = FICHIERS[cle];
-    if (!definition) throw new Error(`fichier BDPM inconnu : ${cle} (choix : ${Object.keys(FICHIERS).join(', ')})`);
     const url = definition.url ?? `${BASE}/download/file/${definition.fichier}`;
     const chemin = join(cache, 'bdpm', definition.fichier);
     await telecharger(url, chemin, { forcer, journal });
@@ -136,7 +166,7 @@ export async function exporterBdpm({ fichiers, sortie = 'data/bdpm', cache = '.c
     const csv = new EcrivainCsv(join(sortie, nomCsv), colonnes);
     for (const l of lignes) await csv.ecrire(l);
     await csv.fermer();
-    resume.fichiers[cle] = { source: definition.fichier, fichier: nomCsv, lignes: lignes.length };
+    resume.fichiers[cle] = { source: definition.fichier, fichier: nomCsv, lignes: lignes.length, miseAJour: dates.fichiers[cle] ?? null };
     journal(`${cle} : ${lignes.length} lignes`);
   }
   writeFileSync(join(sortie, 'bdpm-resume.json'), JSON.stringify(resume, null, 2) + '\n');

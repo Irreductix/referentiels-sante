@@ -6,13 +6,13 @@
  * dessus. Conçu pour tourner chaque semaine en intégration continue.
  */
 
-import { AGENT_UTILISATEUR } from '../commun/telecharger.js';
+import { AGENT_UTILISATEUR, recupererPage } from '../commun/telecharger.js';
 import { JEUX, URL_STABLES, trouverRessource } from '../finess/sources.js';
 import { TABLES, urlTable } from '../nos/index.js';
 import { ARCHIVES, trouverArchive } from '../ghs/index.js';
 import { trouverArchives, ARCHIVES_CONNUES } from '../ccam/index.js';
 import { EDITIONS } from '../cim10/index.js';
-import { FICHIERS, BASE as BASE_BDPM } from '../bdpm/index.js';
+import { FICHIERS, BASE as BASE_BDPM, PAGE as PAGE_BDPM, lireDatesMiseAJour } from '../bdpm/index.js';
 import { SOURCES, VERSIONS_CONNUES, trouverFichiers } from '../cnam/index.js';
 
 /** Requête d'en-tête (repli sur GET sans lire le corps si HEAD est refusé). */
@@ -141,8 +141,21 @@ export async function verifierCim10() {
   return r;
 }
 
-export async function verifierBdpm() {
+export async function verifierBdpm({ lirePage = recupererPage } = {}) {
   const r = [];
+  // La date de mise à jour lue sur la page entre dans la mention de source des fichiers publiés.
+  try {
+    const page = await lirePage(PAGE_BDPM);
+    if (page.statut === 403) {
+      r.push(resultat('bdpm', 'page de téléchargement', true, "403 : page refusée depuis cette adresse, non vérifiable d'ici", true));
+    } else {
+      const { base } = lireDatesMiseAJour(page.texte);
+      r.push(resultat('bdpm', 'page de téléchargement : date de mise à jour', Boolean(base),
+        base ? `base mise à jour le ${base}` : `date « Dernière mise à jour le » introuvable (${page.statut})`));
+    }
+  } catch (e) {
+    r.push(resultat('bdpm', 'page de téléchargement', false, e.message));
+  }
   for (const [cle, d] of Object.entries(FICHIERS)) {
     const s = await sonder(d.url ?? `${BASE_BDPM}/download/file/${d.fichier}`);
     r.push(controleFichier('bdpm', cle, s));

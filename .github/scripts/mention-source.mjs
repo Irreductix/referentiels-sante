@@ -19,6 +19,8 @@ export function mentionFiness({ structures, activites, version }) {
     '  FINESS - Structures : https://www.data.gouv.fr/datasets/finess-structures-1',
     '  FINESS - Activités : https://www.data.gouv.fr/datasets/finess-activites-1',
     'Licence : Licence Ouverte 2.0, https://www.etalab.gouv.fr/licence-ouverte-open-licence/',
+    "Libellés des codes : Nomenclatures des objets de santé (NOS) de l'ANS, https://mos.esante.gouv.fr/NOS/",
+    '  tables utilisées listées dans structures-resume.json',
     `Instantané des structures : ${basename(structures.source)}, produit par l'ANS le ${jour(structures.generatedAt)}`,
   ];
   if (activites) {
@@ -43,6 +45,7 @@ export function mentionBdpm({ resume, version }) {
     `  ${resume.source}`,
     '  Jeu data.gouv.fr : https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-base-officielle',
     'Licence : Licence Ouverte',
+    `Dernière mise à jour de la base : ${jour(resume.miseAJour)}, date affichée sur sa page de téléchargement`,
     `Données téléchargées à la source le ${jour(resume.converti)}`,
     '',
     "Ces fichiers transforment les fichiers d'origine : en-têtes ajoutés, encodage UTF-8, dates au",

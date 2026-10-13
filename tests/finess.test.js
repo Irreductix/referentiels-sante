@@ -7,6 +7,7 @@ import { lireCsv } from '../src/commun/csv.js';
 import { decomposerCommune, majusculesSansAccents, libelleDepartement, ligneEntiteJuridique, lignesEtablissements, ligneHistorique, COLONNES_HISTORIQUE } from '../src/finess/aplatir.js';
 import { libellesVides } from '../src/finess/libelles.js';
 import { convertirStructures } from '../src/finess/convertir.js';
+import { telechargerFlux } from '../src/finess/sources.js';
 import { FIXTURES, dossierTemp } from './_util.js';
 
 const FLUX = join(FIXTURES, 'finess-structures-exemple.json');
@@ -159,4 +160,23 @@ test('convertirStructures produit tous les fichiers à partir du flux exemple', 
   assert.equal(gcc[0].nom, DOCUMENT.gcc[0].nomGcc);
   assert.equal(membres.filter((m) => m.groupement_type === 'GCC').length,
     DOCUMENT.gcc.reduce((n, g) => n + g.pmejDuGcc.length + g.egeDuGcc.length, 0));
+});
+
+test('instantané mensuel introuvable : échec, sans repli sur le flux du jour', async () => {
+  const vrai = globalThis.fetch;
+  const appels = [];
+  globalThis.fetch = async (url) => {
+    appels.push(String(url));
+    return new Response('indisponible', { status: 503 });
+  };
+  try {
+    await assert.rejects(
+      () => telechargerFlux('structures', { periodicite: 'mensuel', cache: dossierTemp() }),
+      /instantané mensuel introuvable/,
+    );
+    assert.equal(appels.length, 1, 'seule l’API data.gouv.fr est interrogée, rien n’est téléchargé');
+    assert.match(appels[0], /api\/1\/datasets\/finess-structures-1/);
+  } finally {
+    globalThis.fetch = vrai;
+  }
 });

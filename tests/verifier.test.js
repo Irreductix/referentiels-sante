@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { formaterRapport, verifierTout, controleFichier } from '../src/verifier/index.js';
+import { formaterRapport, verifierTout, controleFichier, verifierBdpm } from '../src/verifier/index.js';
 import { versionEnVigueur } from '../src/ccam/index.js';
 import { VERSIONS_CONNUES, SOURCES } from '../src/cnam/index.js';
 import { dictionnairePour, documenterTable } from '../src/cnam/colonnes.js';
@@ -97,4 +97,24 @@ test('le rapport distingue OK, AVERT et ECHEC, et compte les avertissements', ()
   assert.ok(lignes[1].startsWith('ECHEC '));
   assert.ok(lignes[2].startsWith('OK    '));
   assert.equal(lignes.at(-1), '3 contrôles, 1 échec(s), 1 avertissement(s), 2026-10-07T00:00:00Z');
+});
+
+test('verifierBdpm contrôle la date de mise à jour affichée sur la page de téléchargement', async () => {
+  const vrai = globalThis.fetch;
+  globalThis.fetch = async () => new Response(null, { status: 200, headers: { 'content-type': 'application/octet-stream' } });
+  try {
+    const avecDate = await verifierBdpm({ lirePage: async () => ({ ok: true, statut: 200, texte: '<p> Dernière mise à jour le 29/09/2026 </p>' }) });
+    assert.equal(avecDate[0].ok, true);
+    assert.match(avecDate[0].detail, /2026-09-29/);
+    assert.ok(avecDate.slice(1).every((x) => x.ok), 'les fichiers répondent');
+
+    const sansDate = await verifierBdpm({ lirePage: async () => ({ ok: true, statut: 200, texte: '<p>page refaite</p>' }) });
+    assert.equal(sansDate[0].ok, false, 'une page qui ne donne plus la date est un échec');
+
+    const refusee = await verifierBdpm({ lirePage: async () => ({ ok: false, statut: 403, texte: '' }) });
+    assert.equal(refusee[0].ok, true);
+    assert.equal(refusee[0].avertissement, true);
+  } finally {
+    globalThis.fetch = vrai;
+  }
 });

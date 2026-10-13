@@ -1,17 +1,20 @@
 name: Publication mensuelle des fichiers convertis
 
-# Le 2 de chaque mois, convertit l'instantané mensuel FINESS+ et la base publique
-# des médicaments, et les publie dans les releases du mois (finess-AAAAMM,
-# bdpm-AAAAMM) et dans la release donnees-du-mois, dont les adresses ne changent
-# jamais. Seules ces deux sources, sous Licence Ouverte, sont rediffusées ; chaque
-# archive contient MENTION-SOURCE.txt. Les autres référentiels n'ont pas de licence
-# de réutilisation explicite et ne sont jamais publiés ici (voir docs/SOURCES.md).
-# Lancé à la main, il ne touche pas aux fichiers d'un mois déjà publié, sauf si
-# « refaire » est coché ; même alors, les adresses restent valides.
+# Le 2 de chaque mois, convertit le dernier instantané mensuel FINESS+ et la base
+# publique des médicaments, et les publie dans les releases du mois (finess-AAAAMM,
+# bdpm-AAAAMM, AAAAMM étant le mois de publication) et dans la release
+# donnees-du-mois, dont les adresses ne changent jamais. Seules ces deux sources,
+# sous Licence Ouverte, sont rediffusées ; chaque archive contient
+# MENTION-SOURCE.txt. Les autres référentiels n'ont pas de licence de réutilisation
+# explicite et ne sont jamais publiés ici (voir docs/SOURCES.md).
+# Les passages des 3 et 4 rattrapent un passage du 2 retardé ou échoué : un mois
+# déjà publié n'est pas retouché, sauf lancement manuel avec « refaire » ; même
+# alors, les adresses restent valides. Un échec ouvre un ticket, refermé à la
+# publication suivante réussie.
 
 on:
   schedule:
-    - cron: '0 5 2 * *'
+    - cron: '17 4 2,3,4 * *'
   workflow_dispatch:
     inputs:
       cibles:
@@ -26,6 +29,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: publication
@@ -58,15 +62,23 @@ jobs:
         run: |
           etiquette="finess-$(date -u +%Y%m)"
           archive="sortie/${etiquette}.zip"
-          notes="Fichiers FINESS+ convertis (instantané mensuel). Source : Agence du Numérique en Santé, data.gouv.fr, Licence Ouverte 2.0. Source et dates dans MENTION-SOURCE.txt. Détail des colonnes : docs/FINESS.md."
           mkdir -p sortie
           if gh release view "$etiquette" > /dev/null 2>&1 && [ "$REFAIRE" != "true" ]; then
             echo "La release $etiquette existe déjà : elle est conservée telle quelle."
+            taille_mois=$(gh release view "$etiquette" --json assets --jq ".assets[] | select(.name == \"${etiquette}.zip\") | .size")
+            taille_fixe=$(gh release view "$STABLE" --json assets --jq '.assets[] | select(.name == "finess.zip") | .size')
+            if [ -n "$taille_mois" ] && [ "$taille_mois" = "$taille_fixe" ]; then
+              echo "L'adresse fixe sert déjà cette archive."
+              exit 0
+            fi
             gh release download "$etiquette" --pattern "${etiquette}.zip" --dir sortie --clobber
           else
             node src/cli.js finess --activites --mensuel --sortie sortie/finess
             node .github/scripts/mention-source.mjs finess sortie/finess
             (cd sortie/finess && zip -q -9 "../${etiquette}.zip" ./*)
+            instantane=$(node -p "require('path').basename(require('./sortie/finess/structures-resume.json').source)")
+            produit=$(node -p "String(require('./sortie/finess/structures-resume.json').generatedAt).slice(0, 10)")
+            notes="Fichiers FINESS+ convertis depuis l'instantané mensuel ${instantane}, produit par l'ANS le ${produit}. Source : Agence du Numérique en Santé, data.gouv.fr, Licence Ouverte 2.0 ; libellés des codes : Nomenclatures des objets de santé (NOS) de l'ANS. Détail dans MENTION-SOURCE.txt et docs/FINESS.md."
             if gh release view "$etiquette" > /dev/null 2>&1; then
               for f in "$archive" sortie/finess/structures-resume.json sortie/finess/activites-resume.json; do
                 bash .github/scripts/remplacer-piece.sh "$etiquette" "$f"
@@ -85,15 +97,26 @@ jobs:
         run: |
           etiquette="bdpm-$(date -u +%Y%m)"
           archive="sortie/${etiquette}.zip"
-          notes="Base de données publique des médicaments convertie en CSV UTF-8 : spécialités, présentations, compositions, avis SMR et ASMR, génériques, conditions de prescription, informations importantes, disponibilité. Source : ANSM, HAS, UNCAM, base-donnees-publique.medicaments.gouv.fr, Licence Ouverte. Source et date dans MENTION-SOURCE.txt. Détail des colonnes : docs/AUTRES-REFERENTIELS.md."
           mkdir -p sortie
           if gh release view "$etiquette" > /dev/null 2>&1 && [ "$REFAIRE" != "true" ]; then
             echo "La release $etiquette existe déjà : elle est conservée telle quelle."
+            taille_mois=$(gh release view "$etiquette" --json assets --jq ".assets[] | select(.name == \"${etiquette}.zip\") | .size")
+            taille_fixe=$(gh release view "$STABLE" --json assets --jq '.assets[] | select(.name == "bdpm.zip") | .size')
+            if [ -n "$taille_mois" ] && [ "$taille_mois" = "$taille_fixe" ]; then
+              echo "L'adresse fixe sert déjà cette archive."
+              exit 0
+            fi
             gh release download "$etiquette" --pattern "${etiquette}.zip" --dir sortie --clobber
           else
             node src/cli.js bdpm --sortie sortie/bdpm
             node .github/scripts/mention-source.mjs bdpm sortie/bdpm
             (cd sortie/bdpm && zip -q -9 "../${etiquette}.zip" ./*)
+            maj=$(node -p "require('./sortie/bdpm/bdpm-resume.json').miseAJour || 'inconnue'")
+            if [ "$maj" = "inconnue" ]; then
+              echo "Date de mise à jour introuvable sur la page de la base : la mention de source serait incomplète, rien n'est publié." >&2
+              exit 1
+            fi
+            notes="Base de données publique des médicaments convertie en CSV UTF-8 : spécialités, présentations, compositions, avis SMR et ASMR, génériques, conditions de prescription, informations importantes, disponibilité. Dernière mise à jour de la base : ${maj}. Source : ANSM, HAS, UNCAM, base-donnees-publique.medicaments.gouv.fr, Licence Ouverte. Détail dans MENTION-SOURCE.txt et docs/AUTRES-REFERENTIELS.md."
             if gh release view "$etiquette" > /dev/null 2>&1; then
               for f in "$archive" sortie/bdpm/bdpm-resume.json; do
                 bash .github/scripts/remplacer-piece.sh "$etiquette" "$f"
@@ -105,3 +128,19 @@ jobs:
             fi
           fi
           bash .github/scripts/remplacer-piece.sh "$STABLE" "$archive" bdpm.zip
+
+      - name: Ticket en cas d'échec
+        if: failure()
+        run: |
+          titre="Publication mensuelle : échec du $(date -u +%Y-%m-%d)"
+          corps="La publication des fichiers convertis a échoué : ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}. Les adresses fixes servent les dernières archives publiées avec succès. Les passages des 3 et 4 du mois réessaient ; sinon, relancer le workflow à la main une fois la cause corrigée."
+          gh label create publication --description "Publication mensuelle des fichiers convertis" --color D93F0B --force
+          existant=$(gh issue list --label publication --state open --json number --jq '.[0].number')
+          if [ -n "$existant" ]; then gh issue comment "$existant" --body "$corps"; else gh issue create --title "$titre" --body "$corps" --label publication; fi
+
+      - name: Ticket refermé quand la publication repasse
+        if: success()
+        run: |
+          for numero in $(gh issue list --label publication --state open --json number --jq '.[].number'); do
+            gh issue close "$numero" --comment "La publication du $(date -u +%Y-%m-%d) a réussi."
+          done

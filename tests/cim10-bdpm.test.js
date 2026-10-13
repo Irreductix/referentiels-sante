@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { convertirClaml, exporterCim10 } from '../src/cim10/index.js';
-import { convertirTexte, exporterBdpm, FICHIERS } from '../src/bdpm/index.js';
+import { convertirTexte, exporterBdpm, FICHIERS, lireDatesMiseAJour } from '../src/bdpm/index.js';
 import { lireCsv } from '../src/commun/csv.js';
 import { dossierTemp } from './_util.js';
 
@@ -92,4 +92,38 @@ test('convertirTexte lit les fichiers tabulés de la BDPM avec dates et prix nor
 
 test('exporterBdpm refuse un nom de fichier inconnu', async () => {
   await assert.rejects(() => exporterBdpm({ fichiers: ['inexistant'], sortie: dossierTemp() }), /fichier BDPM inconnu/);
+});
+
+test('lireDatesMiseAJour lit la date de la base et celle de chaque fichier sur la page de téléchargement', () => {
+  const page = `<div class="fr-header__tools"> <p>
+      Dernière mise à jour le 29/09/2026 </p> </div>
+    <a class="fr-download__link" href="/download/file/CIS_bdpm.txt" role="link" aria-label="Cliquez ici" download='CIS_bdpm.txt'>
+      <span class="fr-icon-download-fill" aria-hidden="true"></span> Fichier des spécialités (Date de mise à jour : 29/09/2026, 3101 Ko) </a>
+    <a class="fr-download__link" href="/download/file/CIS_CIP_bdpm.txt" role="link" download='CIS_CIP_bdpm.txt'>
+      <span></span> Fichier des présentations (Date de mise à jour : 12/10/2026, 4054 Ko) </a>
+    <a class="fr-download__link" href="/download/CIS_InfoImportantes.txt" role="link" download='CIS_InfoImportantes_*_bdpm.txt'>
+      <span></span> Fichier des Informations importantes (génération en direct) </a>`;
+  const dates = lireDatesMiseAJour(page);
+  assert.equal(dates.base, '2026-09-29');
+  assert.equal(dates.fichiers.specialites, '2026-09-29');
+  assert.equal(dates.fichiers.presentations, '2026-10-12', 'chaque fichier garde sa propre date');
+  assert.equal(dates.fichiers.informationsImportantes, null, 'fichier généré en direct, sans date');
+  assert.equal(dates.fichiers.compositions, null, 'fichier absent de la page');
+  assert.deepEqual(lireDatesMiseAJour(''), { base: null, fichiers: Object.fromEntries(Object.keys(FICHIERS).map((c) => [c, null])) });
+});
+
+test('exporterBdpm inscrit la date de mise à jour lue sur la page, et continue si la page est illisible', async () => {
+  const sortie = dossierTemp();
+  const cache = dossierTemp();
+  mkdirSync(join(cache, 'bdpm'), { recursive: true });
+  writeFileSync(join(cache, 'bdpm', 'CIS_CIP_Dispo_Spec.txt'), '60000001\t3400930000001\t1\tRupture de stock\t01/10/2026\t02/10/2026\thttps://ansm.sante.fr\n');
+  const page = 'Dernière mise à jour le 29/09/2026 <a href="/download/file/CIS_CIP_Dispo_Spec.txt">Fichier des ruptures de stocks (Date de mise à jour : 12/10/2026, 151 Ko)</a>';
+  const resume = await exporterBdpm({ fichiers: ['disponibilite'], sortie, cache, lirePage: async () => ({ ok: true, statut: 200, texte: page }) });
+  assert.equal(resume.miseAJour, '2026-09-29');
+  assert.equal(resume.fichiers.disponibilite.miseAJour, '2026-10-12');
+  assert.equal(JSON.parse(readFileSync(join(sortie, 'bdpm-resume.json'), 'utf8')).miseAJour, '2026-09-29');
+
+  const sansPage = await exporterBdpm({ fichiers: ['disponibilite'], sortie: dossierTemp(), cache, lirePage: async () => { throw new Error('hors ligne'); } });
+  assert.equal(sansPage.miseAJour, null);
+  assert.equal(sansPage.fichiers.disponibilite.lignes, 1);
 });
