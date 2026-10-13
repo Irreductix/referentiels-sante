@@ -6,8 +6,9 @@ Merci de l'intérêt porté au projet.
 
 Les tickets marqués `good first issue` sont faits pour une première
 contribution, et beaucoup ne demandent pas de savoir coder : vérifier une
-source depuis un poste d'établissement, documenter une colonne, trouver une
-source structurée. La page <https://irreductix.fr/contribuer> les présente avec
+source depuis un poste d'établissement, documenter une colonne. Les tickets
+`help wanted`, comme la recherche d'une source structurée pour la NGAP, sont
+eux aussi ouverts à tous. La page <https://irreductix.fr/contribuer> les présente avec
 le profil attendu pour chacun. Pas de compte GitHub : <contact@irreductix.fr>.
 
 Les contributions les plus utiles :

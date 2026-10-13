@@ -1,7 +1,7 @@
 # referentiels-sante
 
-**Les référentiels publics de la santé en France, convertis en CSV et JSON
-propres. Sans dépendance, en une commande.**
+**Les référentiels publics de la santé en France, convertis en CSV propres, et
+en JSON pour FINESS+, NOS, CIM-10 et GHS. Sans dépendance, en une commande.**
 
 Site : <https://referentiels-sante.irreductix.fr/>
 
@@ -37,15 +37,26 @@ sont documentés et viennent de la source ([docs/FINESS.md](docs/FINESS.md)).
 **Les fichiers déjà convertis.** FINESS+ et la base publique des médicaments
 sont sous Licence Ouverte : ils sont convertis et publiés le 2 de chaque mois
 dans les [releases](https://github.com/irreductix/referentiels-sante/releases)
-(`finess-AAAAMM`, `bdpm-AAAAMM`). L'archive FINESS du mois a aussi une adresse
-stable : <https://irreductix.fr/telecharger/finess.zip>. Les autres
-référentiels ne sont jamais publiés tout convertis : leur licence ne le permet
-pas ([docs/SOURCES.md](docs/SOURCES.md)).
+(`finess-AAAAMM`, `bdpm-AAAAMM`), avec un fichier `MENTION-SOURCE.txt` qui
+donne le producteur, la licence et la date des données. `AAAAMM` est le mois de
+publication : l'archive FINESS contient le dernier instantané mensuel paru à
+cette date, celui du mois précédent, dont le nom figure dans
+`MENTION-SOURCE.txt`. La dernière archive de chacun reste toujours à la même
+adresse :
 
-**La version Windows.** Pour tous les référentiels, chaque version publie une
-archive `referentiels-sante-x.y.z-windows.zip` qui contient l'outil et le
-Node.js officiel : on la décompresse, on double-clique sur `Convertir.cmd`, on
-choisit le référentiel. Ni installation, ni droit d'administrateur. Les données
+- FINESS+ : <https://github.com/Irreductix/referentiels-sante/releases/download/donnees-du-mois/finess.zip>
+- médicaments : <https://github.com/Irreductix/referentiels-sante/releases/download/donnees-du-mois/bdpm.zip>
+
+Les autres référentiels ne sont jamais publiés tout convertis : leur licence ne
+le permet pas ([docs/SOURCES.md](docs/SOURCES.md)).
+
+**La version Windows.** Chaque version publie une archive
+`referentiels-sante-x.y.z-windows.zip` qui contient l'outil et le Node.js
+officiel : on la décompresse, on double-clique sur `Convertir.cmd` et on choisit
+FINESS+, la CCAM, la CIM-10, les médicaments, la NABM, la LPP, les UCD ou les
+tarifs GHS. Les tables NOS et les fichiers DBF se convertissent avec
+`referentiels-sante.cmd`, qui accepte les mêmes arguments que la commande npx.
+Ni installation, ni droit d'administrateur. Les données
 sont téléchargées à la source au moment de la conversion, sur le poste de
 l'agent.
 
@@ -89,9 +100,13 @@ npx referentiels-sante --aide
 Les sources sont des pages web, pas des API : elles changent sans prévenir.
 `verifier` contrôle chaque semaine en intégration continue que les pages ont
 encore la forme attendue, que chaque fichier répond, et que les adresses de
-repli embarquées sont à jour ; un échec ouvre un ticket. Quand une source publie
-une nouvelle version, la même tâche ouvre une pull request qui met à jour les
-replis (`npx referentiels-sante replis`).
+repli embarquées sont à jour ; un échec ouvre un ticket. La CCAM fait exception :
+le site de l'Assurance Maladie refuse les serveurs d'intégration continue, un
+simple avertissement le signale, et elle se vérifie depuis un poste (voir
+[docs/AUTRES-REFERENTIELS.md](docs/AUTRES-REFERENTIELS.md)). Quand une source
+publie une nouvelle version, la même tâche ouvre une pull request qui met à jour
+les replis (`npx referentiels-sante replis`), ou un ticket avec le lien pour
+l'ouvrir si l'organisation interdit aux workflows d'en créer.
 
 Détail des colonnes : [docs/FINESS.md](docs/FINESS.md), [docs/CCAM.md](docs/CCAM.md),
 [docs/AUTRES-REFERENTIELS.md](docs/AUTRES-REFERENTIELS.md) (CIM-10, médicaments, NABM, LPP, UCD).
@@ -137,9 +152,11 @@ Mesures sur un poste de travail, flux du 14 septembre 2026 pour les structures, 
 
 ## Ce que l'outil ne fait pas
 
-- Il ne redistribue **pas** les données dans ce dépôt : il les télécharge à la
-  source officielle au moment de l'exécution. Ce que vous produisez reste
-  soumis à la licence de la source (voir [docs/SOURCES.md](docs/SOURCES.md)).
+- Il ne redistribue **pas** les données : il les télécharge à la source
+  officielle au moment de l'exécution. Seuls FINESS+ et la base des
+  médicaments, sous Licence Ouverte, sont republiés déjà convertis dans les
+  releases (voir « Sans rien installer »). Ce que vous produisez reste soumis à
+  la licence de la source (voir [docs/SOURCES.md](docs/SOURCES.md)).
 - Il ne réinterprète pas les données : chaque colonne est tracée jusqu'au champ
   d'origine dans [docs/FINESS.md](docs/FINESS.md). Les seules règles de calcul
   (statut et capacités des activités) sont celles publiées par l'ANS.

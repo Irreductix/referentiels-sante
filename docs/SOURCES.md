@@ -1,7 +1,9 @@
 # Sources et licences
 
 Ce dépôt ne contient aucune donnée de référence : il contient du code qui
-télécharge les sources officielles et les convertit. Les fichiers que vous
+télécharge les sources officielles et les convertit. Seules les releases
+mensuelles de FINESS+ et de la base des médicaments, deux sources sous Licence
+Ouverte, contiennent des fichiers déjà convertis. Les fichiers que vous
 produisez restent soumis à la licence de leur source. Ce document les recense.
 
 ## Sources traitées
@@ -31,11 +33,13 @@ sert de modèle au fichier `etablissements-format-historique.csv`.
 |---|---|
 | Producteur | Agence du Numérique en Santé |
 | Adresse | <https://mos.esante.gouv.fr/NOS/> (tables `.tabs`, XML SVS, FHIR) |
-| Guide | [Terminologies de santé](https://ansforge.github.io/IG-terminologie-de-sante/) (dépôt sous licence MIT) |
+| Guide | [Terminologies de santé](https://ansforge.github.io/IG-terminologie-de-sante/ig/main/) (dépôt sous licence MIT) |
 | Licence | conditions d'utilisation de l'ANS, publiées avec chaque terminologie ; consultez-les avant toute redistribution |
 
 L'outil télécharge les tables au moment de l'exécution et ne les redistribue
-pas. La fixture `tests/fixtures/nos-TRE_R66-exemple.tabs` est un extrait de
+pas. Les fichiers FINESS publiés chaque mois contiennent seulement, à côté de
+chaque code, le libellé tiré de ces tables, comme le faisait l'ancienne
+extraction FINESS ; leur `MENTION-SOURCE.txt` cite les NOS. La fixture `tests/fixtures/nos-TRE_R66-exemple.tabs` est un extrait de
 quatorze lignes de la table des catégories d'établissement, à titre de test.
 
 Tables utilisées pour FINESS+ :
@@ -105,6 +109,10 @@ Tables utilisées pour FINESS+ :
 
 ## Mention de source
 
-Chaque exécution écrit un fichier `*-resume.json` contenant la source, la
-date de génération du flux et la date de conversion. Reprenez ces mentions
-lorsque vous rediffusez des fichiers produits.
+Les commandes `finess`, `bdpm`, `ccam`, `cim10`, `ghs`, `nabm`, `lpp` et `ucd`
+écrivent un fichier `*-resume.json` avec la page ou le fichier d'origine et la
+date de conversion ; pour FINESS+, il donne aussi la date de génération du flux
+par l'ANS. Les tables NOS portent leur date de mise à jour dans chaque fichier
+JSON. Les archives publiées chaque mois contiennent en plus `MENTION-SOURCE.txt`,
+qui nomme le producteur, la licence et la date des données. Reprenez ces
+mentions lorsque vous rediffusez des fichiers produits.

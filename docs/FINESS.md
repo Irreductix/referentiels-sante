@@ -46,7 +46,7 @@ jointure.
 | departement_historique, code_commune_historique | déduits du COG | codage de l'ancien flux : `9A` Guadeloupe, `9B` Martinique, `9C` Guyane, `9D` La Réunion, `9E` Saint-Pierre-et-Miquelon, `9F` Mayotte, `9J` Wallis-et-Futuna, commune sur trois caractères |
 | departement_libelle | TRE_G09 | |
 | latitude, longitude | coordonneesGeographique.directionLatitude, directionLongitude | WGS 84, en degrés décimaux |
-| coordonnee_x, coordonnee_y | coordonneesGeographique.coordonneeX, coordonneeY | recopiées telles quelles. Dans le flux observé, `coordonneeX` porte une valeur de l'ordre de 6 500 000 et `coordonneeY` de l'ordre de 800 000, soit l'inverse de la convention Lambert 93 (X vers l'est, Y vers le nord). Vérifiez avant usage cartographique |
+| coordonnee_x, coordonnee_y | coordonneesGeographique.coordonneeX, coordonneeY | recopiées telles quelles. Dans les flux antérieurs au 6 octobre 2026, ces deux valeurs étaient inversées pour une partie des adresses, à rebours de la convention Lambert 93 (X vers l'est, Y vers le nord) : voir « Anomalies observées dans la source » |
 | cle_ban, score_ban | cleInInteropBAN, scoreBAN | rapprochement avec la Base adresse nationale |
 | telephone, telecopie, courriel | contact[] | contact de rôle `01` si présent, sinon le premier |
 | numero_education_nationale, numero_reference_externe | idem | |
@@ -79,6 +79,53 @@ identifiant et des colonnes FINESS vides.
 
 `role` reprend `typeRoleEntiteGroupe` : dans les GHT, `S` désigne
 l'établissement support et `M` un membre.
+
+### groupements-conventionnels.csv
+
+Un groupement conventionnel (GCC, dont les GHT) par ligne.
+
+| Colonne | Origine | Remarque |
+|---|---|---|
+| id_gcc | gccId | identifiant technique du groupement |
+| nom | nomGcc | |
+| type_gcc | typeGcc | code restitué brut |
+| identifiant_externe | gccIdentifiantExterne | |
+| etat, etat_libelle | etatObjet | libellé : `A` actif, `I` inactif |
+| nb_membres_ej, nb_membres_et | calculés sur `pmejDuGcc[]` et `egeDuGcc[]` | |
+| date_derniere_maj | dateDerniereMaj | horodatage ISO 8601 |
+
+### groupements-cooperation.csv
+
+Un groupement de coopération doté de la personnalité morale (GCO, dont les
+GCS) par ligne.
+
+| Colonne | Origine | Remarque |
+|---|---|---|
+| finess_ej, denomination | PMEJ porteuse du groupement, retrouvée par `pmSmsseId` | vides si cette PMEJ est absente du flux |
+| id_pmej | pmSmsseId | |
+| type_gco | typeGco | code restitué brut |
+| nb_membres_ej, nb_membres_et | calculés sur `pmejDuGco[]` et `egeDuGco[]` | |
+
+### groupements-membres.csv
+
+Un membre de groupement par ligne, pour les deux sortes de groupements.
+
+| Colonne | Origine | Remarque |
+|---|---|---|
+| groupement_type | `GCC` ou `GCO` | |
+| groupement_id | `id_gcc` du GCC, ou `id_pmej` du GCO | |
+| groupement_nom | `nom` du GCC, ou `denomination` du GCO | |
+| membre_type | `EJ` ou `ET` | `EJ` pour un membre de `pmejDuGcc[]` ou `pmejDuGco[]`, `ET` pour `egeDuGcc[]` ou `egeDuGco[]` |
+| membre_id | pmSmsseId ou egeId du membre | |
+| membre_finess, membre_denomination | numéro FINESS et dénomination du membre, retrouvés dans le flux | vides si le membre est absent du flux |
+| role | typeRoleEntiteGroupe | voir plus haut |
+
+## Fichiers JSON Lines
+
+`etablissements.jsonl`, `entites-juridiques.jsonl` et `activites.jsonl`
+contiennent les mêmes lignes et les mêmes colonnes que le CSV de même nom, un
+objet JSON par ligne. Une valeur absente, cellule vide dans le CSV, y vaut
+`null` ou n'apparaît pas dans l'objet.
 
 ## etablissements-format-historique.csv
 
@@ -134,21 +181,26 @@ conversion :
 | rs | 4 % | casse différente sur quelques raisons sociales courtes |
 | ligneacheminement | 3 % | « SAINT » écrit en toutes lettres là où l'ancien flux abrégeait « ST » ; codes postaux d'arrondissement mis à jour (« 06300 NICE » pour « 06000 NICE ») |
 
-### Anomalie observée dans la source
+### Anomalies observées dans la source
 
-Dans le flux FINESS+ du 11 septembre 2026, environ 1 400 libellés de voie ont
-perdu la séquence « TH », remplacée par « E » : « rue de la Catherinette »
-devient « CAEERINETTE », « Monthieux » devient « MONEIEUX », « Berthelot »
-devient « BEREELOT », « Thoiry » devient « EOIRY ». Le phénomène touche aussi
-des adresses d'entités juridiques. L'outil recopie la source sans la corriger.
-L'anomalie est connue de l'ANS, qui a annoncé une correction
-([ticket 28 du dépôt ansforge/finess](https://github.com/ansforge/finess/issues/28)).
+Dans le flux FINESS+ du 11 septembre 2026, environ 1 400 libellés de voie
+avaient perdu la séquence « TH », remplacée par « E » : « rue de la Catherinette »
+devenait « CAEERINETTE », « Monthieux » « MONEIEUX », « Berthelot » « BEREELOT »,
+« Thoiry » « EOIRY ». Le phénomène touchait aussi des adresses d'entités
+juridiques. L'ANS a déclaré l'anomalie corrigée le 5 octobre 2026
+([ticket 28 du dépôt ansforge/finess](https://github.com/ansforge/finess/issues/28),
+fermé). Dans le flux du 13 octobre, quelques adresses restent touchées, par
+exemple « R PAUL BEREELOT ». L'outil recopie la source sans la corriger.
 
-L'inversion des coordonnées projetées et géographiques signalée plus haut fait
-l'objet du [ticket 24](https://github.com/ansforge/finess/issues/24) : selon
-les adresses, `coordonneeX` et `coordonneeY` portent tantôt les coordonnées
-Lambert, tantôt la longitude et la latitude. Vérifiez la plage de valeurs
-avant tout usage cartographique.
+Dans les mêmes flux, `coordonneeX` et `coordonneeY` portaient selon les adresses
+tantôt les coordonnées Lambert, tantôt des valeurs inversées
+([ticket 24](https://github.com/ansforge/finess/issues/24), fermé le 5 octobre
+2026). Dans le flux du 13 octobre, aucune inversion ne subsiste pour les
+établissements de métropole.
+
+Les fichiers produits à partir d'un flux antérieur au 6 octobre 2026 contiennent
+encore ces deux défauts, y compris l'archive `finess-202610`, construite depuis
+l'instantané mensuel du 1er octobre.
 
 ## activites.csv
 
