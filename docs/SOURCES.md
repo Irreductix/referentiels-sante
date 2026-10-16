@@ -24,7 +24,7 @@ publiés par l'ANS dans ce dépôt de spécification (licence MIT), le second
 tronqué à quelques entités.
 
 L'ancienne extraction FINESS (jeux `etalab_cs1100502` et `etalab_cs1100507`,
-Licence Ouverte 2.0) n'est plus mise à jour depuis le 4 mai 2026. Son format
+Licence Ouverte 1.0) n'est plus mise à jour depuis le 4 mai 2026. Son format
 sert de modèle au fichier `etablissements-format-historique.csv`.
 
 ### Nomenclatures des objets de santé, NOS (ANS)
@@ -34,7 +34,7 @@ sert de modèle au fichier `etablissements-format-historique.csv`.
 | Producteur | Agence du Numérique en Santé |
 | Adresse | <https://mos.esante.gouv.fr/NOS/> (tables `.tabs`, XML SVS, FHIR) |
 | Guide | [Terminologies de santé](https://ansforge.github.io/IG-terminologie-de-sante/ig/main/) (dépôt sous licence MIT) |
-| Licence | conditions d'utilisation de l'ANS, publiées avec chaque terminologie ; consultez-les avant toute redistribution |
+| Licence | Licence Ouverte 2.0 d'après la fiche « Terminologie NOS » d'esante.gouv.fr (vérifiée le 13 octobre 2026) ; les fichiers des tables ne portent pas de licence, et la question de la rediffusion des libellés a été posée à l'ANS le 13 octobre 2026 |
 
 L'outil télécharge les tables au moment de l'exécution et ne les redistribue
 pas. Les fichiers FINESS publiés chaque mois contiennent, à côté de chaque
