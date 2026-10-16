@@ -147,3 +147,19 @@ France avec la même commande.
 - Le fichier des médicaments d'intérêt thérapeutique majeur (`CIS_MITM.txt`),
   publié avec la base des médicaments, n'est pas encore lu par la commande
   `bdpm`, qui prend en charge les dix autres fichiers.
+
+## Code officiel géographique (INSEE)
+
+Commande : `referentiels-sante communes [--annee 2026]`. Source : les fichiers du millésime sur insee.fr (Licence Ouverte 2.0), trouvés par l'API de data.gouv.fr (jeu « Code officiel géographique ») ; si le millésime de l'année n'est pas encore publié, le précédent est pris. Un seul fichier, `communes.csv`, avec une ligne par commune, arrondissement municipal, commune déléguée ou associée de métropole et des départements d'outre-mer, puis une ligne par commune des collectivités d'outre-mer (Saint-Pierre-et-Miquelon, Saint-Barthélemy, Saint-Martin, Wallis-et-Futuna, Polynésie française, Nouvelle-Calédonie).
+
+| Colonne | Origine |
+|---|---|
+| code_commune | COM (ou COM_COMER pour les collectivités) : le code INSEE à cinq caractères, celui de la colonne `code_commune_insee` des fichiers FINESS |
+| type | TYPECOM : COM (commune), ARM (arrondissement municipal), COMD (commune déléguée), COMA (commune associée) |
+| libelle, libelle_majuscules, article | LIBELLE (avec son article), NCC (majuscules sans accent), TNCC (code de l'article) |
+| departement, region | DEP et REG ; pour les collectivités d'outre-mer, departement porte le code de la collectivité (975, 977, 978, 986, 987, 988) |
+| arrondissement, canton | ARR et CAN |
+| commune_parente | COMPARENT : la commune de rattachement d'un arrondissement, d'une commune déléguée ou associée |
+| territoire | le nom de la collectivité d'outre-mer, vide en métropole et dans les départements d'outre-mer |
+
+`communes-resume.json` donne le millésime, les adresses des deux fichiers, la date de modification lue sur data.gouv.fr et les comptages.

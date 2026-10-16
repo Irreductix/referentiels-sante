@@ -15,6 +15,7 @@ import { exporterCcam, convertirTableDbf } from './ccam/index.js';
 import { exporterCim10, EDITIONS } from './cim10/index.js';
 import { exporterBdpm } from './bdpm/index.js';
 import { exporterTableCnam, SOURCES } from './cnam/index.js';
+import { exporterCommunes } from './communes/index.js';
 import { verifierTout, formaterRapport } from './verifier/index.js';
 import { actualiserReplis, formaterReplis } from './verifier/replis.js';
 import { extraireZip } from './commun/zip.js';
@@ -30,6 +31,7 @@ Usage
   referentiels-sante cim10     [--edition 2025 | --source <zip ou xml>]
   referentiels-sante bdpm      [FICHIER ...]   (défaut : les dix fichiers pris en charge : specialites, presentations, compositions…)
   referentiels-sante nabm | lpp | ucd          tables de codage de l'Assurance Maladie
+  referentiels-sante communes  [--annee 2026]  code officiel géographique de l'INSEE : communes, arrondissements, outre-mer
   referentiels-sante dbf       <fichier.dbf | archive.zip> [--encodage cp850|latin1|utf8]
   referentiels-sante verifier  [SOURCE ...]    contrôle que pages et fichiers sources répondent (code de sortie 1 sinon)
   referentiels-sante replis    [--ecrire]      compare les versions de repli aux pages ; --ecrire met src/replis.json à jour
@@ -49,6 +51,7 @@ Exemples
   referentiels-sante ccam --date 2025-06-30     la CCAM telle qu'en vigueur à cette date
   referentiels-sante cim10 --edition 2025       codes CIM-10 FR à usage PMSI avec hiérarchie et rubriques
   referentiels-sante bdpm specialites presentations
+  referentiels-sante communes                   codes et libellés des communes, pour lire les codes commune de FINESS
   referentiels-sante dbf LPP_fiche_tot901.dbf   n'importe quelle table DBF vers CSV
 `;
 
@@ -113,6 +116,13 @@ async function principal(argv) {
     const annee = values.annee ? Number(values.annee) : (values.source ? undefined : Math.max(...Object.keys(ARCHIVES).map(Number)));
     const resume = await exporterTarifs({ ...commun, annee, source: values.source, sortie: values.sortie ?? 'data/ghs' });
     journal(`${resume.ghs} lignes GHS, ${resume.ght} GHT, ${resume.supplements} suppléments (dates d'effet : ${resume.datesEffet.join(', ')})`);
+    return 0;
+  }
+
+  if (commande === 'communes') {
+    const annee = values.annee ? Number(values.annee) : undefined;
+    const resume = await exporterCommunes({ ...commun, annee, sortie: values.sortie ?? 'data/communes' });
+    journal(`${resume.communes} communes, ${resume.arrondissements} arrondissements municipaux, ${resume.deleguees} communes déléguées ou associées, ${resume.outremer} communes des collectivités d'outre-mer (code officiel géographique ${resume.annee})`);
     return 0;
   }
 

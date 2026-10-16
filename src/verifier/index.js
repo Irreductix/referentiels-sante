@@ -14,6 +14,7 @@ import { trouverArchives, ARCHIVES_CONNUES } from '../ccam/index.js';
 import { EDITIONS } from '../cim10/index.js';
 import { FICHIERS, BASE as BASE_BDPM, PAGE as PAGE_BDPM, lireDatesMiseAJour } from '../bdpm/index.js';
 import { SOURCES, VERSIONS_CONNUES, trouverFichiers } from '../cnam/index.js';
+import { trouverRessources as trouverCommunes, REPLIS as REPLIS_COMMUNES } from '../communes/index.js';
 
 /** Requête d'en-tête (repli sur GET sans lire le corps si HEAD est refusé). */
 export async function sonder(url, { delai = 20000 } = {}) {
@@ -187,12 +188,33 @@ export async function verifierCnam() {
   return r;
 }
 
+export async function verifierCommunes() {
+  const r = [];
+  const annee = new Date().getUTCFullYear();
+  let ressources = null;
+  for (const candidate of [annee, annee - 1]) {
+    try {
+      ressources = await trouverCommunes(candidate);
+      r.push(resultat('communes', `millésime ${candidate} : API data.gouv.fr`, true, ressources.dateModification ?? 'date inconnue', candidate !== annee));
+      break;
+    } catch (e) {
+      r.push(resultat('communes', `millésime ${candidate} : API data.gouv.fr`, candidate === annee, e.message, candidate === annee));
+    }
+  }
+  const adresses = ressources ?? REPLIS_COMMUNES[Math.max(...Object.keys(REPLIS_COMMUNES).map(Number))];
+  for (const cle of ['communes', 'outremer']) {
+    const s = await sonder(adresses[cle]);
+    r.push(controleFichier('communes', `${cle} : ${adresses[cle].split('/').pop()}`, s));
+  }
+  return r;
+}
+
 /**
  * Lance toutes les vérifications (ou celles demandées) et renvoie
  * { resultats, echecs, ok }.
  */
 export async function verifierTout({ sources, journal = () => {} } = {}) {
-  const tout = { finess: verifierFiness, nos: verifierNos, ghs: verifierGhs, ccam: verifierCcam, cim10: verifierCim10, bdpm: verifierBdpm, cnam: verifierCnam };
+  const tout = { finess: verifierFiness, nos: verifierNos, ghs: verifierGhs, ccam: verifierCcam, cim10: verifierCim10, bdpm: verifierBdpm, cnam: verifierCnam, communes: verifierCommunes };
   const cles = sources?.length ? sources : Object.keys(tout);
   const resultats = [];
   for (const cle of cles) {

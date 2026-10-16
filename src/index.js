@@ -5,6 +5,7 @@ export * as ccam from './ccam/index.js';
 export * as cim10 from './cim10/index.js';
 export * as bdpm from './bdpm/index.js';
 export * as cnam from './cnam/index.js';
+export * as communes from './communes/index.js';
 export { lireElements, lireCollection } from './commun/json-flux.js';
 export { EcrivainCsv, EcrivainJsonl, lireCsv } from './commun/csv.js';
 export { telecharger } from './commun/telecharger.js';
