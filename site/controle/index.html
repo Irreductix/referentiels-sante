@@ -251,10 +251,20 @@
 
   // Contrôle d'une liste
   $('bouton-controler').addEventListener('click', () => controlerTexte($('liste').value));
+  // Excel enregistre souvent les CSV en ANSI (windows-1252) : on l'accepte sans rien demander.
+  async function lireFichierTexte(f) {
+    const octets = await f.arrayBuffer();
+    try {
+      return new TextDecoder('utf-8', { fatal: true }).decode(octets);
+    } catch (e) {
+      return new TextDecoder('windows-1252').decode(octets);
+    }
+  }
+
   $('fichier-liste').addEventListener('change', async function () {
     const f = this.files && this.files[0];
     if (!f) return;
-    const texte = await f.text();
+    const texte = await lireFichierTexte(f);
     $('liste').value = texte;
     controlerTexte(texte);
   });
@@ -269,7 +279,7 @@
       return;
     }
     const nomCol = (i) => (i === undefined ? 'absente' : 'colonne ' + (i + 1));
-    $('colonnes').textContent = 'Colonnes reconnues : FINESS en ' + nomCol(col.finess) + ', SIRET ' + nomCol(col.siret) + ', code postal ' + nomCol(col.cp) + ', nom ' + nomCol(col.nom) + (liste.entete ? ' ; première ligne lue comme en-tête' : '') + '. ' + liste.lignes.length + ' lignes.';
+    $('colonnes').textContent = 'Colonnes reconnues : FINESS en ' + nomCol(col.finess) + ', SIRET ' + nomCol(col.siret) + ', code postal ' + nomCol(col.cp) + ', nom ' + nomCol(col.nom) + (liste.entete ? ' ; en-tête lu ligne ' + liste.ligneEntete : ' ; pas de ligne d\'en-tête') + '. ' + liste.lignes.length + ' lignes de données' + (liste.entete && liste.ligneEntete > 1 ? ', les lignes d\'explication et les titres de section sont ignorés' : '') + '.';
     const r = C.controler(index, liste);
     dernierResultat = r;
     $('resume').innerHTML = '<span><b>' + r.comptes.lignes + '</b> lignes</span><span><b>' + r.comptes.ecarts + '</b> écarts</span><span><b>' + r.comptes.aVerifier + '</b> à regarder</span><span><b>' + r.comptes.conformes + '</b> concordent</span><span><b>' + r.comptes.absents + '</b> absents de la liste</span>';

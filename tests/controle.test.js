@@ -56,6 +56,33 @@ test('lireListe reconnaît les colonnes, avec ou sans en-tête, collées depuis 
   assert.deepEqual(l2.colonnes, { finess: 0, siret: 3, cp: 2, nom: 1 });
 });
 
+test("lireListe trouve l'en-tête après des lignes d'explication, saute les titres de section et les en-têtes répétés", () => {
+  const csv = [
+    'FINESS : Fichier national des établissements sanitaires et sociaux;;;;',
+    'SIREN = 9 premiers chiffres du SIRET;;;;',
+    ';;;;',
+    'GH La Rochelle;;;;',
+    'Raison sociale;Code postal et commune;N° FINESS ;N° SIRET;APE',
+    'SMR MARLONGES;17000 LA ROCHELLE;17 000 006 1;200.047.835.00422;8610 Z',
+    ';;;;',
+    'CH Ajaccio;;;;',
+    'Raison sociale;Code postal et commune;N° FINESS ;N° SIRET;APE',
+    'ANTENNE SMUR SARTENE;20100 SARTENE;2A 000 312 5;262.000.001.00044;8610 Z',
+    '"\tEHPAD SANS NUMERO";20100 SARTENE;;262.000.001.00051;8710 A',
+  ].join('\r\n') + '\r\n';
+  const l = C.lireListe(csv);
+  assert.equal(l.entete, true);
+  assert.equal(l.ligneEntete, 5);
+  assert.deepEqual(l.colonnes, { finess: 2, siret: 3, cp: 1, nom: 0 });
+  assert.deepEqual(l.numeros, [6, 10, 11]);
+  const r = C.controler(C.lireIndex(INDEX), l);
+  const par = (ligne) => r.resultats.find((x) => x.ligne === ligne);
+  assert.equal(par(6).resultat, 'établissement trouvé');
+  assert.equal(par(10).resultat, 'établissement trouvé');
+  assert.equal(par(11).resultat, 'pas de numéro FINESS');
+  assert.equal(par(11).nom, 'EHPAD SANS NUMERO');
+});
+
 test('controler retrouve les écarts connus et les explique', () => {
   const index = C.lireIndex(INDEX);
   const liste = C.lireListe([

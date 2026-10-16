@@ -147,20 +147,26 @@
       i += 1;
     }
     if (ligne.length) lignes.push(ligne);
-    return lignes.filter((l) => l.some((v) => String(v).trim() !== ''));
+    return lignes;
   }
 
+  const ligneVide = (l) => !l.some((v) => String(v == null ? '' : v).trim() !== '');
+
+  // Le séparateur est celui qui revient le plus hors des cellules entre guillemets :
+  // un tableau Excel colle des tabulations, un CSV français met des points-virgules.
   function detecterSeparateur(texte) {
-    const tete = texte.slice(0, 5000);
-    if (tete.indexOf('\t') >= 0) return '\t';
-    const pv = (tete.match(/;/g) || []).length;
-    const virg = (tete.match(/,/g) || []).length;
+    const tete = texte.slice(0, 5000).replace(/"(?:[^"]|"")*"/g, '');
+    const compter = (c) => tete.split(c).length - 1;
+    const tab = compter('\t');
+    const pv = compter(';');
+    const virg = compter(',');
+    if (tab > 0 && tab >= pv && tab >= virg) return '\t';
     return pv >= virg ? ';' : ',';
   }
 
   // L'index : douze colonnes, un établissement par ligne.
   function lireIndex(texte) {
-    const lignes = lireCsv(texte, ';');
+    const lignes = lireCsv(texte, ';').filter((l) => !ligneVide(l));
     const entete = lignes.shift() || [];
     const pos = {};
     entete.forEach((c, i) => { pos[c] = i; });
@@ -220,22 +226,48 @@
     return scores.slice(0, limite).map((x) => x.e);
   }
 
+  // Une cellule d'en-tête est courte : « N° FINESS », pas une phrase d'explication qui cite FINESS.
+  const estCelluleEntete = (v, motif) => {
+    const t = normaliserTexte(v);
+    return t.length > 0 && t.length <= 30 && motif.test(t);
+  };
+
+  function reconnaitreEntete(l) {
+    const col = {};
+    l.forEach((v, i) => {
+      if (col.finess === undefined && estCelluleEntete(v, /\bFINESS\b/)) col.finess = i;
+      else if (col.siret === undefined && estCelluleEntete(v, /\bSIRE[TN]\b/)) col.siret = i;
+      else if (col.cp === undefined && estCelluleEntete(v, /POSTAL|COMMUNE|\bCP\b|VILLE|ADRESSE/)) col.cp = i;
+      else if (col.nom === undefined && estCelluleEntete(v, /RAISON|\bNOM\b|LIBELLE|DENOMINATION|ETABLISSEMENT/)) col.nom = i;
+    });
+    return col.finess !== undefined && (col.siret !== undefined || col.nom !== undefined || col.cp !== undefined) ? col : null;
+  }
+
   // Détecte les colonnes d'une liste collée ou déposée : FINESS, SIRET, code postal, nom.
+  // L'en-tête peut être précédé de lignes d'explication et répété avant chaque section ;
+  // les titres de section (une seule cellule remplie) sont ignorés.
   function lireListe(texte) {
     const sep = detecterSeparateur(texte);
     const lignes = lireCsv(texte, sep);
-    if (!lignes.length) return { lignes: [], colonnes: {}, entete: false, separateur: sep };
+    if (!lignes.some((l) => !ligneVide(l))) return { lignes: [], numeros: [], colonnes: {}, entete: false, separateur: sep };
     const largeur = Math.max.apply(null, lignes.map((l) => l.length));
-    const premiere = lignes[0].map((v) => normaliserTexte(v));
-    const parEntete = {};
-    premiere.forEach((v, i) => {
-      if (/FINESS/.test(v) && parEntete.finess === undefined) parEntete.finess = i;
-      else if (/SIRET|SIREN/.test(v) && parEntete.siret === undefined) parEntete.siret = i;
-      else if (/POSTAL|COMMUNE|CP\b|VILLE/.test(v) && parEntete.cp === undefined) parEntete.cp = i;
-      else if (/RAISON|NOM|LIBELLE|DENOMINATION|ETABLISSEMENT/.test(v) && parEntete.nom === undefined) parEntete.nom = i;
+    let indexEntete = -1;
+    let parEntete = null;
+    for (let i = 0; i < Math.min(lignes.length, 60); i += 1) {
+      const col = reconnaitreEntete(lignes[i]);
+      if (col) { indexEntete = i; parEntete = col; break; }
+    }
+    const entete = indexEntete >= 0;
+    const donnees = [];
+    const numeros = [];
+    const remplies = (l) => l.filter((v) => String(v == null ? '' : v).trim() !== '').length;
+    lignes.forEach((l, i) => {
+      if (i <= indexEntete || ligneVide(l)) return;
+      if (entete && reconnaitreEntete(l)) return;
+      if (remplies(l) === 1 && !(parEntete && normaliserFiness(l[parEntete.finess]))) return;
+      donnees.push(l);
+      numeros.push(i + 1);
     });
-    const entete = parEntete.finess !== undefined || parEntete.siret !== undefined;
-    const donnees = entete ? lignes.slice(1) : lignes;
     const score = { finess: [], siret: [], cp: [], nom: [] };
     for (let c = 0; c < largeur; c += 1) {
       let f = 0; let s = 0; let p = 0; let t = 0;
@@ -254,12 +286,13 @@
       tab.forEach((v, i) => { if (v > val && exclure.indexOf(i) < 0) { val = v; best = i; } });
       return best < 0 ? undefined : best;
     };
+    const p = parEntete || {};
     const colonnes = {};
-    colonnes.finess = parEntete.finess !== undefined ? parEntete.finess : meilleure(score.finess, []);
-    colonnes.siret = parEntete.siret !== undefined ? parEntete.siret : meilleure(score.siret, [colonnes.finess]);
-    colonnes.cp = parEntete.cp !== undefined ? parEntete.cp : meilleure(score.cp, [colonnes.finess, colonnes.siret]);
-    colonnes.nom = parEntete.nom !== undefined ? parEntete.nom : meilleure(score.nom, [colonnes.finess, colonnes.siret, colonnes.cp]);
-    return { lignes: donnees, colonnes, entete, separateur: sep };
+    colonnes.finess = p.finess !== undefined ? p.finess : meilleure(score.finess, []);
+    colonnes.siret = p.siret !== undefined ? p.siret : meilleure(score.siret, [colonnes.finess]);
+    colonnes.cp = p.cp !== undefined ? p.cp : meilleure(score.cp, [colonnes.finess, colonnes.siret]);
+    colonnes.nom = p.nom !== undefined ? p.nom : meilleure(score.nom, [colonnes.finess, colonnes.siret, colonnes.cp]);
+    return { lignes: donnees, numeros, colonnes, entete, ligneEntete: entete ? indexEntete + 1 : 0, separateur: sep };
   }
 
   function voisins(num, index) {
@@ -302,7 +335,7 @@
     liste.lignes.forEach((l, k) => {
       const brutFiness = cellule(l, col.finess);
       const finess = normaliserFiness(brutFiness);
-      const r = { ligne: k + 1 + (liste.entete ? 1 : 0), nom: cellule(l, col.nom).trim(), finess: finess || '', gravite: 0, pistes: [] };
+      const r = { ligne: liste.numeros && liste.numeros[k] ? liste.numeros[k] : k + 1 + (liste.entete ? 1 : 0), nom: cellule(l, col.nom).trim(), finess: finess || '', gravite: 0, pistes: [] };
       const et = finess ? index.parEt.get(finess) : null;
       const estEj = finess && !et && index.parEj.has(finess);
       if (estVide(brutFiness)) { r.resultat = 'pas de numéro FINESS'; r.gravite = 1; }
