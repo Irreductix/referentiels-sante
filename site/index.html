@@ -14,7 +14,9 @@
 <meta property="og:locale" content="fr_FR">
 <meta name="twitter:card" content="summary">
 <meta name="color-scheme" content="light dark">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%231d4f91'/%3E%3Cg fill='%23fff'%3E%3Crect x='7' y='9' width='18' height='2.6'/%3E%3Crect x='7' y='14.7' width='18' height='2.6'/%3E%3Crect x='7' y='20.4' width='11' height='2.6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" href="favicon.png" sizes="64x64" type="image/png">
+<link rel="apple-touch-icon" href="icone-192.png">
+<meta property="og:image" content="https://referentiels-sante.irreductix.fr/icone-512.png">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -36,77 +38,68 @@
 </script>
 <style>
   :root {
-    --fond: #ffffff;
-    --fond-2: #f5f6f8;
-    --texte: #1f2328;
-    --texte-2: #57606a;
-    --trait: #d8dee4;
-    --lien: #1d4f91;
-    --code-fond: #f5f6f8;
-    --alerte-fond: #fff8e6;
-    --alerte-trait: #e7c566;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --fond: #0f1419;
-      --fond-2: #161c23;
-      --texte: #e6e8eb;
-      --texte-2: #9aa4af;
-      --trait: #2b333c;
-      --lien: #8cb4ea;
-      --code-fond: #161c23;
-      --alerte-fond: #231e10;
-      --alerte-trait: #6d5a22;
-    }
-  }
-  :root[data-theme="dark"] {
-    --fond: #0f1419;
-    --fond-2: #161c23;
-    --texte: #e6e8eb;
-    --texte-2: #9aa4af;
-    --trait: #2b333c;
-    --lien: #8cb4ea;
-    --code-fond: #161c23;
-    --alerte-fond: #231e10;
-    --alerte-trait: #6d5a22;
+    --bg: #282722;
+    --panel: #302f29;
+    --ivory: #f5f0e4;
+    --muted: #c0beb0;
+    --ochre: #dda34f;
+    --sage: #bdc6a7;
+    --line: #ffffff24;
+    --ink: #2a2b24;
+    --ink-2: #5a5b52;
+    --paper-line: #2a2b2420;
+    --paper-code: #2a2b240c;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+    color-scheme: dark;
   }
 
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--fond);
-    color: var(--texte);
-    font: 16px/1.65 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  }
-  a { color: var(--lien); text-underline-offset: 2px; }
-  a:focus-visible { outline: 2px solid var(--lien); outline-offset: 2px; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--ivory); font: 16px/1.65 var(--sans); }
+  a { color: var(--ochre); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+  a:hover { color: var(--ivory); }
+  a:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+  .col { max-width: 820px; margin: 0 auto; padding-inline: 20px; }
 
-  .barre { border-bottom: 1px solid var(--trait); }
-  .barre .col { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; padding-block: 14px; }
-  .barre .nom { font-weight: 600; color: var(--texte); text-decoration: none; }
+  .barre { border-bottom: 1px solid var(--line); }
+  .barre .col { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding-block: 12px; }
+  .barre .village { font-family: var(--serif); font-size: 17px; letter-spacing: 0.01em; text-decoration: none; color: var(--ivory); }
+  .barre .village span { color: var(--ochre); }
   .barre nav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 15px; }
+  .barre nav a { color: var(--muted); text-decoration: none; }
+  .barre nav a:hover { color: var(--ochre); }
 
-  .col { max-width: 780px; margin: 0 auto; padding-inline: 20px; }
-  main { padding-block: 40px 24px; }
-
-  h1 { font-size: clamp(28px, 5vw, 38px); line-height: 1.2; margin: 0 0 16px; letter-spacing: -0.01em; }
-  h2 { font-size: 24px; line-height: 1.3; margin: 56px 0 14px; padding-top: 28px; border-top: 1px solid var(--trait); }
+  .hero { padding-block: 44px 40px; }
+  .hero .logo { display: block; max-width: 404px; background: var(--ivory); border-radius: 10px; padding: 16px 22px; margin: 0 0 28px; }
+  .hero .logo img { display: block; width: 100%; height: auto; }
+  .hero, .paper, footer { overflow-wrap: anywhere; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 5vw, 42px); line-height: 1.18; margin: 0 0 18px; letter-spacing: -0.005em; }
   .insecable { white-space: nowrap; }
-  h3 { font-size: 18px; line-height: 1.4; margin: 30px 0 8px; }
+  .intro { font-size: 18px; color: var(--muted); max-width: 680px; }
+  .hero p { max-width: 680px; }
+  .commande { font-family: var(--mono); font-size: 17px; line-height: 1.6; background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--ochre); border-radius: 6px; padding: 14px 18px; margin: 22px 0; overflow-x: auto; }
+  .commande code { background: none; border: 0; padding: 0; font-size: inherit; color: var(--ivory); }
+  .hero code { font-family: var(--mono); font-size: 0.92em; background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; }
+
+  .paper { background: var(--ivory); color: var(--ink); padding-block: 48px 56px; }
+  .paper h2 { font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.25; margin: 56px 0 16px; padding-top: 28px; border-top: 1px solid var(--paper-line); }
+  .paper h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+  .paper h3 { font-family: var(--serif); font-weight: 400; font-size: 21px; line-height: 1.35; margin: 30px 0 8px; }
+  .paper a { color: #8a4f0a; }
+  .paper a:hover { color: var(--ink); }
+  .paper a:focus-visible { outline-color: #8a4f0a; }
   p, ul, ol { margin: 0 0 14px; }
   li { margin-bottom: 6px; }
-  .intro { font-size: 18px; color: var(--texte-2); }
+  .paper code { font-family: var(--mono); font-size: 0.9em; background: var(--paper-code); border: 1px solid var(--paper-line); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+  .paper pre { font-family: var(--mono); font-size: 14px; line-height: 1.6; background: var(--paper-code); border: 1px solid var(--paper-line); border-radius: 6px; padding: 14px 16px; margin: 0 0 16px; overflow-x: auto; }
+  .paper pre code { background: none; border: 0; padding: 0; font-size: inherit; overflow-wrap: normal; }
 
-  code { font-family: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace; font-size: 0.9em; background: var(--code-fond); border: 1px solid var(--trait); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
-  pre { font-family: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace; font-size: 14px; line-height: 1.6; background: var(--code-fond); border: 1px solid var(--trait); border-radius: 6px; padding: 14px 16px; overflow-x: auto; margin: 0 0 16px; }
-  pre code { background: none; border: 0; padding: 0; font-size: inherit; overflow-wrap: normal; }
-  .commande { font-size: 16px; }
-
-  .tableau { overflow-x: auto; margin: 0 0 16px; border: 1px solid var(--trait); border-radius: 6px; }
+  .tableau { overflow-x: auto; margin: 0 0 16px; border: 1px solid var(--paper-line); border-radius: 6px; background: #ffffff55; }
   table { border-collapse: collapse; width: 100%; font-size: 15px; }
-  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--trait); }
-  th { background: var(--fond-2); font-weight: 600; white-space: nowrap; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--paper-line); }
+  th { background: #2a2b2410; font-weight: 600; white-space: nowrap; }
   tr:last-child td { border-bottom: 0; }
   td.nombre { white-space: nowrap; font-variant-numeric: tabular-nums; }
   table.fichiers td code { overflow-wrap: normal; white-space: nowrap; }
@@ -115,36 +108,41 @@
   @media (max-width: 640px) {
     table.fichiers thead { display: none; }
     table.fichiers td { display: block; border-bottom: 0; padding-bottom: 2px; }
-    table.fichiers td + td { padding-top: 0; padding-bottom: 12px; border-bottom: 1px solid var(--trait); }
+    table.fichiers td + td { padding-top: 0; padding-bottom: 12px; border-bottom: 1px solid var(--paper-line); }
     table.fichiers tr:last-child td + td { border-bottom: 0; }
   }
 
-  .note { background: var(--alerte-fond); border: 1px solid var(--alerte-trait); border-radius: 6px; padding: 12px 16px; margin: 0 0 16px; }
+  .note { background: #ffffff66; border: 1px solid var(--paper-line); border-left: 3px solid var(--ochre); border-radius: 6px; padding: 12px 16px; margin: 0 0 16px; }
   .note p:last-child { margin-bottom: 0; }
-
   ol.etapes { padding-left: 22px; }
   ol.etapes li { margin-bottom: 12px; }
 
-  footer { border-top: 1px solid var(--trait); margin-top: 48px; }
-  footer .col { padding-block: 24px 40px; font-size: 14px; color: var(--texte-2); }
+  footer { border-top: 1px solid var(--line); }
+  footer .col { padding-block: 28px 44px; font-size: 14px; color: var(--muted); }
   footer p { margin-bottom: 8px; }
+  footer .village { font-family: var(--serif); font-size: 17px; color: var(--ivory); margin-bottom: 12px; }
+  footer .village a { color: var(--ivory); text-decoration: none; }
+  footer .village a:hover { color: var(--ochre); }
 </style>
 </head>
 <body>
 
 <header class="barre">
-  <div class="col">
-    <a class="nom" href="./">referentiels-sante</a>
-    <nav aria-label="Liens du projet">
-      <a href="https://github.com/Irreductix/referentiels-sante">Code source</a>
-      <a href="https://www.npmjs.com/package/referentiels-sante">npm</a>
-      <a href="https://github.com/Irreductix/referentiels-sante/blob/main/docs/FINESS.md">Documentation</a>
-    </nav>
-  </div>
+<div class="col">
+<a class="village" href="https://irreductix.fr/" title="Le collectif Irréductix">Un outil du village <span>Irréductix</span></a>
+<nav aria-label="Liens du projet">
+<a href="https://github.com/Irreductix/referentiels-sante">Code source</a>
+<a href="https://www.npmjs.com/package/referentiels-sante">npm</a>
+<a href="https://github.com/Irreductix/referentiels-sante/blob/main/docs/FINESS.md">Documentation</a>
+<a href="https://irreductix.fr/outils">Les autres outils</a>
+</nav>
+</div>
 </header>
 
-<main class="col">
-
+<main>
+<section class="hero">
+<div class="col">
+<p class="logo"><img src="logo.png" width="899" height="136" alt="referentiels-sante"></p>
 <h1>Le fichier FINESS en CSV, la CCAM, la <span class="insecable">CIM-10</span> et les médicaments en fichiers propres</h1>
 
 <p class="intro">referentiels-sante télécharge les référentiels publics de la santé à leur source officielle et les convertit en CSV lisibles dans Excel, une base de données ou un script, et en JSON pour FINESS+, les nomenclatures NOS, la CIM-10 et les tarifs GHS. L'outil est libre, gratuit et tient en une commande.</p>
@@ -153,6 +151,11 @@
 
 <p>Cette commande récupère le flux FINESS+ du jour et écrit dans le dossier <code>data/finess</code> les quelque 175 000 établissements sanitaires, sociaux et médico-sociaux (dont environ 105 000 en activité), les entités juridiques et les groupements hospitaliers de territoire.</p>
 
+</div>
+</section>
+
+<div class="paper">
+<div class="col">
 <h2 id="pas-a-pas">Obtenir FINESS en CSV sous Windows, pas à pas</h2>
 
 <p>Pas besoin d'être développeur, ni d'installer quoi que ce soit.</p>
@@ -277,13 +280,16 @@ nos.indexLibelles(categories).get('355'); // 'Centre hospitalier (CH)'</code></p
 
 <p>Code sous licence MIT, testé à chaque modification sur Linux et Windows avec Node.js 22, 24 et 26. Les signalements d'écarts, les référentiels manquants et les contributions sont bienvenus sur <a href="https://github.com/Irreductix/referentiels-sante">GitHub</a>.</p>
 
+</div>
+</div>
 </main>
 
 <footer>
-  <div class="col">
-    <p>Écrit et maintenu par <a href="https://github.com/QuentinCazier">Quentin Cazier</a>. Code sous licence MIT. Les données produites restent la propriété de leurs producteurs et sont soumises à leurs licences. La date de conversion est inscrite dans les fichiers <code>*-resume.json</code>, et les fichiers du mois contiennent une mention de source complète.</p>
-    <p>Du même village : <a href="https://registris.irreductix.fr/">Registris</a>, un registre des habilitations et coffre à preuves d'audit pour les établissements de santé. Les deux sont publiés par <a href="https://irreductix.fr/">Irréductix</a>, un collectif qui construit des outils libres pour le service public.</p>
-  </div>
+<div class="col">
+<p class="village"><a href="https://irreductix.fr/">Irréductix</a> : des outils libres pour le service public, construits à partir de données publiques.</p>
+<p>Écrit et maintenu par <a href="https://github.com/QuentinCazier">Quentin Cazier</a>. Code sous licence MIT. Les données produites restent la propriété de leurs producteurs et sont soumises à leurs licences. La date de conversion est inscrite dans les fichiers *-resume.json, et les fichiers du mois contiennent une mention de source complète ; ils sont décrits sur data.gouv.fr : <a href="https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess">FINESS en CSV</a> et <a href="https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle">Base des médicaments en CSV</a>.</p>
+<p>Du même village : <a href="https://registris.irreductix.fr/">Registris</a>, un registre des habilitations et coffre à preuves d'audit pour les établissements de santé. Sans cookie ni ressource externe. Une faille ? <a href="https://irreductix.fr/contact">Écrivez-nous en privé</a>.</p>
+</div>
 </footer>
 
 </body>
