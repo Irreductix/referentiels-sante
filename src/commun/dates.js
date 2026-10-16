@@ -30,11 +30,13 @@ export function dateHeureIso(valeur) {
   return dateIso(s);
 }
 
-/** « 1 800,57 » ou « 1800.57 » vers 1800.57 ; vide vers null. */
+/** « 1 800,57 », « 1,466,29 » (milliers à la virgule) ou « 1800.57 » vers un nombre ; vide vers null. */
 export function nombreFr(valeur) {
   if (valeur === null || valeur === undefined) return null;
-  const s = String(valeur).replace(/\s/g, '').replace(',', '.');
+  let s = String(valeur).replace(/\s/g, '');
   if (s === '') return null;
+  const i = s.lastIndexOf(',');
+  if (i >= 0) s = `${s.slice(0, i).replace(/,/g, '')}.${s.slice(i + 1)}`;
   const n = Number(s);
   return Number.isFinite(n) ? n : null;
 }

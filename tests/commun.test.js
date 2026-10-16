@@ -49,6 +49,9 @@ test('dates et nombres sont normalisés', () => {
   assert.equal(dateHeureIso('2025-10-21'), '2025-10-21');
   assert.equal(nombreFr('1800,57'), 1800.57);
   assert.equal(nombreFr('1 234,5'), 1234.5);
+  assert.equal(nombreFr('1,466,29'), 1466.29, 'la base des médicaments sépare les milliers par une virgule');
+  assert.equal(nombreFr('999,20'), 999.2);
+  assert.equal(nombreFr('1800.57'), 1800.57);
   assert.equal(nombreFr(''), null);
   assert.equal(texte('  '), null);
   assert.equal(texte(' a '), 'a');
