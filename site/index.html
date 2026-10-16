@@ -135,6 +135,7 @@
 <a href="https://www.npmjs.com/package/referentiels-sante">npm</a>
 <a href="https://github.com/Irreductix/referentiels-sante/blob/main/docs/FINESS.md">Documentation</a>
 <a href="controle/">Contrôler une liste</a>
+<a href="tarifs/">Tarifs GHS</a>
 <a href="https://irreductix.fr/outils">Les autres outils</a>
 </nav>
 </div>
@@ -219,10 +220,13 @@
     <tr><td>NABM, LPP, UCD</td><td>Assurance Maladie, tables dBase</td><td><code>nabm</code>, <code>lpp</code>, <code>ucd</code></td></tr>
     <tr><td>Tarifs GHS, GHT et suppléments</td><td>ATIH, CSV des arrêtés tarifaires</td><td><code>ghs --annee 2026</code></td></tr>
     <tr><td>Nomenclatures NOS</td><td>ANS, tables de codes</td><td><code>nos TRE_R66-CategorieEtablissement</code></td></tr>
+<tr><td>Code officiel géographique (communes, arrondissements, outre-mer)</td><td>INSEE, CSV d'un millésime par an</td><td><code>communes</code></td></tr>
     <tr><td>Une table dBase quelconque</td><td>Votre fichier</td><td><code>dbf fichier.dbf</code></td></tr>
   </tbody>
 </table>
 </div>
+
+<p>Pour les tarifs GHS, la page <a href="tarifs/">Tarifs GHS</a> compare deux campagnes GHS par GHS, à partir des fichiers <code>ghs.csv</code> convertis sur votre poste, et chiffre l'effet des nouveaux tarifs sur vos volumes de séjours, sans que ces volumes quittent votre navigateur.</p>
 
 <p>Chaque commande se lance de la même façon : <code>npx referentiels-sante ccam</code>, <code>npx referentiels-sante cim10 --edition 2025</code>, et ainsi de suite. <code>npx referentiels-sante ccam --date 2025-06-30</code> donne la CCAM telle qu'elle était à cette date. La NGAP n'est pas couverte : l'Assurance Maladie ne la publie qu'en PDF.</p>
 

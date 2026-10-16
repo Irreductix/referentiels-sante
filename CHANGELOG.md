@@ -1,5 +1,10 @@
 # Journal des versions
 
+## 0.5.0 (octobre 2026)
+
+- Page « Tarifs GHS » sur le site (`site/tarifs/`) : comparaison de deux campagnes GHS par GHS (tarifs, écarts, bornes, EXH, GHS nouveaux ou supprimés), filtres par secteur, CMD et évolution, export CSV ; et calcul de l'effet des nouveaux tarifs sur des volumes de séjours collés (par GHS ou par GHM), avec export. La page lit les fichiers `ghs.csv` convertis sur le poste : les archives de l'ATIH ne sont pas rediffusées, et les volumes ne quittent pas le navigateur. Logique dans `site/tarifs/tarifs.js`, testée avec Node.
+- Commande `communes` : le code officiel géographique de l'INSEE (Licence Ouverte 2.0), communes, arrondissements municipaux, communes déléguées et associées, et communes des collectivités d'outre-mer, dans un seul `communes.csv` ; millésime trouvé sur data.gouv.fr, adresses de repli dans le code. La vérification hebdomadaire le contrôle.
+
 ## 0.4.0 (octobre 2026)
 
 - Page « Contrôle FINESS » sur le site (`site/controle/`) : recherche instantanée d'un établissement, et contrôle d'une liste collée depuis Excel ou déposée en CSV (numéros FINESS avec clé de contrôle et numéro voisin probable, SIRET comparés et expliqués, codes postaux et CEDEX, établissements fermés, établissements actifs absents de la liste), avec rapport CSV. Tout se calcule dans le navigateur, sans aucune requête une fois l'index chargé ; la logique est dans `site/controle/controle.js`, testée avec Node.

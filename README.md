@@ -4,6 +4,7 @@
 
 <p align="center">
 <a href="https://referentiels-sante.irreductix.fr/controle/"><img src="https://img.shields.io/badge/Contr%C3%B4le_FINESS-v%C3%A9rifier_une_liste_dans_le_navigateur-dda34f?style=for-the-badge&labelColor=282722" alt="Contrôle FINESS"></a>
+<a href="https://referentiels-sante.irreductix.fr/tarifs/"><img src="https://img.shields.io/badge/Tarifs_GHS-comparer_deux_campagnes-dda34f?style=for-the-badge&labelColor=282722" alt="Tarifs GHS"></a>
 <a href="https://referentiels-sante.irreductix.fr/"><img src="https://img.shields.io/badge/Site-mode_d'emploi_et_fichiers_du_mois-bdc6a7?style=for-the-badge&labelColor=282722" alt="Site"></a>
 <a href="https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess"><img src="https://img.shields.io/badge/data.gouv.fr-FINESS_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="FINESS en CSV sur data.gouv.fr"></a>
 <a href="https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle"><img src="https://img.shields.io/badge/data.gouv.fr-M%C3%A9dicaments_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="Base des médicaments en CSV sur data.gouv.fr"></a>
@@ -103,6 +104,7 @@ npx referentiels-sante nos TRE_R66-CategorieEtablissement TRE_R72-FinessStatutJu
 npx referentiels-sante ccam                    # data/ccam : actes, activités, phases, tarifs, chapitres, notes
 npx referentiels-sante cim10 --edition 2025    # data/cim10 : 11 969 codes avec hiérarchie et rubriques
 npx referentiels-sante bdpm                    # data/bdpm : dix fichiers de la base des médicaments
+npx referentiels-sante communes                # data/communes : code officiel géographique de l'INSEE, pour lire les codes commune de FINESS
 npx referentiels-sante nabm                    # idem lpp, ucd
 npx referentiels-sante ghs --annee 2026
 npx referentiels-sante dbf fichier.dbf
