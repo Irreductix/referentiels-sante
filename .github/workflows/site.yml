@@ -23,6 +23,16 @@ jobs:
       url: ${{ steps.deploiement.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
+      # La page de contrôle lit l'index du mois sur la même origine que le site : on le
+      # prend dans la release à adresse fixe, sans jamais le commiter.
+      - name: Index FINESS du mois
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for f in index-finess.csv.gz index-finess.json; do
+            gh release download donnees-du-mois --pattern "$f" --dir site --clobber || echo "$f absent de la release : la page de contrôle proposera le chargement depuis un fichier"
+          done
+          ls -la site/index-finess.* 2>/dev/null || true
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1,5 +1,11 @@
 # Journal des versions
 
+## 0.4.0 (octobre 2026)
+
+- Page « Contrôle FINESS » sur le site (`site/controle/`) : recherche instantanée d'un établissement, et contrôle d'une liste collée depuis Excel ou déposée en CSV (numéros FINESS avec clé de contrôle et numéro voisin probable, SIRET comparés et expliqués, codes postaux et CEDEX, établissements fermés, établissements actifs absents de la liste), avec rapport CSV. Tout se calcule dans le navigateur, sans aucune requête une fois l'index chargé ; la logique est dans `site/controle/controle.js`, testée avec Node.
+- Version hors ligne : l'archive `controle-finess-hors-ligne.zip`, refaite chaque mois dans la release à adresse fixe, contient la page et l'index ; la page ouverte depuis un fichier charge l'index depuis le disque.
+- La publication mensuelle produit `index-finess.json` (instantané, dates, comptage) et redéploie le site avec l'index du mois.
+
 ## 0.3.5 (octobre 2026)
 
 Corrections

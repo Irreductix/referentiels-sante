@@ -5,7 +5,7 @@
 **Les référentiels publics de la santé en France, convertis en CSV propres, et
 en JSON pour FINESS+, NOS, CIM-10 et GHS. Sans dépendance, en une commande.**
 
-Site : <https://referentiels-sante.irreductix.fr/>  
+Site : <https://referentiels-sante.irreductix.fr/>, avec la page [Contrôle FINESS](https://referentiels-sante.irreductix.fr/controle/) pour vérifier une liste d'établissements dans le navigateur  
 Fichiers du mois sur data.gouv.fr : [FINESS en CSV](https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess) et [Base des médicaments en CSV](https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle)  
 Un outil libre du collectif [Irréductix](https://irreductix.fr)
 
