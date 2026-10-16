@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
+<title>Tarifs GHS : comparer deux campagnes et mesurer l'impact sur votre activité</title>
+<meta name="description" content="Comparez les tarifs GHS de deux campagnes, GHS par GHS, et chiffrez l'effet des nouveaux tarifs sur vos volumes de séjours. Tout se calcule dans votre navigateur.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://referentiels-sante.irreductix.fr/tarifs/">
+<link rel="icon" href="data:image/png;base64,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" sizes="64x64" type="image/png">
+<style>
+  :root {
+    --bg: #282722; --panel: #302f29; --ivory: #f5f0e4; --muted: #c0beb0; --ochre: #dda34f; --sage: #bdc6a7; --line: #ffffff24;
+    --fond: #f3f1ea; --carte: #ffffff; --trait: #e2ddd0; --texte: #2a2b24; --texte-2: #5f6057; --lien: #8a4f0a; --doux: #faf8f2;
+    --rouge: #a8321f; --orange: #b4700f; --jaune: #7d6d14; --vert: #3e6b3a;
+    --sans: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--fond); color: var(--texte); font: 15px/1.5 var(--sans); overflow-wrap: anywhere; min-height: 100vh; display: flex; flex-direction: column; }
+  a { color: var(--lien); text-underline-offset: 3px; }
+  a:hover { color: var(--texte); }
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, summary:focus-visible, label:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+  .page { width: 100%; max-width: 1600px; margin: 0 auto; padding-inline: clamp(16px, 2.5vw, 44px); }
+  svg.ic { width: 20px; height: 20px; vertical-align: -4px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+  .barre { background: var(--bg); color: var(--ivory); }
+  .barre .page { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding-block: 10px; }
+  .barre .logo { display: inline-block; background: var(--ivory); border-radius: 8px; padding: 8px 14px; line-height: 0; }
+  .barre .logo img { height: 30px; width: auto; display: block; }
+  .barre .droite { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; }
+  .barre nav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 14.5px; }
+  .barre nav a { color: var(--muted); text-decoration: none; }
+  .barre nav a:hover { color: var(--ochre); }
+  .barre .village { line-height: 0; }
+  .barre .village img { height: 36px; width: auto; display: block; opacity: 0.95; }
+
+  .fil { background: var(--carte); border-bottom: 1px solid var(--trait); font-size: 13.5px; color: var(--texte-2); }
+  .fil .page { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 24px; padding-block: 9px; }
+  .fil a { color: var(--texte-2); text-decoration: none; }
+  .fil a:hover { color: var(--lien); }
+  .fil span.sep { margin-inline: 8px; color: var(--trait); }
+  .fil strong { color: var(--texte); font-weight: 600; }
+
+  main.page { flex: 1; padding-block: 26px 44px; }
+  .entete { display: grid; grid-template-columns: 1fr; gap: 20px 32px; align-items: start; margin-bottom: 22px; }
+  @media (min-width: 1000px) { .entete { grid-template-columns: minmax(0, 3fr) minmax(360px, 2fr); } }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--texte-2); background: #e9e5d8; border-radius: 4px; padding: 4px 10px; margin-bottom: 8px; }
+  h1 { font-size: clamp(30px, 4vw, 40px); line-height: 1.1; margin: 0 0 12px; font-weight: 800; letter-spacing: -0.01em; }
+  .intro { font-size: 17px; color: var(--texte-2); margin: 0; max-width: 70ch; }
+
+  .carte { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 2px #2a2b240a; }
+  .apropos { background: #eef1e6; border-color: #d6ddc6; }
+  .apropos h2 { font-size: 16px; margin: 0 0 8px; }
+  .apropos p { margin: 0 0 10px; font-size: 14px; color: #42463a; }
+  .apropos label { display: block; margin: 6px 0; font-size: 14px; }
+  .apropos label b { display: inline-block; min-width: 150px; }
+  .etat { display: flex; align-items: baseline; gap: 8px; font-size: 14px; color: var(--texte); margin: 10px 0 0; }
+  .etat .pastille { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--ochre); position: relative; top: -1px; }
+  .etat.ok .pastille { background: #5b8f55; }
+  .etat.erreur .pastille { background: var(--rouge); }
+  input[type="file"] { font: inherit; color: var(--texte); max-width: 100%; }
+
+  .carte h2 { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; margin: 0 0 4px; }
+  .carte h2 svg.ic { width: 24px; height: 24px; color: var(--texte-2); }
+  .sous { color: var(--texte-2); font-size: 13.5px; margin: 0 0 14px; }
+  .filtres { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; margin: 0 0 12px; }
+  .filtres label { font-size: 13.5px; color: var(--texte-2); display: inline-flex; align-items: center; gap: 6px; }
+  select, input[type="search"], textarea { font: inherit; color: var(--texte); background: #fff; border: 1px solid #cfc9bb; border-radius: 8px; padding: 8px 10px; }
+  input[type="search"] { min-width: 240px; }
+  textarea { width: 100%; min-height: 120px; font-family: var(--mono); font-size: 13px; line-height: 1.45; resize: vertical; }
+  .bouton { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; font-weight: 600; color: var(--ivory); background: var(--bg); border: 1px solid var(--bg); border-radius: 8px; padding: 10px 18px; cursor: pointer; }
+  .bouton:hover { background: #3b3a33; }
+  .bouton.second { background: #fff; color: var(--texte); border-color: #cfc9bb; }
+  .bouton.second:hover { border-color: var(--texte-2); background: var(--doux); }
+  .bouton[disabled] { opacity: 0.45; cursor: default; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: center; margin: 12px 0 6px; }
+  .discret { color: var(--texte-2); font-size: 13.5px; margin: 8px 0 0; }
+  .compteurs { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+  .compteurs span { font-size: 13px; font-weight: 600; background: #efece2; border-radius: 999px; padding: 4px 11px; color: var(--texte-2); }
+  .compteurs span b { color: var(--texte); font-weight: 700; margin-right: 3px; }
+  .tete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; margin-bottom: 12px; }
+  .tableau { width: 100%; overflow: auto; border: 1px solid var(--trait); border-radius: 8px; background: #fff; max-height: 70vh; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 11px; border-bottom: 1px solid var(--trait); }
+  thead th { position: sticky; top: 0; background: var(--doux); font-weight: 600; white-space: nowrap; z-index: 1; }
+  th.tri { cursor: pointer; user-select: none; }
+  th.tri::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 8px; border-right: 1.5px solid #b5ae9d; border-bottom: 1.5px solid #b5ae9d; transform: translateY(-2px) rotate(45deg); }
+  th.tri.asc::after { border-color: var(--texte); transform: translateY(2px) rotate(-135deg); }
+  th.tri.desc::after { border-color: var(--texte); }
+  tbody tr:hover td { background: #faf8f2; }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+  td small { display: block; color: var(--texte-2); font-size: 12.5px; }
+  td.code { white-space: nowrap; }
+  .plus { color: var(--vert); font-weight: 600; } .moins { color: var(--rouge); font-weight: 600; }
+  .statut { display: inline-block; font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
+  .statut.hausse { color: var(--vert); background: #e3ecdc; } .statut.baisse { color: var(--rouge); background: #f7dcd5; }
+  .statut.stable { color: var(--texte-2); background: #efece2; } .statut.nouveau { color: #2f5d8a; background: #dfe8f2; } .statut.supprimé, .statut.incomplet { color: var(--orange); background: #f8e5c6; }
+  .total { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin: 0 0 14px; }
+  .total div { background: var(--doux); border: 1px solid var(--trait); border-radius: 8px; padding: 10px 14px; }
+  .total div span { display: block; font-size: 12.5px; color: var(--texte-2); }
+  .total div b { font-size: 20px; font-weight: 700; }
+  section + section { margin-top: 22px; }
+
+  .aide { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 22px; }
+  @media (min-width: 1100px) { .aide { grid-template-columns: 1fr 1fr; } }
+  .aide details.carte { padding: 0; }
+  .aide summary { cursor: pointer; padding: 14px 20px; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 10px; list-style: none; }
+  .aide summary::-webkit-details-marker { display: none; }
+  .aide summary::after { content: ""; margin-left: auto; width: 8px; height: 8px; border-right: 1.5px solid var(--texte-2); border-bottom: 1.5px solid var(--texte-2); transform: translateY(-2px) rotate(45deg); }
+  .aide details[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+  .aide .corps { padding: 0 20px 16px; font-size: 14px; }
+  .aide ol, .aide ul { margin: 0 0 10px; padding-left: 22px; }
+  .aide li { margin-bottom: 6px; }
+  code { font-family: var(--mono); font-size: 0.92em; background: #2a2b240c; border-radius: 4px; padding: 1px 5px; }
+
+  footer { background: var(--bg); color: var(--muted); font-size: 13.5px; margin-top: 10px; }
+  footer .page { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 28px; padding-block: 18px 22px; }
+  footer .gauche { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+  footer .gauche img { height: 34px; width: auto; display: block; }
+  footer p { margin: 0; }
+  footer a { color: var(--ivory); text-decoration: none; }
+  footer a:hover { color: var(--ochre); }
+  .cache { display: none; }
+</style>
+</head>
+<body>
+
+<header class="barre">
+<div class="page">
+<a class="logo" href="../" title="referentiels-sante, accueil"><img src="logo.png" width="899" height="136" alt="referentiels-sante"></a>
+<div class="droite">
+<nav aria-label="Liens du projet">
+<a href="../">Le convertisseur</a>
+<a href="../controle/">Contrôle FINESS</a>
+<a href="https://github.com/Irreductix/referentiels-sante/tree/main/site/tarifs">Code de cette page</a>
+<a href="https://github.com/Irreductix/referentiels-sante/issues">Signaler un écart</a>
+</nav>
+<a class="village" href="https://irreductix.fr/" title="Le collectif Irréductix"><img src="irreductix.webp" width="1086" height="362" alt="Irréductix"></a>
+</div>
+</div>
+</header>
+
+<div class="fil">
+<div class="page">
+<p style="margin:0"><a href="../">referentiels-sante</a><span class="sep">›</span><a href="https://irreductix.fr/outils">Outils</a><span class="sep">›</span><strong>Tarifs GHS</strong></p>
+<p style="margin:0">Un outil libre pour le service public</p>
+</div>
+</div>
+
+<main class="page">
+
+<div class="entete">
+<div>
+<span class="badge">Outil</span>
+<h1>Tarifs GHS, d'une campagne à l'autre</h1>
+<p class="intro">Comparez les tarifs GHS de deux campagnes, GHS par GHS, puis collez vos volumes de séjours pour chiffrer l'effet des nouveaux tarifs sur votre activité. Vos volumes restent sur votre poste.</p>
+</div>
+<aside class="carte apropos">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg> Les fichiers à charger</h2>
+<p>Les tarifs viennent des fichiers <code>ghs.csv</code> que produit le convertisseur pour chaque campagne (l'ATIH ne permet pas de les rediffuser, la page lit donc ce que vous avez converti). Rien n'est envoyé : tout se calcule dans votre navigateur.</p>
+<label><b>Ancienne campagne</b> <input type="file" id="fichier-a" accept=".csv"></label>
+<label><b>Nouvelle campagne</b> <input type="file" id="fichier-b" accept=".csv"></label>
+<p class="etat" id="etat"><span class="pastille"></span><span id="etat-texte">Chargez les deux fichiers ghs.csv, un par campagne.</span></p>
+</aside>
+</div>
+
+<section class="carte" id="comparaison">
+<div class="tete">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 19h16M7 16V9M12 16V5M17 16v-6"/></svg> Comparaison <span class="compteurs" id="resume"></span></h2>
+<button class="bouton second" id="bouton-export" disabled><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg> Exporter CSV</button>
+</div>
+<div class="filtres">
+<label>Secteur <select id="secteur" disabled></select></label>
+<label>CMD <select id="cmd" disabled><option value="">toutes</option></select></label>
+<label>Évolution <select id="statut" disabled><option value="">toutes</option><option value="hausse">hausses</option><option value="baisse">baisses</option><option value="stable">stables</option><option value="nouveau">nouveaux GHS</option><option value="supprimé">GHS supprimés</option></select></label>
+<label><input type="search" id="filtre" placeholder="GHS, GHM ou mot du libellé" autocomplete="off" disabled></label>
+</div>
+<p class="discret" id="info-comparaison">Les deux campagnes chargées, le tableau liste chaque GHS avec son tarif avant, son tarif après et l'écart.</p>
+<div class="tableau cache" id="tableau"></div>
+</section>
+
+<section class="carte" id="impact">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 16l4-5 4 3 4-7"/></svg> Impact sur votre activité</h2>
+<p class="sous">Collez deux colonnes : le numéro de GHS (ou le code GHM) et le nombre de séjours, avec ou sans en-tête. Le calcul applique les deux tarifs aux mêmes volumes, pour le secteur choisi ci-dessus. Ordre de grandeur seulement : sans bornes extrêmes, suppléments ni coefficient géographique.</p>
+<textarea id="volumes" placeholder="GHS	Séjours&#10;22	120&#10;23	45&#10;ou&#10;01C031	120" disabled></textarea>
+<div class="actions">
+<button class="bouton" id="bouton-impact" disabled><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg> Calculer</button>
+<label class="discret">ou déposer un fichier <input type="file" id="fichier-volumes" accept=".csv,.txt,.tsv" disabled></label>
+</div>
+<p class="discret" id="impact-info"></p>
+<div id="impact-resultats" class="cache">
+<div class="total" id="impact-resume"></div>
+<div class="tete"><span class="discret" style="margin:0">Lignes triées par écart, en valeur absolue.</span><button class="bouton second" id="bouton-export-impact"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg> Exporter CSV</button></div>
+<div class="tableau" id="impact-tableau"></div>
+</div>
+</section>
+
+<div class="aide">
+<details class="carte" open>
+<summary><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg> Obtenir les fichiers ghs.csv</summary>
+<div class="corps">
+<ol>
+<li>Avec la <a href="https://github.com/Irreductix/referentiels-sante/releases/latest">version Windows du convertisseur</a> : lancez <code>Convertir.cmd</code>, choisissez les tarifs GHS et l'année, une fois pour l'ancienne campagne, une fois pour la nouvelle. Chaque conversion écrit un dossier avec <code>ghs.csv</code>.</li>
+<li>Avec Node.js : <code>npx referentiels-sante ghs --annee 2025 --sortie ghs-2025</code> puis <code>npx referentiels-sante ghs --annee 2026 --sortie ghs-2026</code>.</li>
+<li>Chargez les deux <code>ghs.csv</code> ci-dessus. La campagne de chaque fichier se lit dans ses dates d'effet.</li>
+</ol>
+<p class="discret" style="margin:0">Source : arrêtés tarifaires publiés par l'ATIH (archives ghs_web). Un tarif inchangé depuis la campagne précédente garde sa date d'effet d'origine.</p>
+</div>
+</details>
+<details class="carte">
+<summary><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg> Comment lire les résultats</summary>
+<div class="corps">
+<ul>
+<li><strong>Écart</strong> : tarif de la nouvelle campagne moins tarif de l'ancienne, en euros et en pourcentage. Un GHS « nouveau » n'existait pas avant ; un GHS « supprimé » n'existe plus.</li>
+<li><strong>Seuils et EXH</strong> : les bornes basse et haute du GHS et le tarif journalier au-delà de la borne haute, pour les deux campagnes, sont dans l'export CSV.</li>
+<li><strong>Impact</strong> : chaque ligne multiplie vos séjours par les deux tarifs de base. Les séjours hors bornes, les suppléments, la liste en sus et le coefficient géographique ne sont pas pris en compte : le résultat est un ordre de grandeur, pas une valorisation.</li>
+<li><strong>GHM</strong> : quand un GHM a plusieurs GHS, la ligne n'est pas chiffrée et la page demande le numéro de GHS.</li>
+</ul>
+</div>
+</details>
+</div>
+
+</main>
+
+<footer>
+<div class="page">
+<div class="gauche">
+<a href="https://irreductix.fr/" title="Le collectif Irréductix"><img src="irreductix.webp" width="1086" height="362" alt="Irréductix"></a>
+<p>Des outils libres pour le service public, construits à partir de données publiques.</p>
+</div>
+<p>Code sous licence MIT, <a href="https://github.com/Irreductix/referentiels-sante">sur GitHub</a>. Tarifs : arrêtés tarifaires, publiés par l'ATIH ; conversion par referentiels-sante.</p>
+</div>
+</footer>
+
+<script src="tarifs.js"></script>
+<script>
+(function () {
+  'use strict';
+  const T = window.Tarifs;
+  const $ = (id) => document.getElementById(id);
+  const campagnes = { a: null, b: null };
+  let comparaison = null;
+  let dernierImpact = null;
+  let tri = { cle: 'ghs', sens: 1 };
+
+  const echapper = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const euros = (n) => (n === null || n === undefined ? '' : Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €');
+  const pct = (n) => (n === null || n === undefined ? '' : (n > 0 ? '+' : '') + Number(n).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' %');
+  const signe = (n) => (n > 0 ? 'plus' : n < 0 ? 'moins' : '');
+  const nombre = (n) => Number(n).toLocaleString('fr-FR');
+
+  function etat(classe, texte) {
+    $('etat').className = 'etat ' + classe;
+    $('etat-texte').textContent = texte;
+  }
+
+  async function lireFichierTexte(f) {
+    const octets = await f.arrayBuffer();
+    try { return new TextDecoder('utf-8', { fatal: true }).decode(octets); } catch (e) { return new TextDecoder('windows-1252').decode(octets); }
+  }
+
+  async function charger(lettre, f) {
+    if (!f) return;
+    try {
+      campagnes[lettre] = T.lireTarifs(await lireFichierTexte(f));
+      campagnes[lettre].nom = f.name;
+    } catch (e) {
+      campagnes[lettre] = null;
+      etat('erreur', f.name + ' : ' + e.message);
+      return;
+    }
+    const a = campagnes.a; const b = campagnes.b;
+    if (a && b) {
+      if (a.dateMax > b.dateMax) { campagnes.a = b; campagnes.b = a; }
+      comparaison = T.comparer(campagnes.a, campagnes.b);
+      etat('ok', 'Campagnes ' + campagnes.a.campagne + ' (' + nombre(campagnes.a.tarifs.length) + ' lignes) et ' + campagnes.b.campagne + ' (' + nombre(campagnes.b.tarifs.length) + ' lignes) chargées' + (a.dateMax > b.dateMax ? ', remises dans l\'ordre' : '') + '.');
+      preparer();
+    } else {
+      etat('', 'Campagne ' + (a || b).campagne + ' chargée (' + nombre((a || b).tarifs.length) + ' lignes). Chargez l\'autre fichier.');
+    }
+  }
+  $('fichier-a').addEventListener('change', function () { charger('a', this.files && this.files[0]); });
+  $('fichier-b').addEventListener('change', function () { charger('b', this.files && this.files[0]); });
+
+  function preparer() {
+    const secteurs = Array.from(new Set(comparaison.lignes.map((l) => l.secteur))).sort();
+    $('secteur').innerHTML = secteurs.slice().sort((x, y) => (x === 'public' ? -1 : y === 'public' ? 1 : 0)).map((s) => '<option value="' + echapper(s) + '">' + (s === 'public' ? 'public et ESPIC' : s === 'prive' ? 'privé' : echapper(s)) + '</option>').join('');
+    const cmds = Array.from(new Set(comparaison.lignes.map((l) => l.cmd))).filter(Boolean).sort();
+    $('cmd').innerHTML = '<option value="">toutes</option>' + cmds.map((c) => '<option value="' + echapper(c) + '">' + echapper(c) + '</option>').join('');
+    for (const id of ['secteur', 'cmd', 'statut', 'filtre', 'volumes', 'bouton-impact', 'fichier-volumes', 'bouton-export']) $(id).disabled = false;
+    afficher();
+  }
+
+  function filtres() {
+    return { secteur: $('secteur').value, cmd: $('cmd').value, statut: $('statut').value, texte: $('filtre').value };
+  }
+
+  function trier(lignes) {
+    const v = (l) => (tri.cle === 'ghs' ? Number(l.ghs) : tri.cle === 'ghm' ? l.ghm : tri.cle === 'libelle' ? l.libelle.toLowerCase() : tri.cle === 'tarifA' ? (l.tarifA ?? -1) : tri.cle === 'tarifB' ? (l.tarifB ?? -1) : tri.cle === 'ecart' ? (l.ecart ?? -1e12) : (l.pct ?? -1e12));
+    return lignes.slice().sort((x, y) => { const a = v(x); const b = v(y); return (a < b ? -1 : a > b ? 1 : Number(x.ghs) - Number(y.ghs)) * tri.sens; });
+  }
+
+  function afficher() {
+    if (!comparaison) return;
+    const f = filtres();
+    const r = T.resumer(comparaison, f.secteur);
+    $('resume').innerHTML = '<span><b>' + r.total + '</b>GHS</span><span><b>' + r.hausse + '</b>hausses</span><span><b>' + r.baisse + '</b>baisses</span><span><b>' + r.stable + '</b>stables</span><span><b>' + r.nouveau + '</b>nouveaux</span><span><b>' + r.supprime + '</b>supprimés</span>' + (r.medianePct !== null ? '<span><b>' + pct(r.medianePct) + '</b>médiane</span>' : '');
+    const lignes = trier(T.filtrer(comparaison, f));
+    const a = comparaison.campagneA; const b = comparaison.campagneB;
+    $('info-comparaison').textContent = lignes.length + ' GHS affichés sur ' + r.total + ' pour ce secteur.';
+    const th = (cle, titre, num) => '<th class="tri' + (num ? ' num' : '') + (tri.cle === cle ? (tri.sens > 0 ? ' asc' : ' desc') : '') + '" data-cle="' + cle + '">' + titre + '</th>';
+    $('tableau').className = 'tableau';
+    $('tableau').innerHTML = '<table><thead><tr>' + th('ghs', 'GHS', true) + th('ghm', 'GHM') + th('libelle', 'Libellé') + '<th>Évolution</th>' + th('tarifA', 'Tarif ' + a, true) + th('tarifB', 'Tarif ' + b, true) + th('ecart', 'Écart', true) + th('pct', 'Écart %', true) + '</tr></thead><tbody>'
+      + lignes.map((l) => '<tr><td class="num">' + echapper(l.ghs) + '</td><td class="num" style="text-align:left">' + echapper(l.ghm) + '</td><td>' + echapper(l.libelle) + (l.seuilHautB !== null && l.seuilHautB !== undefined ? '<small>bornes ' + echapper(l.seuilBasB) + ' à ' + echapper(l.seuilHautB) + ' jours' + (l.exhB ? ', EXH ' + euros(l.exhB) : '') + '</small>' : '') + '</td>'
+        + '<td><span class="statut ' + echapper(l.statut) + '">' + echapper(l.statut) + '</span></td>'
+        + '<td class="num">' + euros(l.tarifA) + '</td><td class="num">' + euros(l.tarifB) + '</td>'
+        + '<td class="num ' + signe(l.ecart) + '">' + (l.ecart === null ? '' : (l.ecart > 0 ? '+' : '') + euros(l.ecart)) + '</td><td class="num ' + signe(l.pct) + '">' + pct(l.pct) + '</td></tr>').join('')
+      + '</tbody></table>';
+    for (const e of $('tableau').querySelectorAll('th.tri')) {
+      e.addEventListener('click', () => { const cle = e.getAttribute('data-cle'); tri = tri.cle === cle ? { cle, sens: -tri.sens } : { cle, sens: cle === 'ghs' || cle === 'ghm' || cle === 'libelle' ? 1 : -1 }; afficher(); });
+    }
+  }
+  for (const id of ['secteur', 'cmd', 'statut']) $(id).addEventListener('change', afficher);
+  let minuteur = null;
+  $('filtre').addEventListener('input', () => { clearTimeout(minuteur); minuteur = setTimeout(afficher, 150); });
+
+  function telecharger(nom, contenu) {
+    const blob = new Blob([contenu], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = nom;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+  $('bouton-export').addEventListener('click', () => {
+    if (!comparaison) return;
+    telecharger('tarifs-ghs-' + comparaison.campagneA + '-' + comparaison.campagneB + '.csv', T.rapportCsv(comparaison, T.filtrer(comparaison, { secteur: $('secteur').value })));
+  });
+
+  function calculer(texte) {
+    if (!comparaison) return;
+    const volumes = T.lireVolumes(texte);
+    if (!volumes.lignes.length || volumes.colonnes.volume === undefined || volumes.colonnes.code === undefined) {
+      $('impact-info').textContent = 'Il faut une colonne de numéros de GHS (ou de codes GHM) et une colonne de nombres de séjours.';
+      $('impact-resultats').className = 'cache';
+      return;
+    }
+    const secteur = $('secteur').value;
+    dernierImpact = T.impact(comparaison, volumes, secteur);
+    const r = dernierImpact;
+    $('impact-info').textContent = volumes.lignes.length + ' lignes lues (codes en colonne ' + (volumes.colonnes.code + 1) + ', séjours en colonne ' + (volumes.colonnes.volume + 1) + '), secteur ' + secteur + (r.nonChiffres ? ' ; ' + r.nonChiffres + ' ligne(s) non chiffrée(s), voir la colonne note' : '') + '.';
+    $('impact-resume').innerHTML = '<div><span>Séjours chiffrés</span><b>' + nombre(r.sejours) + '</b></div><div><span>Tarifs ' + comparaison.campagneA + '</span><b>' + euros(r.totalA) + '</b></div><div><span>Tarifs ' + comparaison.campagneB + '</span><b>' + euros(r.totalB) + '</b></div><div><span>Écart</span><b class="' + signe(r.delta) + '">' + (r.delta > 0 ? '+' : '') + euros(r.delta) + '</b></div><div><span>Écart relatif</span><b class="' + signe(r.pct) + '">' + pct(r.pct) + '</b></div>';
+    $('impact-tableau').innerHTML = '<table><thead><tr><th class="num">Ligne</th><th>Code</th><th>GHS</th><th class="num">Séjours</th><th class="num">Tarif ' + comparaison.campagneA + '</th><th class="num">Tarif ' + comparaison.campagneB + '</th><th class="num">Montant ' + comparaison.campagneA + '</th><th class="num">Montant ' + comparaison.campagneB + '</th><th class="num">Écart</th><th>Note</th></tr></thead><tbody>'
+      + r.lignes.map((l) => '<tr><td class="num">' + l.ligne + '</td><td class="code">' + echapper(l.code) + '</td><td>' + (l.ghs ? echapper(l.ghs) + ' <small>' + echapper(l.ghm) + ' ' + echapper(l.libelle) + '</small>' : '') + '</td><td class="num">' + (l.volume === null ? '' : nombre(l.volume)) + '</td><td class="num">' + euros(l.tarifA) + '</td><td class="num">' + euros(l.tarifB) + '</td><td class="num">' + euros(l.montantA) + '</td><td class="num">' + euros(l.montantB) + '</td><td class="num ' + signe(l.delta) + '">' + (l.delta === null ? '' : (l.delta > 0 ? '+' : '') + euros(l.delta)) + '</td><td>' + echapper(l.note) + '</td></tr>').join('')
+      + '</tbody></table>';
+    $('impact-resultats').className = '';
+  }
+  $('bouton-impact').addEventListener('click', () => calculer($('volumes').value));
+  $('fichier-volumes').addEventListener('change', async function () {
+    const f = this.files && this.files[0];
+    if (!f) return;
+    const texte = await lireFichierTexte(f);
+    $('volumes').value = texte;
+    calculer(texte);
+  });
+  $('bouton-export-impact').addEventListener('click', () => {
+    if (!dernierImpact) return;
+    telecharger('impact-tarifs-' + comparaison.campagneA + '-' + comparaison.campagneB + '.csv', T.rapportImpactCsv(comparaison, dernierImpact));
+  });
+})();
+</script>
+</body>
+</html>
