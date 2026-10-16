@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
+<title>Contrôle FINESS : vérifier une liste d'établissements dans le navigateur</title>
+<meta name="description" content="Collez une liste d'établissements (numéros FINESS, SIRET, codes postaux) et obtenez aussitôt les écarts avec FINESS+. Tout se calcule dans votre navigateur, rien n'est envoyé.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://referentiels-sante.irreductix.fr/controle/">
+<link rel="icon" href="../favicon.png" sizes="64x64" type="image/png">
+<style>
+  :root {
+    --bg: #282722; --panel: #302f29; --ivory: #f5f0e4; --muted: #c0beb0; --ochre: #dda34f; --sage: #bdc6a7;
+    --line: #ffffff24; --ink: #2a2b24; --ink-2: #5a5b52; --paper-line: #2a2b2420; --paper-code: #2a2b240c;
+    --rouge: #a8321f; --orange: #b4700f; --jaune: #8a7a1f; --vert: #3e6b3a;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ivory); font: 16px/1.6 var(--sans); overflow-wrap: anywhere; }
+  a { color: var(--ochre); text-underline-offset: 3px; }
+  a:hover { color: var(--ivory); }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+  .col { max-width: 980px; margin: 0 auto; padding-inline: 20px; }
+  .barre { border-bottom: 1px solid var(--line); }
+  .barre .col { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding-block: 12px; }
+  .barre .village { font-family: var(--serif); font-size: 17px; text-decoration: none; color: var(--ivory); }
+  .barre .village span { color: var(--ochre); }
+  .barre nav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 15px; }
+  .barre nav a { color: var(--muted); text-decoration: none; }
+  .barre nav a:hover { color: var(--ochre); }
+  .hero { padding-block: 40px 36px; }
+  h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(30px, 5vw, 42px); line-height: 1.18; margin: 0 0 14px; }
+  .intro { font-size: 18px; color: var(--muted); max-width: 720px; margin: 0 0 20px; }
+  .garantie { border: 1px solid var(--line); border-left: 3px solid var(--sage); border-radius: 6px; background: #ffffff07; padding: 14px 18px; max-width: 720px; margin: 0 0 22px; }
+  .garantie p { margin: 0; }
+  .garantie strong { color: var(--sage); }
+  .etat { display: flex; align-items: flex-start; gap: 10px; font-size: 15px; color: var(--muted); }
+  .etat .pastille { flex: none; display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--ochre); margin-top: 7px; }
+  .hero input[type="file"] { color: var(--muted); }
+  .etat.ok .pastille { background: var(--sage); }
+  .etat.erreur .pastille { background: #e06c50; }
+  .horsligne { margin-top: 14px; font-size: 15px; color: var(--muted); }
+  .paper { background: var(--ivory); color: var(--ink); padding-block: 40px 56px; }
+  .paper h2 { font-family: var(--serif); font-weight: 400; font-size: 28px; line-height: 1.25; margin: 52px 0 14px; padding-top: 26px; border-top: 1px solid var(--paper-line); }
+  .paper h2:first-child { margin-top: 0; padding-top: 0; border-top: 0; }
+  .paper h3 { font-family: var(--serif); font-weight: 400; font-size: 21px; margin: 26px 0 8px; }
+  .paper a { color: #8a4f0a; }
+  .paper a:hover { color: var(--ink); }
+  p, ul, ol { margin: 0 0 14px; }
+  .paper code { font-family: var(--mono); font-size: 0.9em; background: var(--paper-code); border: 1px solid var(--paper-line); border-radius: 4px; padding: 1px 5px; }
+  .paper .discret { color: var(--ink-2); font-size: 15px; }
+  input[type="search"], textarea { width: 100%; font: inherit; color: var(--ink); background: #ffffffaa; border: 1px solid #2a2b2440; border-radius: 6px; padding: 10px 12px; }
+  textarea { min-height: 150px; font-family: var(--mono); font-size: 14px; line-height: 1.5; resize: vertical; }
+  input[type="file"] { font: inherit; color: var(--ink); max-width: 100%; }
+  .bouton { font: inherit; font-weight: 600; color: var(--ivory); background: var(--ink); border: 0; border-radius: 6px; padding: 10px 18px; cursor: pointer; }
+  .bouton:hover { background: #3f4039; }
+  .bouton.second { background: transparent; color: var(--ink); border: 1px solid #2a2b2460; }
+  .bouton.second:hover { background: #2a2b2410; }
+  .bouton[disabled] { opacity: 0.5; cursor: default; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; margin: 12px 0 18px; }
+  .tableau { overflow-x: auto; margin: 0 0 16px; border: 1px solid var(--paper-line); border-radius: 6px; background: #ffffff55; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--paper-line); }
+  th { background: #2a2b2410; font-weight: 600; white-space: nowrap; }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td .g { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: -1px; }
+  td small { display: block; color: var(--ink-2); font-size: 13px; }
+  td .v3 { color: var(--rouge); font-weight: 600; } td .v2 { color: var(--orange); font-weight: 600; } td .v1 { color: var(--jaune); }
+  .g3 { background: var(--rouge); } .g2 { background: var(--orange); } .g1 { background: var(--jaune); } .g0 { background: var(--vert); }
+  .resume { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 0 0 14px; font-size: 15px; }
+  .resume b { font-size: 22px; font-family: var(--serif); font-weight: 400; margin-right: 4px; }
+  .legende span { display: inline-block; margin-right: 16px; }
+  .cache { display: none; }
+  footer { border-top: 1px solid var(--line); }
+  footer .col { padding-block: 28px 44px; font-size: 14px; color: var(--muted); }
+  footer p { margin-bottom: 8px; }
+  footer .village { font-family: var(--serif); font-size: 17px; color: var(--ivory); margin-bottom: 12px; }
+  footer .village a { color: var(--ivory); text-decoration: none; }
+  footer .village a:hover { color: var(--ochre); }
+</style>
+</head>
+<body>
+
+<header class="barre">
+<div class="col">
+<a class="village" href="https://irreductix.fr/" title="Le collectif Irréductix">Un outil du village <span>Irréductix</span></a>
+<nav aria-label="Liens du projet">
+<a href="../">referentiels-sante</a>
+<a href="https://github.com/Irreductix/referentiels-sante/tree/main/site/controle">Code de cette page</a>
+<a href="https://github.com/Irreductix/referentiels-sante/issues">Signaler un écart</a>
+</nav>
+</div>
+</header>
+
+<main>
+<section class="hero">
+<div class="col">
+<h1>Contrôle FINESS</h1>
+<p class="intro">Retrouvez un établissement en tapant son nom ou son numéro, et vérifiez d'un coup une liste entière (numéros FINESS, SIRET, codes postaux) contre FINESS+, le répertoire national de l'Agence du Numérique en Santé.</p>
+<div class="garantie">
+<p><strong>Rien ne quitte votre navigateur.</strong> Une fois l'index chargé, cette page ne fait plus aucune requête : votre liste n'est envoyée nulle part, ni à nous ni à personne. Pas de cookie, pas de traceur, pas de compte. Le code de la page est public et tient en deux fichiers.</p>
+</div>
+<p class="etat" id="etat"><span class="pastille"></span><span id="etat-texte">Chargement de l'index FINESS+ (6 Mo)…</span></p>
+<div class="horsligne" id="horsligne">
+<label>Sans connexion, ou si le chargement échoue : chargez l'index depuis un fichier <code>index-finess.csv.gz</code> <input type="file" id="fichier-index" accept=".gz,.csv"></label>
+</div>
+</div>
+</section>
+
+<div class="paper">
+<div class="col">
+
+<h2 id="rechercher">Rechercher un établissement</h2>
+<p><label for="recherche">Nom, commune, numéro FINESS ou SIRET, même partiels. Les accents et « St » ne comptent pas.</label></p>
+<input type="search" id="recherche" placeholder="par exemple : hopital mercy, 570000141, 26570280300510" autocomplete="off" disabled>
+<p class="discret" id="recherche-info"></p>
+<div class="tableau cache" id="recherche-tableau"></div>
+
+<h2 id="controler">Contrôler une liste</h2>
+<p>Copiez des colonnes depuis Excel et collez-les ci-dessous, ou déposez un fichier CSV. Il faut au moins une colonne de numéros FINESS ; le SIRET, le code postal et le nom sont reconnus s'ils sont là, avec ou sans ligne d'en-tête, dans n'importe quel ordre.</p>
+<textarea id="liste" placeholder="Raison sociale	Code postal et commune	N° FINESS	N° SIRET&#10;HOPITAL DE MERCY	57530 ARS LAQUENEXY	57 000 014 1	265 702 803 00510" disabled></textarea>
+<div class="actions">
+<button class="bouton" id="bouton-controler" disabled>Contrôler la liste</button>
+<label class="discret">ou déposer un fichier <input type="file" id="fichier-liste" accept=".csv,.txt,.tsv" disabled></label>
+</div>
+<p class="discret" id="colonnes"></p>
+<div id="resultats" class="cache">
+<div class="resume" id="resume"></div>
+<div class="actions"><button class="bouton second" id="bouton-rapport">Télécharger le rapport (CSV)</button></div>
+<div class="tableau" id="resultats-tableau"></div>
+<h3 id="absents-titre" class="cache">Établissements actifs dans FINESS mais absents de la liste</h3>
+<div class="tableau cache" id="absents-tableau"></div>
+<p class="discret" id="entites"></p>
+</div>
+<p class="legende discret"><span><i class="g g3"></i> écart à corriger</span><span><i class="g g2"></i> écart à vérifier</span><span><i class="g g1"></i> à regarder</span><span><i class="g g0"></i> concorde</span></p>
+
+<h2 id="lire">Comment lire les résultats</h2>
+<ul>
+<li><strong>Inconnu de FINESS</strong> : le numéro n'existe pas dans le répertoire. Si sa clé de contrôle est invalide, c'est presque toujours une faute de frappe ; la colonne « pistes » propose le numéro voisin le plus probable.</li>
+<li><strong>SIRET différent</strong> : la page dit si ce SIRET appartient à un autre établissement de la même entité, ou s'il figure sur une autre ligne de votre liste (SIRET intervertis). Sinon, vérifiez lequel est à jour dans l'<a href="https://annuaire-entreprises.data.gouv.fr/">annuaire des entreprises</a>.</li>
+<li><strong>Code postal</strong> : un code CEDEX dans FINESS pour la même commune n'est pas une erreur. Un code différent demande un regard.</li>
+<li><strong>Absents de la liste</strong> : les établissements que FINESS dit actifs pour vos entités juridiques et qui ne sont pas dans votre liste. À ajouter s'ils sont toujours en activité ; sinon, c'est FINESS qu'il faut faire mettre à jour, par l'ARS.</li>
+</ul>
+<p class="discret">Cette page ne corrige rien et ne fait pas foi : la source reste FINESS+ (<a href="https://finess.esante.gouv.fr/">consultation officielle</a>). Les données chargées sont l'instantané mensuel de l'ANS, publié sur data.gouv.fr sous Licence Ouverte 2.0 et converti par <a href="../">referentiels-sante</a>.</p>
+
+<h2 id="horsligne-titre">Utiliser la page hors ligne</h2>
+<p>Pour un poste sans accès à internet, ou si votre service préfère ne rien charger depuis l'extérieur : téléchargez <a href="https://github.com/Irreductix/referentiels-sante/releases/download/donnees-du-mois/controle-finess-hors-ligne.zip">controle-finess-hors-ligne.zip</a>, décompressez-le, ouvrez <code>index.html</code> dans votre navigateur, puis chargez le fichier <code>index-finess.csv.gz</code> du même dossier avec le bouton prévu en haut de page. L'archive est refaite le 2 de chaque mois avec le nouvel instantané.</p>
+
+</div>
+</div>
+</main>
+
+<footer>
+<div class="col">
+<p class="village"><a href="https://irreductix.fr/">Irréductix</a> : des outils libres pour le service public, construits à partir de données publiques.</p>
+<p>Page écrite et maintenue par <a href="https://github.com/QuentinCazier">Quentin Cazier</a>, code sous licence MIT. Données : FINESS+, Agence du Numérique en Santé, Licence Ouverte 2.0 ; libellés des codes : Nomenclatures des objets de santé (NOS) de l'ANS. Sans cookie ni ressource externe.</p>
+</div>
+</footer>
+
+<script src="controle.js"></script>
+<script>
+(function () {
+  'use strict';
+  const C = window.Controle;
+  const $ = (id) => document.getElementById(id);
+  let index = null;
+  let dernierResultat = null;
+
+  const echapper = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const nombre = (n) => Number(n).toLocaleString('fr-FR');
+
+  function etat(classe, texte) {
+    const e = $('etat');
+    e.className = 'etat ' + classe;
+    $('etat-texte').textContent = texte;
+  }
+
+  function activer() {
+    for (const id of ['recherche', 'liste', 'bouton-controler', 'fichier-liste']) $(id).disabled = false;
+  }
+
+  async function decompresser(flux) {
+    if (typeof DecompressionStream === 'undefined') throw new Error('ce navigateur ne sait pas décompresser le fichier ; chargez un index .csv non compressé');
+    return new Response(flux.pipeThrough(new DecompressionStream('gzip'))).text();
+  }
+
+  function installer(texte, provenance) {
+    index = C.lireIndex(texte);
+    etat('ok', 'Index chargé : ' + nombre(index.nombre) + ' établissements, dont ' + nombre(index.actifs) + ' en activité' + (provenance ? ' (' + provenance + ')' : '') + '. Plus aucune requête ne part de cette page.');
+    activer();
+  }
+
+  async function chargerEnLigne() {
+    const reponse = await fetch('../index-finess.csv.gz', { cache: 'no-cache' });
+    if (!reponse.ok) throw new Error('index indisponible (HTTP ' + reponse.status + ')');
+    const texte = await decompresser(reponse.body);
+    let provenance = '';
+    try {
+      const meta = await (await fetch('../index-finess.json', { cache: 'no-cache' })).json();
+      if (meta && meta.instantane) provenance = 'instantané ' + meta.instantane + (meta.produit ? ', produit par l\'ANS le ' + meta.produit : '');
+    } catch (e) { /* la date est un confort, pas une condition */ }
+    installer(texte, provenance);
+  }
+
+  $('fichier-index').addEventListener('change', async function () {
+    const f = this.files && this.files[0];
+    if (!f) return;
+    etat('', 'Lecture de ' + f.name + '…');
+    try {
+      const texte = /\.gz$/i.test(f.name) ? await decompresser(f.stream()) : await f.text();
+      installer(texte, 'fichier ' + f.name);
+    } catch (e) {
+      etat('erreur', 'Impossible de lire ce fichier : ' + e.message);
+    }
+  });
+
+  if (location.protocol === 'file:') {
+    etat('', 'Page ouverte hors ligne : chargez l\'index depuis le fichier index-finess.csv.gz ci-dessous.');
+  } else {
+    chargerEnLigne().catch((e) => etat('erreur', 'Chargement de l\'index impossible (' + e.message + '). Vous pouvez le charger depuis un fichier ci-dessous.'));
+  }
+
+  // Recherche
+  let minuteur = null;
+  $('recherche').addEventListener('input', function () {
+    clearTimeout(minuteur);
+    const q = this.value;
+    minuteur = setTimeout(() => afficherRecherche(q), 150);
+  });
+
+  function afficherRecherche(q) {
+    const tableau = $('recherche-tableau');
+    if (!index || q.trim().length < 2) {
+      tableau.className = 'tableau cache';
+      $('recherche-info').textContent = '';
+      return;
+    }
+    const r = C.chercher(index, q, 50);
+    $('recherche-info').textContent = r.length ? (r.length >= 50 ? '50 premiers résultats, précisez la recherche' : r.length + ' résultat' + (r.length > 1 ? 's' : '')) : 'Aucun établissement ne correspond.';
+    tableau.className = 'tableau' + (r.length ? '' : ' cache');
+    tableau.innerHTML = '<table><thead><tr><th>FINESS</th><th>Établissement</th><th>Commune</th><th>Catégorie</th><th>État</th><th>SIRET</th><th>Entité juridique</th></tr></thead><tbody>'
+      + r.map((e) => '<tr><td class="num">' + echapper(e.et) + '</td><td>' + echapper(e.nomLong || e.nomCourt) + '</td><td>' + echapper(e.cp + ' ' + e.commune) + '</td><td>' + echapper(e.categorie) + '</td><td>' + (e.etat === 'A' ? 'actif' : 'fermé' + (e.dateFermeture ? ' le ' + echapper(e.dateFermeture) : '')) + '</td><td class="num">' + echapper(e.siret) + '</td><td>' + echapper(e.ej + ' ' + e.ejNom) + '</td></tr>').join('')
+      + '</tbody></table>';
+  }
+
+  // Contrôle d'une liste
+  $('bouton-controler').addEventListener('click', () => controlerTexte($('liste').value));
+  $('fichier-liste').addEventListener('change', async function () {
+    const f = this.files && this.files[0];
+    if (!f) return;
+    const texte = await f.text();
+    $('liste').value = texte;
+    controlerTexte(texte);
+  });
+
+  function controlerTexte(texte) {
+    if (!index) return;
+    const liste = C.lireListe(texte);
+    const col = liste.colonnes;
+    if (!liste.lignes.length || col.finess === undefined) {
+      $('colonnes').textContent = 'Aucune colonne de numéros FINESS reconnue : collez au moins une colonne de numéros à neuf caractères.';
+      $('resultats').className = 'cache';
+      return;
+    }
+    const nomCol = (i) => (i === undefined ? 'absente' : 'colonne ' + (i + 1));
+    $('colonnes').textContent = 'Colonnes reconnues : FINESS en ' + nomCol(col.finess) + ', SIRET ' + nomCol(col.siret) + ', code postal ' + nomCol(col.cp) + ', nom ' + nomCol(col.nom) + (liste.entete ? ' ; première ligne lue comme en-tête' : '') + '. ' + liste.lignes.length + ' lignes.';
+    const r = C.controler(index, liste);
+    dernierResultat = r;
+    $('resume').innerHTML = '<span><b>' + r.comptes.lignes + '</b> lignes</span><span><b>' + r.comptes.ecarts + '</b> écarts</span><span><b>' + r.comptes.aVerifier + '</b> à regarder</span><span><b>' + r.comptes.conformes + '</b> concordent</span><span><b>' + r.comptes.absents + '</b> absents de la liste</span>';
+    const classe = (verdict, grave) => (verdict === 'concorde' || !verdict ? '' : grave ? ' class="v' + grave + '"' : '');
+    const graviteSiret = (x) => (/^différent|mal formé|illisible/.test(x.verdictSiret) ? 3 : /absent de FINESS|SIREN seul dans la liste, différent|SIREN différent/.test(x.verdictSiret) ? 2 : /cohérent|des deux côtés|non comparé/.test(x.verdictSiret) ? 0 : 1);
+    const graviteCp = (x) => (/^différent|autre code postal/.test(x.verdictCp) ? 2 : 1);
+    $('resultats-tableau').innerHTML = '<table><thead><tr><th></th><th class="num">Ligne</th><th>Dans la liste</th><th>Dans FINESS</th><th>SIRET</th><th>Code postal</th><th>Pistes</th></tr></thead><tbody>'
+      + r.resultats.map((x) => '<tr><td><i class="g g' + x.gravite + '" title="gravité ' + x.gravite + '"></i></td>'
+        + '<td class="num">' + x.ligne + '</td>'
+        + '<td>' + echapper(x.nom) + '<small class="num">' + echapper(x.finess) + '</small></td>'
+        + '<td><span' + (x.gravite === 3 && /inconnu|illisible/.test(x.resultat) ? ' class="v3"' : '') + '>' + echapper(x.resultat) + (x.cle === 'invalide' ? ' (clé invalide)' : '') + '</span>' + (x.nomFiness ? '<small>' + echapper(x.nomFiness) + (x.etat ? ', ' + (x.etat.indexOf('fermé') === 0 ? '<span class="v3">' + echapper(x.etat) + '</span>' : echapper(x.etat)) : '') + '</small>' : '') + '</td>'
+        + '<td><span' + classe(x.verdictSiret, graviteSiret(x)) + '>' + echapper(x.verdictSiret) + '</span>' + (x.siret || x.siretFiness ? '<small class="num">liste ' + echapper(x.siret || 'vide') + '<br>FINESS ' + echapper(x.siretFiness || 'vide') + '</small>' : '') + '</td>'
+        + '<td><span' + classe(x.verdictCp, graviteCp(x)) + '>' + echapper(x.verdictCp) + '</span>' + (x.cp || x.cpFiness ? '<small class="num">liste ' + echapper(x.cp || 'vide') + ', FINESS ' + echapper(x.cpFiness || 'vide') + '</small>' : '') + '</td>'
+        + '<td>' + echapper(x.pistes.join(' ; ')) + '</td></tr>').join('')
+      + '</tbody></table>';
+    const absents = $('absents-tableau');
+    $('absents-titre').className = r.absents.length ? '' : 'cache';
+    absents.className = 'tableau' + (r.absents.length ? '' : ' cache');
+    absents.innerHTML = '<table><thead><tr><th class="num">FINESS</th><th>Établissement</th><th>Catégorie</th><th>Commune</th><th class="num">SIRET</th><th class="num">Entité</th></tr></thead><tbody>'
+      + r.absents.map((a) => '<tr><td class="num">' + echapper(a.finess) + '</td><td>' + echapper(a.nom) + '</td><td>' + echapper(a.categorie) + '</td><td>' + echapper(a.cp + ' ' + a.commune) + '</td><td class="num">' + echapper(a.siret) + '</td><td class="num">' + echapper(a.ej) + '</td></tr>').join('')
+      + '</tbody></table>';
+    $('entites').textContent = r.entites.map((e) => e.ej + ' ' + e.nom + ' : ' + e.total + ' établissements dans FINESS dont ' + e.actifs + ' actifs, ' + e.dansListe + ' dans la liste').join(' ; ');
+    $('resultats').className = '';
+    $('resultats').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  $('bouton-rapport').addEventListener('click', () => {
+    if (!dernierResultat) return;
+    const blob = new Blob([C.rapportCsv(dernierResultat)], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'controle-finess.csv';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
+})();
+</script>
+</body>
+</html>
