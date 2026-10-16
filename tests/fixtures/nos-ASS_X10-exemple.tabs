@@ -1,0 +1,6 @@
+<OID>;<Type fichier>;<Nom fichier>;<Description>;<URL fichier>;<Date valid>;<Date fin>;<Date MàJ>
+1.2.250.1.213.1.6.1.113;ASS;ASS_X10-AgregatCategorieEtablissement.tabs;Association d'agrégats des catégories d'établissements;https://mos.esante.gouv.fr/NOS/ASS_X10-AgregatCategorieEtablissement;20160901000000;;20260223120000
+<1.2.250.1.213.1.6.1.5> TRE_R63-AgregatCategorieEtablissementNiv1;<1.2.250.1.213.1.6.1.6> TRE_R64-AgregatCategorieEtablissementNiv2;<1.2.250.1.213.1.6.1.7> TRE_R65-AgregatCategorieEtablissement;<1.2.250.1.213.1.6.1.8> TRE_R66-CategorieEtablissement;<1.2.250.1.213.1.6.1.59> TRE_R62-Domaine
+4000;4400;4401;001;SOC
+4000;4400;4401;002;SOC
+1000;1100;1109;003;SAN

@@ -19,26 +19,26 @@ import { EcrivainCsv } from '../commun/csv.js';
 
 export const URL_NOS = 'https://mos.esante.gouv.fr/NOS';
 
-/** Tables utilisées par ce projet (clé courte vers nom officiel). */
+/** Tables exportées par défaut : celles des fichiers FINESS structures (clé courte vers nom officiel). */
 export const TABLES = {
   categorieEtablissement: 'TRE_R66-CategorieEtablissement',
   agregatCategorieNiv1: 'TRE_R63-AgregatCategorieEtablissementNiv1',
   agregatCategorieNiv2: 'TRE_R64-AgregatCategorieEtablissementNiv2',
+  agregatCategorieNiv3: 'TRE_R65-AgregatCategorieEtablissement',
   associationAgregatCategorie: 'ASS_X10-AgregatCategorieEtablissement',
   statutJuridique: 'TRE_R72-FinessStatutJuridique',
   agregatStatutNiv1: 'TRE_R68-FinessAgregatStatutJuridiqueNiv1',
   agregatStatutNiv2: 'TRE_R69-FinessAgregatStatutJuridiqueNiv2',
+  associationAgregatStatut: 'ASS_X11-FinessAgregatStatutJuridique',
   espic: 'TRE_R73-ESPIC',
   modeFixationTarifaire: 'TRE_R74-ModeFixationTarifaire',
   departement: 'TRE_G09-DepartementOM',
-  region: 'TRE_R30-RegionOM',
   activiteSanitaireRegulee: 'TRE_R274-ActiviteSanitaireRegulee',
-  modaliteActivite: 'TRE_R275-ModaliteActivite',
-  formeActivite: 'TRE_R276-FormeActivite',
   equipementMaterielLourd: 'TRE_R272-EquipementMaterielLourd',
-  typeFermeture: 'TRE_R286-TypeFermeture',
-  autoriteEnregistrement: 'TRE_R60-AutoriteEnregistrement',
 };
+
+/** Les colonnes d'une association sont nommées « <OID> Nom-de-table » : on garde le nom. */
+export const nomColonneAssociation = (s) => s.replace(/^<?[\d.]+>?\s+/, '');
 
 export function urlTable(nom) {
   return `${URL_NOS}/${nom}/${nom}.tabs`;
@@ -135,8 +135,21 @@ export async function exporterTables(noms, { sortie = 'data/nos', cache, forcer,
   const resume = [];
   for (const nom of noms) {
     const officiel = TABLES[nom] ?? nom;
-    const table = await chargerTable(officiel, { cache, forcer, journal });
     const base = join(sortie, officiel);
+    // Une association (ASS_) n'a ni code ni libellé : ses colonnes sont les tables qu'elle relie.
+    if (/^ASS_/i.test(officiel)) {
+      const ass = await chargerAssociation(officiel, { cache, forcer, journal });
+      const colonnes = ass.colonnes.map(nomColonneAssociation);
+      const lignes = ass.lignes.map((l) => Object.fromEntries(ass.colonnes.map((c, i) => [colonnes[i], l[c]])));
+      const dateMaj = dateIso(ass.descripteur['Date MàJ']);
+      writeFileSync(`${base}.json`, JSON.stringify({ nom: officiel, oid: ass.descripteur.OID ?? null, description: ass.descripteur.Description ?? null, dateMaj, colonnes, lignes }, null, 1) + '\n');
+      const csv = new EcrivainCsv(`${base}.csv`, colonnes);
+      for (const l of lignes) await csv.ecrire(l);
+      await csv.fermer();
+      resume.push({ table: officiel, concepts: lignes.length, dateMaj });
+      continue;
+    }
+    const table = await chargerTable(officiel, { cache, forcer, journal });
     writeFileSync(`${base}.json`, JSON.stringify(table, null, 1) + '\n');
     const csv = new EcrivainCsv(`${base}.csv`, ['code', 'libelle', 'libelleCourt', 'libelleLong', 'dateDebut', 'dateFin', 'actif']);
     for (const c of table.concepts) await csv.ecrire(c);

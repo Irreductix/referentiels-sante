@@ -63,11 +63,13 @@ jointure.
 | denomination, denomination_longue, complement_adresse | denominationPm, denominationLonguePmSmsse, complementAdressePmSmsse |
 | siren, code_ape | siren, codeApe |
 | statut_juridique et libellé, agrégats niv1 et niv2 | statutJuridique, TRE_R72, ASS_X11, TRE_R68, TRE_R69 |
-| type_personne_morale, fonction_publique, categorie, type_groupe_gco | champs homonymes ; ces codes internes n'ont pas de table NOS publiée, ils sont restitués bruts |
+| type_personne_morale, fonction_publique, type_groupe_gco | champs homonymes ; ces codes internes n'ont pas de table NOS publiée, ils sont restitués bruts |
 | etat, date_creation, date_fermeture | etatObjet, dateCreation, dateFermeture |
 | colonnes d'adresse et de contact | comme pour les établissements, adresse d'usage `02` (siège) |
 | nb_etablissements, nb_etablissements_actifs | calculés sur `ege[]` |
 | date_derniere_maj | dateDerniereMaj |
+
+Jusqu'à la 0.3.4, ce fichier portait aussi `categorie` et `categorie_libelle` : la catégorie n'existe qu'au niveau de l'établissement dans FINESS+, et ces deux colonnes étaient vides pour les 98 000 entités juridiques. Elles ont été retirées en 0.3.5.
 
 ## groupements-conventionnels.csv, groupements-cooperation.csv, groupements-membres.csv
 
