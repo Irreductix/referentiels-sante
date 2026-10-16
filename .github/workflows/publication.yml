@@ -109,7 +109,7 @@ jobs:
             node .github/scripts/index-finess.mjs sortie/finess/etablissements.csv sortie/index-finess.csv.gz
             node -e "const r = require('./sortie/finess/structures-resume.json'); require('fs').writeFileSync('sortie/index-finess.json', JSON.stringify({ instantane: require('path').basename(r.source), produit: String(r.generatedAt).slice(0, 10), converti: String(r.converti).slice(0, 10), etablissements: r.etablissements }) + '\n')"
             # La page de contrôle avec son index, pour un poste sans accès à internet.
-            zip -q -j sortie/controle-finess-hors-ligne.zip site/controle/index.html site/controle/controle.js sortie/index-finess.csv.gz sortie/index-finess.json
+            zip -q -j sortie/controle-finess-hors-ligne.zip site/controle/index.html site/controle/controle.js site/controle/logo.png site/controle/irreductix.webp sortie/index-finess.csv.gz sortie/index-finess.json
             instantane=$(node -p "require('path').basename(require('./sortie/finess/structures-resume.json').source)")
             produit=$(node -p "String(require('./sortie/finess/structures-resume.json').generatedAt).slice(0, 10)")
             notes="Fichiers FINESS+ convertis depuis l'instantané mensuel ${instantane}, produit par l'ANS le ${produit}. Source : Agence du Numérique en Santé, data.gouv.fr, Licence Ouverte 2.0 ; libellés des codes : Nomenclatures des objets de santé (NOS) de l'ANS. Détail dans MENTION-SOURCE.txt et docs/FINESS.md."

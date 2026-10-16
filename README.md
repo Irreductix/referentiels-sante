@@ -2,6 +2,15 @@
 
 <p align="center"><img src="docs/logo.png" alt="" width="360"></p>
 
+<p align="center">
+<a href="https://referentiels-sante.irreductix.fr/controle/"><img src="https://img.shields.io/badge/Contr%C3%B4le_FINESS-v%C3%A9rifier_une_liste_dans_le_navigateur-dda34f?style=for-the-badge&labelColor=282722" alt="Contrôle FINESS"></a>
+<a href="https://referentiels-sante.irreductix.fr/"><img src="https://img.shields.io/badge/Site-mode_d'emploi_et_fichiers_du_mois-bdc6a7?style=for-the-badge&labelColor=282722" alt="Site"></a>
+<a href="https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess"><img src="https://img.shields.io/badge/data.gouv.fr-FINESS_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="FINESS en CSV sur data.gouv.fr"></a>
+<a href="https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle"><img src="https://img.shields.io/badge/data.gouv.fr-M%C3%A9dicaments_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="Base des médicaments en CSV sur data.gouv.fr"></a>
+<a href="https://www.npmjs.com/package/referentiels-sante"><img src="https://img.shields.io/npm/v/referentiels-sante?style=for-the-badge&labelColor=282722&color=c0beb0&label=npm" alt="npm"></a>
+<a href="https://irreductix.fr/"><img src="https://img.shields.io/badge/Irr%C3%A9ductix-le_collectif-282722?style=for-the-badge&labelColor=dda34f" alt="Irréductix"></a>
+</p>
+
 **Les référentiels publics de la santé en France, convertis en CSV propres, et
 en JSON pour FINESS+, NOS, CIM-10 et GHS. Sans dépendance, en une commande.**
 

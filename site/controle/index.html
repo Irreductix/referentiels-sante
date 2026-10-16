@@ -11,93 +11,137 @@
 <link rel="icon" href="data:image/png;base64,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" sizes="64x64" type="image/png">
 <style>
   :root {
-    --bg: #282722; --panel: #302f29; --ivory: #f5f0e4; --muted: #c0beb0; --ochre: #dda34f; --sage: #bdc6a7;
-    --line: #ffffff24; --ink: #2a2b24; --ink-2: #5f6057; --paper-line: #2a2b2426; --paper-2: #ece6d6;
+    --bg: #282722; --panel: #302f29; --ivory: #f5f0e4; --muted: #c0beb0; --ochre: #dda34f; --sage: #bdc6a7; --line: #ffffff24;
+    --fond: #f3f1ea; --carte: #ffffff; --trait: #e2ddd0; --texte: #2a2b24; --texte-2: #5f6057; --lien: #8a4f0a; --doux: #faf8f2;
     --rouge: #a8321f; --orange: #b4700f; --jaune: #7d6d14; --vert: #3e6b3a;
-    --serif: Georgia, "Times New Roman", serif;
     --sans: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
     --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
-    color-scheme: dark;
+    color-scheme: light;
   }
   * { box-sizing: border-box; }
   html { -webkit-text-size-adjust: 100%; }
-  body { margin: 0; background: var(--ivory); color: var(--ink); font: 15px/1.5 var(--sans); overflow-wrap: anywhere; min-height: 100vh; display: flex; flex-direction: column; }
-  a { color: #8a4f0a; text-underline-offset: 3px; }
-  a:hover { color: var(--ink); }
-  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
-  .page { width: 100%; padding-inline: clamp(16px, 2.5vw, 44px); }
+  body { margin: 0; background: var(--fond); color: var(--texte); font: 15px/1.5 var(--sans); overflow-wrap: anywhere; min-height: 100vh; display: flex; flex-direction: column; }
+  a { color: var(--lien); text-underline-offset: 3px; }
+  a:hover { color: var(--texte); }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible, label:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+  .page { width: 100%; max-width: 1600px; margin: 0 auto; padding-inline: clamp(16px, 2.5vw, 44px); }
+  svg.ic { width: 20px; height: 20px; vertical-align: -4px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-  .barre { background: var(--bg); color: var(--ivory); border-bottom: 1px solid var(--line); }
-  .barre .page { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; padding-block: 10px; }
-  .barre .titre { font-family: var(--serif); font-size: 20px; color: var(--ivory); text-decoration: none; }
-  .barre .titre small { font-family: var(--sans); font-size: 13px; color: var(--muted); margin-left: 10px; }
-  .barre nav { display: flex; flex-wrap: wrap; gap: 4px 18px; font-size: 14px; }
+  .barre { background: var(--bg); color: var(--ivory); }
+  .barre .page { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding-block: 10px; }
+  .barre .logo { display: inline-block; background: var(--ivory); border-radius: 8px; padding: 8px 14px; line-height: 0; }
+  .barre .logo img { height: 30px; width: auto; display: block; }
+  .barre .droite { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; }
+  .barre nav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 14.5px; }
   .barre nav a { color: var(--muted); text-decoration: none; }
   .barre nav a:hover { color: var(--ochre); }
+  .barre .village { line-height: 0; }
+  .barre .village img { height: 36px; width: auto; display: block; opacity: 0.95; }
+  .barre .village:hover img { opacity: 1; }
 
-  .bandeau { background: var(--bg); color: var(--ivory); }
-  .bandeau .page { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 24px; padding-block: 10px 14px; font-size: 14px; color: var(--muted); }
-  .bandeau .etat { display: flex; align-items: baseline; gap: 8px; margin: 0; }
-  .bandeau .pastille { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ochre); position: relative; top: -1px; }
-  .etat.ok .pastille { background: var(--sage); }
-  .etat.erreur .pastille { background: #e06c50; }
-  .bandeau details { margin: 0; }
-  .bandeau summary { cursor: pointer; color: var(--muted); list-style: none; }
-  .bandeau summary::-webkit-details-marker { display: none; }
-  .bandeau summary:hover { color: var(--ochre); }
-  .bandeau details[open] summary { color: var(--ivory); }
-  .bandeau details p { margin: 8px 0 0; }
-  .bandeau input[type="file"] { color: var(--muted); font: inherit; }
+  .fil { background: var(--carte); border-bottom: 1px solid var(--trait); font-size: 13.5px; color: var(--texte-2); }
+  .fil .page { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 24px; padding-block: 9px; }
+  .fil a { color: var(--texte-2); text-decoration: none; }
+  .fil a:hover { color: var(--lien); }
+  .fil span.sep { margin-inline: 8px; color: var(--trait); }
+  .fil strong { color: var(--texte); font-weight: 600; }
 
-  main.page { flex: 1; padding-block: 22px 40px; }
-  .panneaux { display: grid; grid-template-columns: 1fr; gap: 26px 40px; }
-  @media (min-width: 1100px) { .panneaux { grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); } }
-  h2 { font-family: var(--serif); font-weight: 400; font-size: 21px; line-height: 1.25; margin: 0 0 10px; }
-  h3 { font-family: var(--serif); font-weight: 400; font-size: 18px; margin: 22px 0 8px; }
-  p { margin: 0 0 10px; }
-  .discret { color: var(--ink-2); font-size: 13.5px; }
-  label.discret { display: inline-block; }
-  code { font-family: var(--mono); font-size: 0.92em; }
-  input[type="search"], textarea { width: 100%; font: inherit; color: var(--ink); background: #fffdf8; border: 1px solid #2a2b2455; border-radius: 3px; padding: 8px 10px; }
-  textarea { min-height: 132px; font-family: var(--mono); font-size: 13px; line-height: 1.45; resize: vertical; }
-  input[type="file"] { font: inherit; color: var(--ink); max-width: 100%; }
-  .bouton { font: inherit; font-weight: 600; color: var(--ivory); background: var(--ink); border: 1px solid var(--ink); border-radius: 3px; padding: 7px 16px; cursor: pointer; }
-  .bouton:hover { background: #3f4039; }
-  .bouton.second { background: transparent; color: var(--ink); }
-  .bouton.second:hover { background: #2a2b2412; }
+  main.page { flex: 1; padding-block: 26px 44px; }
+  .entete { display: grid; grid-template-columns: 1fr; gap: 20px 32px; align-items: start; margin-bottom: 22px; }
+  @media (min-width: 1000px) { .entete { grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr); } }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--texte-2); background: #e9e5d8; border-radius: 4px; padding: 4px 10px; margin-bottom: 8px; }
+  h1 { font-size: clamp(30px, 4vw, 40px); line-height: 1.1; margin: 0 0 12px; font-weight: 800; letter-spacing: -0.01em; }
+  .intro { font-size: 17px; color: var(--texte-2); margin: 0; max-width: 70ch; }
+
+  .carte { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 2px #2a2b240a; }
+  .apropos { background: #eef1e6; border-color: #d6ddc6; }
+  .apropos h2 { font-size: 16px; margin: 0 0 8px; }
+  .apropos p { margin: 0 0 10px; font-size: 14px; color: #42463a; }
+  .apropos p:last-child { margin-bottom: 0; }
+  .etat { display: flex; align-items: baseline; gap: 8px; font-size: 14px; color: var(--texte); }
+  .etat .pastille { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--ochre); position: relative; top: -1px; }
+  .etat.ok .pastille { background: #5b8f55; }
+  .etat.erreur .pastille { background: var(--rouge); }
+  .apropos details { font-size: 13.5px; }
+  .apropos summary { cursor: pointer; color: var(--lien); }
+  .apropos details p { margin: 8px 0 0; }
+  input[type="file"] { font: inherit; color: var(--texte); max-width: 100%; }
+
+  .panneaux { display: grid; grid-template-columns: 1fr; gap: 20px 24px; }
+  @media (min-width: 1100px) { .panneaux { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  .carte h2 { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; margin: 0 0 4px; }
+  .carte h2 svg.ic { width: 24px; height: 24px; color: var(--texte-2); }
+  .sous { color: var(--texte-2); font-size: 13.5px; margin: 0 0 14px; }
+  input[type="search"], textarea { width: 100%; font: inherit; color: var(--texte); background: #fff; border: 1px solid #cfc9bb; border-radius: 8px; padding: 10px 12px; }
+  input[type="search"] { font-size: 16px; }
+  textarea { min-height: 128px; font-family: var(--mono); font-size: 13px; line-height: 1.45; resize: vertical; }
+  .astuce { display: flex; gap: 10px; background: var(--doux); border: 1px solid var(--trait); border-radius: 8px; padding: 10px 14px; margin-top: 14px; font-size: 13.5px; color: var(--texte-2); }
+  .astuce svg.ic { flex: none; color: var(--ochre); }
+  .depot { border: 1.5px dashed #c9c2b2; border-radius: 10px; padding: 18px 16px; text-align: center; background: var(--doux); color: var(--texte-2); font-size: 13.5px; margin-bottom: 12px; transition: border-color .15s, background .15s; }
+  .depot.survol { border-color: var(--ochre); background: #fbf4e3; }
+  .depot svg.ic { width: 26px; height: 26px; color: var(--texte-2); }
+  .depot strong { display: block; color: var(--texte); font-size: 15px; margin: 6px 0 2px; }
+  .depot .indic { display: block; }
+  .depot .choisir { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--texte); background: #fff; border: 1px solid #cfc9bb; border-radius: 6px; padding: 7px 14px; cursor: pointer; }
+  .depot .choisir:hover { border-color: var(--texte-2); }
+  .depot input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+  .ou { display: flex; align-items: center; gap: 12px; color: var(--texte-2); font-size: 13px; margin: 10px 0; }
+  .ou::before, .ou::after { content: ""; flex: 1; border-top: 1px solid var(--trait); }
+  .bouton { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; font-weight: 600; color: var(--ivory); background: var(--bg); border: 1px solid var(--bg); border-radius: 8px; padding: 10px 18px; cursor: pointer; }
+  .bouton:hover { background: #3b3a33; }
+  .bouton.second { background: #fff; color: var(--texte); border-color: #cfc9bb; font-weight: 600; }
+  .bouton.second:hover { border-color: var(--texte-2); background: var(--doux); }
   .bouton[disabled] { opacity: 0.45; cursor: default; }
-  .actions { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 10px 0 8px; }
+  .lien-bouton { font: inherit; font-size: 14px; color: var(--texte-2); background: none; border: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .lien-bouton:hover { color: var(--texte); }
+  .actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: center; margin: 12px 0 6px; }
+  .discret { color: var(--texte-2); font-size: 13.5px; margin: 8px 0 0; }
 
-  .tableau { width: 100%; overflow-x: auto; margin: 0 0 14px; border: 1px solid var(--paper-line); background: #fffdf8; }
-  table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
-  th, td { text-align: left; vertical-align: top; padding: 6px 9px; border-bottom: 1px solid var(--paper-line); }
-  thead th { position: sticky; top: 0; background: var(--paper-2); font-weight: 600; white-space: nowrap; z-index: 1; }
-  tbody tr:nth-child(even) td { background: #2a2b2406; }
+  .resultats { margin-top: 22px; }
+  .resultats .tete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; margin-bottom: 14px; }
+  .resultats .tete h2 { margin: 0; }
+  .compteurs { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-left: 4px; }
+  .compteurs span { font-size: 13px; font-weight: 600; background: #efece2; border-radius: 999px; padding: 4px 11px; color: var(--texte-2); }
+  .compteurs span b { color: var(--texte); font-weight: 700; margin-right: 3px; }
+  .boutons { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tableau { width: 100%; overflow: auto; border: 1px solid var(--trait); border-radius: 8px; background: #fff; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--trait); }
+  thead th { position: sticky; top: 0; background: var(--doux); font-weight: 600; white-space: nowrap; z-index: 1; color: var(--texte); }
+  th.tri { cursor: pointer; user-select: none; }
+  th.tri::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 8px; border-right: 1.5px solid #b5ae9d; border-bottom: 1.5px solid #b5ae9d; transform: translateY(-2px) rotate(45deg); }
+  th.tri.asc::after { border-color: var(--texte); transform: translateY(2px) rotate(-135deg); }
+  th.tri.desc::after { border-color: var(--texte); }
+  tbody tr:hover td { background: #faf8f2; }
   tr:last-child td { border-bottom: 0; }
   td.num, th.num { white-space: nowrap; font-variant-numeric: tabular-nums; }
-  td small { display: block; color: var(--ink-2); font-size: 12.5px; }
+  td small { display: block; color: var(--texte-2); font-size: 12.5px; }
   td .v3 { color: var(--rouge); font-weight: 600; } td .v2 { color: var(--orange); font-weight: 600; } td .v1 { color: var(--jaune); }
-  .niveau { white-space: nowrap; font-size: 12.5px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; }
-  .niveau.n3 { color: var(--rouge); } .niveau.n2 { color: var(--orange); } .niveau.n1 { color: var(--jaune); } .niveau.n0 { color: var(--vert); }
-  #recherche-tableau { max-height: 60vh; }
+  .niveau { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 3px 10px 3px 8px; }
+  .niveau::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .niveau.n0 { color: var(--vert); background: #e3ecdc; } .niveau.n1 { color: var(--jaune); background: #f3eccb; }
+  .niveau.n2 { color: var(--orange); background: #f8e5c6; } .niveau.n3 { color: var(--rouge); background: #f7dcd5; }
+  #recherche-tableau { margin-top: 12px; max-height: 60vh; }
   #resultats-tableau, #absents-tableau { max-height: 75vh; }
+  .resultats h3 { font-size: 16px; margin: 18px 0 8px; }
 
-  .resultats { margin-top: 30px; padding-top: 18px; border-top: 1px solid var(--paper-line); }
-  .resultats .tete { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 10px; }
-  .resume { margin: 0; font-size: 15px; }
-  .resume b { font-family: var(--serif); font-weight: 400; font-size: 20px; }
-  .resume span + span::before { content: ", "; color: var(--ink-2); font-weight: 400; font-size: 15px; }
-
-  .aide { margin-top: 34px; border-top: 1px solid var(--paper-line); padding-top: 10px; max-width: 110ch; }
-  .aide details { margin: 0; border-bottom: 1px solid var(--paper-line); }
-  .aide summary { cursor: pointer; padding: 10px 0; font-family: var(--serif); font-size: 17px; }
-  .aide dl { margin: 4px 0 14px; display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; }
+  .aide { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 22px; }
+  @media (min-width: 1100px) { .aide { grid-template-columns: 1fr 1fr; } }
+  .aide details.carte { padding: 0; }
+  .aide summary { cursor: pointer; padding: 14px 20px; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 10px; list-style: none; }
+  .aide summary::-webkit-details-marker { display: none; }
+  .aide summary::after { content: ""; margin-left: auto; width: 8px; height: 8px; border-right: 1.5px solid var(--texte-2); border-bottom: 1.5px solid var(--texte-2); transform: translateY(-2px) rotate(45deg); }
+  .aide details[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+  .aide .corps { padding: 0 20px 16px; font-size: 14px; }
+  .aide dl { margin: 0 0 10px; display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
   .aide dt { font-weight: 600; }
   .aide dd { margin: 0; }
   @media (max-width: 640px) { .aide dl { grid-template-columns: 1fr; gap: 2px; } .aide dd { margin-bottom: 8px; } }
 
-  footer { background: var(--bg); color: var(--muted); font-size: 13px; }
-  footer .page { padding-block: 16px 22px; display: flex; flex-wrap: wrap; gap: 4px 28px; }
+  footer { background: var(--bg); color: var(--muted); font-size: 13.5px; margin-top: 10px; }
+  footer .page { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 28px; padding-block: 18px 22px; }
+  footer .gauche { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+  footer .gauche img { height: 34px; width: auto; display: block; }
   footer p { margin: 0; }
   footer a { color: var(--ivory); text-decoration: none; }
   footer a:hover { color: var(--ochre); }
@@ -108,67 +152,94 @@
 
 <header class="barre">
 <div class="page">
-<a class="titre" href="./">Contrôle FINESS <small>un outil de referentiels-sante, du village Irréductix</small></a>
+<a class="logo" href="../" title="referentiels-sante, accueil"><img src="logo.png" width="899" height="136" alt="referentiels-sante"></a>
+<div class="droite">
 <nav aria-label="Liens du projet">
-<a href="../">referentiels-sante</a>
-<a href="https://irreductix.fr/">Irréductix</a>
+<a href="../">Le convertisseur</a>
 <a href="https://github.com/Irreductix/referentiels-sante/tree/main/site/controle">Code de cette page</a>
 <a href="https://github.com/Irreductix/referentiels-sante/issues">Signaler un écart</a>
 </nav>
+<a class="village" href="https://irreductix.fr/" title="Le collectif Irréductix"><img src="irreductix.webp" width="1086" height="362" alt="Irréductix"></a>
+</div>
 </div>
 </header>
 
-<div class="bandeau">
+<div class="fil">
 <div class="page">
-<p class="etat" id="etat"><span class="pastille"></span><span id="etat-texte">Chargement de l'index FINESS+ (6 Mo)…</span></p>
-<details id="horsligne">
-<summary>Charger l'index depuis un fichier</summary>
-<p><label>Sans connexion, ou si le chargement échoue : <input type="file" id="fichier-index" accept=".gz,.csv"></label> <span>(fichier <code>index-finess.csv.gz</code> de l'archive hors ligne)</span></p>
-</details>
+<p style="margin:0"><a href="../">referentiels-sante</a><span class="sep">›</span><a href="https://irreductix.fr/outils">Outils</a><span class="sep">›</span><strong>Contrôle FINESS</strong></p>
+<p style="margin:0">Un outil libre pour le service public</p>
 </div>
 </div>
 
 <main class="page">
 
-<p class="discret" style="max-width: 110ch; margin-bottom: 20px;">Tout se calcule dans votre navigateur : une fois l'index chargé, cette page ne fait plus aucune requête, et votre liste n'est envoyée nulle part. Données : instantané mensuel FINESS+ de l'ANS, Licence Ouverte 2.0.</p>
+<div class="entete">
+<div>
+<span class="badge">Outil</span>
+<h1>Contrôle FINESS</h1>
+<p class="intro">Vérifiez une liste d'établissements (numéros FINESS, SIRET, codes postaux) contre FINESS+, le répertoire national de l'Agence du Numérique en Santé, et retrouvez un établissement en tapant son nom.</p>
+</div>
+<aside class="carte apropos">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg> À propos de cet outil</h2>
+<p>Tout se calcule dans votre navigateur : une fois l'index chargé, cette page ne fait plus aucune requête, et votre liste n'est envoyée nulle part. Pas de cookie, pas de traceur, pas de compte.</p>
+<p class="etat" id="etat"><span class="pastille"></span><span id="etat-texte">Chargement de l'index FINESS+ (6 Mo)…</span></p>
+<details id="horsligne">
+<summary>Charger l'index depuis un fichier</summary>
+<p><label>Sans connexion, ou si le chargement échoue : <input type="file" id="fichier-index" accept=".gz,.csv"></label> (fichier <code>index-finess.csv.gz</code> de l'archive hors ligne)</p>
+</details>
+</aside>
+</div>
 
 <div class="panneaux">
 
-<section id="rechercher">
-<h2>Rechercher un établissement</h2>
-<p class="discret"><label for="recherche">Nom, commune, numéro FINESS ou SIRET, même partiels. Accents et « St » indifférents.</label></p>
-<input type="search" id="recherche" placeholder="hopital mercy, 570000141, 26570280300510" autocomplete="off" disabled>
+<section class="carte" id="rechercher">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg> Rechercher un établissement</h2>
+<p class="sous"><label for="recherche">Nom, commune, numéro FINESS ou SIRET, même partiels. Plusieurs mots possibles.</label></p>
+<input type="search" id="recherche" placeholder="Ex. : hopital mercy, 570026682, 26570280300510" autocomplete="off" disabled>
 <p class="discret" id="recherche-info"></p>
 <div class="tableau cache" id="recherche-tableau"></div>
+<div class="astuce"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1.1 2.1h4.8c.1-.9.5-1.6 1.1-2.1A6 6 0 0 0 12 3z"/></svg><span><strong>Astuce :</strong> les accents, la casse et « St » pour « Saint » ne comptent pas. Un numéro partiel trouve tous les établissements qui commencent par ces chiffres.</span></div>
 </section>
 
-<section id="controler">
-<h2>Contrôler une liste</h2>
-<p class="discret">Collez des colonnes copiées depuis Excel, ou déposez un fichier CSV (UTF-8 ou ANSI). Il faut une colonne de numéros FINESS ; SIRET, code postal et nom sont reconnus s'ils sont là, dans n'importe quel ordre. Les lignes d'explication, les titres de section et les en-têtes répétés sont ignorés.</p>
-<textarea id="liste" placeholder="Raison sociale	Code postal et commune	N° FINESS	N° SIRET&#10;HOPITAL DE MERCY	57530 ARS LAQUENEXY	57 002 668 2	265 702 803 00510" disabled></textarea>
+<section class="carte" id="controler">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14h6"/></svg> Contrôler une liste</h2>
+<p class="sous">Collez vos colonnes depuis Excel (nom, code postal, FINESS, SIRET, dans n'importe quel ordre) ou importez un fichier CSV. Les lignes d'explication, les titres de section et les en-têtes répétés sont ignorés.</p>
+<div class="depot" id="depot">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5M8 9l4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+<strong>Glissez un fichier ici</strong>
+<span class="indic">CSV ou texte, UTF-8 ou ANSI (enregistré depuis Excel)</span>
+<label class="choisir" for="fichier-liste">Choisir un fichier</label>
+<input type="file" id="fichier-liste" accept=".csv,.txt,.tsv" disabled>
+</div>
+<p class="ou">ou</p>
+<textarea id="liste" placeholder="Collez vos données ici, une ligne par établissement&#10;Ex. : Raison sociale	Code postal et commune	N° FINESS	N° SIRET" disabled></textarea>
 <div class="actions">
-<button class="bouton" id="bouton-controler" disabled>Contrôler la liste</button>
-<label class="discret">ou déposer un fichier <input type="file" id="fichier-liste" accept=".csv,.txt,.tsv" disabled></label>
+<button class="bouton" id="bouton-controler" disabled><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg> Contrôler la liste</button>
+<button class="lien-bouton" id="bouton-effacer" type="button">Effacer</button>
 </div>
 <p class="discret" id="colonnes"></p>
 </section>
 
 </div>
 
-<div id="resultats" class="resultats cache">
+<section id="resultats" class="carte resultats cache">
 <div class="tete">
-<p class="resume" id="resume"></p>
-<button class="bouton second" id="bouton-rapport">Télécharger le rapport (CSV)</button>
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Résultats <span class="compteurs" id="resume"></span></h2>
+<div class="boutons">
+<button class="bouton second" id="bouton-rapport"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg> Exporter CSV</button>
+<button class="bouton second" id="bouton-copier"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg> Copier</button>
+</div>
 </div>
 <div class="tableau" id="resultats-tableau"></div>
 <h3 id="absents-titre" class="cache">Établissements actifs dans FINESS mais absents de la liste</h3>
 <div class="tableau cache" id="absents-tableau"></div>
 <p class="discret" id="entites"></p>
-</div>
+</section>
 
 <div class="aide">
-<details>
-<summary>Comment lire les résultats</summary>
+<details class="carte">
+<summary><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg> Comment lire les résultats</summary>
+<div class="corps">
 <dl>
 <dt>Inconnu de FINESS</dt><dd>Le numéro n'existe pas dans le répertoire. Avec une clé de contrôle invalide, c'est presque toujours une faute de frappe ; la colonne « pistes » donne le numéro voisin probable.</dd>
 <dt>SIRET différent</dt><dd>La page dit si ce SIRET appartient à un autre établissement de la même entité, ou s'il figure sur une autre ligne de la liste (SIRET intervertis). Sinon, l'<a href="https://annuaire-entreprises.data.gouv.fr/">annuaire des entreprises</a> dit lequel est à jour.</dd>
@@ -176,11 +247,14 @@
 <dt>Absents de la liste</dt><dd>Les établissements que FINESS dit actifs pour vos entités juridiques et qui manquent dans la liste : à ajouter s'ils sont en activité, sinon c'est FINESS qu'il faut faire mettre à jour, par l'ARS.</dd>
 <dt>Niveaux</dt><dd>« écart » demande une correction, « à vérifier » un contrôle à la source, « à regarder » un simple coup d'œil, « ok » concorde.</dd>
 </dl>
-<p class="discret">Cette page ne corrige rien et ne fait pas foi : la source reste FINESS+ (<a href="https://finess.esante.gouv.fr/">consultation officielle</a>), convertie chaque mois par <a href="../">referentiels-sante</a>.</p>
+<p class="discret" style="margin:0">Cette page ne corrige rien et ne fait pas foi : la source reste FINESS+ (<a href="https://finess.esante.gouv.fr/">consultation officielle</a>), convertie chaque mois par <a href="../">referentiels-sante</a>.</p>
+</div>
 </details>
-<details>
-<summary>Utiliser la page hors ligne</summary>
-<p>Pour un poste sans accès à internet : téléchargez <a href="https://github.com/Irreductix/referentiels-sante/releases/download/donnees-du-mois/controle-finess-hors-ligne.zip">controle-finess-hors-ligne.zip</a>, décompressez-le, ouvrez <code>index.html</code>, puis chargez <code>index-finess.csv.gz</code> depuis le bandeau en haut de page. L'archive est refaite le 2 de chaque mois avec le nouvel instantané.</p>
+<details class="carte">
+<summary><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg> Utiliser la page hors ligne</summary>
+<div class="corps">
+<p>Pour un poste sans accès à internet : téléchargez <a href="https://github.com/Irreductix/referentiels-sante/releases/download/donnees-du-mois/controle-finess-hors-ligne.zip">controle-finess-hors-ligne.zip</a>, décompressez-le, ouvrez <code>index.html</code>, puis chargez <code>index-finess.csv.gz</code> depuis l'encadré « À propos de cet outil ». L'archive est refaite le 2 de chaque mois avec le nouvel instantané.</p>
+</div>
 </details>
 </div>
 
@@ -188,8 +262,11 @@
 
 <footer>
 <div class="page">
-<p><a href="https://irreductix.fr/">Irréductix</a>, des outils libres pour le service public, construits à partir de données publiques.</p>
-<p>Code sous licence MIT. Données FINESS+ : Agence du Numérique en Santé, Licence Ouverte 2.0 ; libellés : NOS de l'ANS. Sans cookie ni ressource externe.</p>
+<div class="gauche">
+<a href="https://irreductix.fr/" title="Le collectif Irréductix"><img src="irreductix.webp" width="1086" height="362" alt="Irréductix"></a>
+<p>Des outils libres pour le service public, construits à partir de données publiques.</p>
+</div>
+<p>Code sous licence MIT, <a href="https://github.com/Irreductix/referentiels-sante">sur GitHub</a>. Données : FINESS+ (ANS), Licence Ouverte 2.0 ; libellés NOS (ANS).</p>
 </div>
 </footer>
 
@@ -201,6 +278,7 @@
   const $ = (id) => document.getElementById(id);
   let index = null;
   let dernierResultat = null;
+  let tri = { cle: 'gravite', sens: -1 };
 
   const echapper = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const nombre = (n) => Number(n).toLocaleString('fr-FR');
@@ -225,7 +303,7 @@
 
   function installer(texte, provenance) {
     index = C.lireIndex(texte);
-    etat('ok', 'Index FINESS+ : ' + nombre(index.nombre) + ' établissements, ' + nombre(index.actifs) + ' en activité' + (provenance ? ', ' + provenance : '') + '. Plus aucune requête ne part de cette page.');
+    etat('ok', 'Index FINESS+ chargé : ' + nombre(index.nombre) + ' établissements, ' + nombre(index.actifs) + ' en activité' + (provenance ? ', ' + provenance : '') + '.');
     $('horsligne').open = false;
     activer();
   }
@@ -283,12 +361,18 @@
     $('recherche-info').textContent = r.length ? (r.length >= 50 ? '50 premiers résultats, précisez la recherche' : r.length + ' résultat' + (r.length > 1 ? 's' : '')) : 'Aucun établissement ne correspond.';
     tableau.className = 'tableau' + (r.length ? '' : ' cache');
     tableau.innerHTML = '<table><thead><tr><th class="num">FINESS</th><th>Établissement</th><th>Commune</th><th>Catégorie</th><th>État</th><th class="num">SIRET</th><th>Entité juridique</th></tr></thead><tbody>'
-      + r.map((e) => '<tr><td class="num">' + echapper(e.et) + '</td><td>' + echapper(e.nomLong || e.nomCourt) + '</td><td>' + echapper(e.cp + ' ' + e.commune) + '</td><td>' + echapper(e.categorie) + '</td><td>' + (e.etat === 'A' ? 'actif' : '<span class="v3">fermé' + (e.dateFermeture ? ' le ' + echapper(dateFr(e.dateFermeture)) : '') + '</span>') + '</td><td class="num">' + echapper(e.siret) + '</td><td>' + echapper(e.ej + ' ' + e.ejNom) + '</td></tr>').join('')
+      + r.map((e) => '<tr><td class="num">' + echapper(e.et) + '</td><td>' + echapper(e.nomLong || e.nomCourt) + '</td><td>' + echapper(e.cp + ' ' + e.commune) + '</td><td>' + echapper(e.categorie) + '</td><td>' + (e.etat === 'A' ? '<span class="niveau n0">actif</span>' : '<span class="niveau n3">fermé' + (e.dateFermeture ? ' le ' + echapper(dateFr(e.dateFermeture)) : '') + '</span>') + '</td><td class="num">' + echapper(e.siret) + '</td><td>' + echapper(e.ej + ' ' + e.ejNom) + '</td></tr>').join('')
       + '</tbody></table>';
   }
 
   // Contrôle d'une liste
   $('bouton-controler').addEventListener('click', () => controlerTexte($('liste').value));
+  $('bouton-effacer').addEventListener('click', () => {
+    $('liste').value = '';
+    $('colonnes').textContent = '';
+    $('resultats').className = 'carte resultats cache';
+    dernierResultat = null;
+  });
 
   // Excel enregistre souvent les CSV en ANSI (windows-1252) : on l'accepte sans rien demander.
   async function lireFichierTexte(f) {
@@ -300,13 +384,18 @@
     }
   }
 
-  $('fichier-liste').addEventListener('change', async function () {
-    const f = this.files && this.files[0];
-    if (!f) return;
+  async function chargerFichierListe(f) {
+    if (!f || !index) return;
     const texte = await lireFichierTexte(f);
     $('liste').value = texte;
     controlerTexte(texte);
-  });
+  }
+
+  $('fichier-liste').addEventListener('change', function () { chargerFichierListe(this.files && this.files[0]); });
+  const depot = $('depot');
+  for (const ev of ['dragenter', 'dragover']) depot.addEventListener(ev, (e) => { e.preventDefault(); depot.classList.add('survol'); });
+  for (const ev of ['dragleave', 'drop']) depot.addEventListener(ev, (e) => { e.preventDefault(); depot.classList.remove('survol'); });
+  depot.addEventListener('drop', (e) => chargerFichierListe(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]));
 
   const NIVEAUX = ['ok', 'à regarder', 'à vérifier', 'écart'];
 
@@ -316,20 +405,37 @@
     const col = liste.colonnes;
     if (!liste.lignes.length || col.finess === undefined) {
       $('colonnes').textContent = 'Aucune colonne de numéros FINESS reconnue : il faut au moins une colonne de numéros à neuf caractères.';
-      $('resultats').className = 'resultats cache';
+      $('resultats').className = 'carte resultats cache';
       return;
     }
     const nomCol = (i) => (i === undefined ? 'absente' : 'colonne ' + (i + 1));
     $('colonnes').textContent = 'Colonnes reconnues : FINESS en ' + nomCol(col.finess) + ', SIRET ' + nomCol(col.siret) + ', code postal ' + nomCol(col.cp) + ', nom ' + nomCol(col.nom) + (liste.entete ? ' ; en-tête lu ligne ' + liste.ligneEntete : ' ; pas de ligne d\'en-tête') + '. ' + liste.lignes.length + ' lignes de données.';
-    const r = C.controler(index, liste);
-    dernierResultat = r;
+    dernierResultat = C.controler(index, liste);
+    tri = { cle: 'gravite', sens: -1 };
+    afficherResultats();
+    $('resultats').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function trier(lignes) {
+    const cle = tri.cle;
+    const valeur = (x) => (cle === 'gravite' ? x.gravite : cle === 'ligne' ? x.ligne : cle === 'nom' ? (x.nom || '').toLowerCase() : cle === 'resultat' ? x.resultat : '');
+    return lignes.slice().sort((a, b) => {
+      const va = valeur(a); const vb = valeur(b);
+      const c = va < vb ? -1 : va > vb ? 1 : a.ligne - b.ligne;
+      return c * tri.sens;
+    });
+  }
+
+  function afficherResultats() {
+    const r = dernierResultat;
     const c = r.comptes;
-    $('resume').innerHTML = '<span><b>' + c.lignes + '</b> lignes</span><span><b>' + c.ecarts + '</b> écarts</span><span><b>' + c.aVerifier + '</b> à regarder</span><span><b>' + c.conformes + '</b> concordent</span><span><b>' + c.absents + '</b> absents de la liste</span>';
+    $('resume').innerHTML = '<span><b>' + c.lignes + '</b>lignes</span><span><b>' + c.ecarts + '</b>écarts</span><span><b>' + c.aVerifier + '</b>à regarder</span><span><b>' + c.conformes + '</b>concordent</span><span><b>' + c.absents + '</b>absents de la liste</span>';
     const classe = (verdict, grave) => (verdict === 'concorde' || !verdict ? '' : grave ? ' class="v' + grave + '"' : '');
     const graviteSiret = (x) => (/^différent|mal formé|illisible/.test(x.verdictSiret) ? 3 : /absent de FINESS|SIREN seul dans la liste, différent|SIREN différent/.test(x.verdictSiret) ? 2 : /cohérent|des deux côtés|non comparé/.test(x.verdictSiret) ? 0 : 1);
     const graviteCp = (x) => (/^différent|autre code postal/.test(x.verdictCp) ? 2 : 1);
-    $('resultats-tableau').innerHTML = '<table><thead><tr><th>Niveau</th><th class="num">Ligne</th><th>Dans la liste</th><th>Dans FINESS</th><th>SIRET</th><th>Code postal</th><th>Pistes</th></tr></thead><tbody>'
-      + r.resultats.map((x) => '<tr><td><span class="niveau n' + x.gravite + '">' + NIVEAUX[x.gravite] + '</span></td>'
+    const th = (cle, titre, num) => '<th class="tri' + (num ? ' num' : '') + (tri.cle === cle ? (tri.sens > 0 ? ' asc' : ' desc') : '') + '" data-cle="' + cle + '">' + titre + '</th>';
+    $('resultats-tableau').innerHTML = '<table><thead><tr>' + th('gravite', 'Niveau') + th('ligne', 'Ligne', true) + th('nom', 'Dans la liste') + th('resultat', 'Dans FINESS') + '<th>SIRET</th><th>Code postal</th><th>Pistes</th></tr></thead><tbody>'
+      + trier(r.resultats).map((x) => '<tr><td><span class="niveau n' + x.gravite + '">' + NIVEAUX[x.gravite] + '</span></td>'
         + '<td class="num">' + x.ligne + '</td>'
         + '<td>' + echapper(x.nom) + '<small class="num">' + echapper(x.finess) + '</small></td>'
         + '<td><span' + (x.gravite === 3 && /inconnu|illisible/.test(x.resultat) ? ' class="v3"' : '') + '>' + echapper(x.resultat) + (x.cle === 'invalide' ? ' (clé invalide)' : '') + '</span>' + (x.nomFiness ? '<small>' + echapper(x.nomFiness) + (x.etat ? ', ' + (x.etat.indexOf('fermé') === 0 ? '<span class="v3">' + echapper(x.etat) + '</span>' : echapper(x.etat)) : '') + '</small>' : '') + '</td>'
@@ -337,6 +443,13 @@
         + '<td><span' + classe(x.verdictCp, graviteCp(x)) + '>' + echapper(x.verdictCp) + '</span>' + (x.cp || x.cpFiness ? '<small class="num">liste ' + echapper(x.cp || 'vide') + ', FINESS ' + echapper(x.cpFiness || 'vide') + '</small>' : '') + '</td>'
         + '<td>' + echapper(x.pistes.join(' ; ')) + '</td></tr>').join('')
       + '</tbody></table>';
+    for (const e of $('resultats-tableau').querySelectorAll('th.tri')) {
+      e.addEventListener('click', () => {
+        const cle = e.getAttribute('data-cle');
+        tri = tri.cle === cle ? { cle, sens: -tri.sens } : { cle, sens: cle === 'gravite' ? -1 : 1 };
+        afficherResultats();
+      });
+    }
     const absents = $('absents-tableau');
     $('absents-titre').className = r.absents.length ? '' : 'cache';
     absents.className = 'tableau' + (r.absents.length ? '' : ' cache');
@@ -344,8 +457,7 @@
       + r.absents.map((a) => '<tr><td class="num">' + echapper(a.finess) + '</td><td>' + echapper(a.nom) + '</td><td>' + echapper(a.categorie) + '</td><td>' + echapper(a.cp + ' ' + a.commune) + '</td><td class="num">' + echapper(a.siret) + '</td><td class="num">' + echapper(a.ej) + '</td></tr>').join('')
       + '</tbody></table>';
     $('entites').textContent = r.entites.map((e) => e.ej + ' ' + e.nom + ' : ' + e.total + ' établissements dans FINESS dont ' + e.actifs + ' actifs, ' + e.dansListe + ' dans la liste').join(' ; ');
-    $('resultats').className = 'resultats';
-    $('resultats').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    $('resultats').className = 'carte resultats';
   }
 
   $('bouton-rapport').addEventListener('click', () => {
@@ -357,6 +469,19 @@
     document.body.appendChild(a);
     a.click();
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
+
+  $('bouton-copier').addEventListener('click', async () => {
+    if (!dernierResultat) return;
+    const texte = C.rapportCsv(dernierResultat).replace(/^﻿/, '').split('\r\n').map((l) => l.replace(/;/g, '\t')).join('\n');
+    const bouton = $('bouton-copier');
+    try {
+      await navigator.clipboard.writeText(texte);
+      bouton.lastChild.textContent = ' Copié';
+    } catch (e) {
+      bouton.lastChild.textContent = ' Copie refusée par le navigateur';
+    }
+    setTimeout(() => { bouton.lastChild.textContent = ' Copier'; }, 2000);
   });
 })();
 </script>
