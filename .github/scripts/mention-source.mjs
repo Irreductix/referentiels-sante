@@ -11,6 +11,14 @@ function jour(iso) {
   return iso ? String(iso).slice(0, 10) : 'inconnue';
 }
 
+// Les résumés depuis la 0.3.5 donnent la date de mise à jour de chaque table NOS utilisée.
+function lignesTablesNos(structures, activites) {
+  const dates = { ...(structures.tablesLibellesDates ?? {}), ...(activites?.tablesLibellesDates ?? {}) };
+  const noms = Object.keys(dates).sort();
+  if (!noms.length) return ['  tables utilisées listées dans structures-resume.json'];
+  return ['  tables utilisées, avec leur date de mise à jour :', ...noms.map((n) => `    ${n} : ${dates[n] ?? 'date non lue'}`)];
+}
+
 export function mentionFiness({ structures, activites, version }) {
   const lignes = [
     `Fichiers FINESS+ convertis en CSV et JSON par referentiels-sante ${version}`,
@@ -20,7 +28,7 @@ export function mentionFiness({ structures, activites, version }) {
     '  FINESS - Activités : https://www.data.gouv.fr/datasets/finess-activites-1',
     'Licence : Licence Ouverte 2.0, https://www.data.gouv.fr/pages/legal/licences/etalab-2.0',
     "Libellés des codes : Nomenclatures des objets de santé (NOS) de l'ANS, https://mos.esante.gouv.fr/NOS/",
-    '  tables utilisées listées dans structures-resume.json',
+    ...lignesTablesNos(structures, activites),
     `Instantané des structures : ${basename(structures.source)}, produit par l'ANS le ${jour(structures.generatedAt)}`,
   ];
   if (activites) {

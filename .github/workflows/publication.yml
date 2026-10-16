@@ -10,7 +10,10 @@ name: Publication mensuelle des fichiers convertis
 # Les passages des 3 et 4 rattrapent un passage du 2 retardé ou échoué, ou un
 # instantané FINESS+ déposé en retard : un mois déjà publié n'est pas retouché, sauf
 # lancement manuel avec « refaire » ; même alors, les adresses restent valides. Un
-# échec ouvre un ticket, refermé à la publication suivante réussie.
+# échec ouvre un ticket, refermé à la publication suivante réussie. La publication
+# s'arrête plutôt que de publier faux : table de libellés indisponible, comptes
+# anormalement bas, valeurs perdues à la conversion. Avec les secrets DATAGOUV_API_KEY
+# et HEALTHCHECKS_URL, elle met à jour les fiches data.gouv.fr et envoie un signal de vie.
 
 on:
   schedule:
@@ -39,6 +42,8 @@ env:
   GH_TOKEN: ${{ github.token }}
   REFAIRE: ${{ inputs.refaire }}
   STABLE: donnees-du-mois
+  DATAGOUV_API_KEY: ${{ secrets.DATAGOUV_API_KEY }}
+  HEALTHCHECKS_URL: ${{ secrets.HEALTHCHECKS_URL }}
 
 jobs:
   publier:
@@ -88,22 +93,36 @@ jobs:
                 exit 1
               fi
             done
+            # Une table NOS indisponible laisserait des libellés vides, un flux trop court
+            # trahirait une source tronquée : dans les deux cas rien n'est publié.
+            for flux in structures activites; do
+              echecs=$(node -p "require('./sortie/finess/${flux}-resume.json').tablesLibellesEnEchec.join(', ')")
+              if [ -n "$echecs" ]; then
+                echo "Tables NOS indisponibles pour ${flux} (${echecs}) : rien n'est publié." >&2
+                exit 1
+              fi
+            done
+            node -e "const r = require('./sortie/finess/structures-resume.json'); if (r.etablissements < 150000 || r.entitesJuridiques < 90000) { console.error('Comptes anormalement bas : ' + r.etablissements + ' établissements, ' + r.entitesJuridiques + ' entités juridiques. Rien n est publié.'); process.exit(1); }"
             node .github/scripts/mention-source.mjs finess sortie/finess
             (cd sortie/finess && zip -q -9 "../${etiquette}.zip" ./*)
+            node .github/scripts/index-finess.mjs sortie/finess/etablissements.csv sortie/index-finess.csv.gz
             instantane=$(node -p "require('path').basename(require('./sortie/finess/structures-resume.json').source)")
             produit=$(node -p "String(require('./sortie/finess/structures-resume.json').generatedAt).slice(0, 10)")
             notes="Fichiers FINESS+ convertis depuis l'instantané mensuel ${instantane}, produit par l'ANS le ${produit}. Source : Agence du Numérique en Santé, data.gouv.fr, Licence Ouverte 2.0 ; libellés des codes : Nomenclatures des objets de santé (NOS) de l'ANS. Détail dans MENTION-SOURCE.txt et docs/FINESS.md."
             if publiee; then
-              for f in "$archive" sortie/finess/structures-resume.json sortie/finess/activites-resume.json; do
+              for f in "$archive" sortie/finess/structures-resume.json sortie/finess/activites-resume.json sortie/index-finess.csv.gz; do
                 bash .github/scripts/remplacer-piece.sh "$etiquette" "$f"
               done
               gh release edit "$etiquette" --notes "$notes"
             else
-              gh release create "$etiquette" "$archive" sortie/finess/structures-resume.json sortie/finess/activites-resume.json \
+              gh release create "$etiquette" "$archive" sortie/finess/structures-resume.json sortie/finess/activites-resume.json sortie/index-finess.csv.gz \
                 --latest=false --title "FINESS+ $(date -u +%Y-%m)" --notes "$notes"
             fi
           fi
           bash .github/scripts/remplacer-piece.sh "$STABLE" "$archive" finess.zip
+          if [ -f sortie/index-finess.csv.gz ]; then
+            bash .github/scripts/remplacer-piece.sh "$STABLE" sortie/index-finess.csv.gz index-finess.csv.gz
+          fi
 
       # La base des médicaments passe après FINESS et tourne même si FINESS échoue.
       - name: Base publique des médicaments
@@ -132,6 +151,7 @@ jobs:
               echo "Date de mise à jour introuvable sur la page de la base : la mention de source serait incomplète, rien n'est publié." >&2
               exit 1
             fi
+            node -e "const f = require('./sortie/bdpm/bdpm-resume.json').fichiers; if ((f.specialites?.lignes ?? 1e9) < 10000 || (f.presentations?.lignes ?? 1e9) < 15000) { console.error('Comptes anormalement bas : ' + f.specialites?.lignes + ' spécialités, ' + f.presentations?.lignes + ' présentations. Rien n est publié.'); process.exit(1); }"
             node .github/scripts/mention-source.mjs bdpm sortie/bdpm
             (cd sortie/bdpm && zip -q -9 "../${etiquette}.zip" ./*)
             notes="Base de données publique des médicaments convertie en CSV UTF-8 : spécialités, présentations, compositions, avis SMR et ASMR, génériques, conditions de prescription, informations importantes, disponibilité. Dernière mise à jour de la base : ${maj}. Source : ANSM, HAS, UNCAM, base-donnees-publique.medicaments.gouv.fr, Licence Ouverte. Détail dans MENTION-SOURCE.txt et docs/AUTRES-REFERENTIELS.md."
@@ -146,6 +166,47 @@ jobs:
             fi
           fi
           bash .github/scripts/remplacer-piece.sh "$STABLE" "$archive" bdpm.zip
+
+      # Les fiches data.gouv.fr pointent vers les adresses fixes : le fichier y est toujours
+      # le dernier. Cette étape met à jour leur date et leur description, si la clé est fournie.
+      - name: Fiches data.gouv.fr
+        if: success()
+        run: |
+          if [ -z "$DATAGOUV_API_KEY" ]; then
+            echo "Secret DATAGOUV_API_KEY absent : fiches data.gouv.fr non mises à jour."
+            exit 0
+          fi
+          maj() {
+            corps=$(node -e "const [t, d, u] = process.argv.slice(1); console.log(JSON.stringify({ title: t, description: d, url: u, filetype: 'remote', format: 'zip' }))" "$3" "$4" "$5")
+            curl -fsS -X PUT "https://www.data.gouv.fr/api/1/datasets/$1/resources/$2/" \
+              -H "X-API-KEY: $DATAGOUV_API_KEY" -H "Content-Type: application/json" --data "$corps" > /dev/null \
+              && echo "fiche $1 : ressource mise à jour"
+          }
+          aujourdhui=$(date -u +%Y-%m-%d)
+          if [ -f sortie/finess/structures-resume.json ]; then
+            instantane=$(node -p "require('path').basename(require('./sortie/finess/structures-resume.json').source)")
+            produit=$(node -p "String(require('./sortie/finess/structures-resume.json').generatedAt).slice(0, 10)")
+            maj 6acdf823c5ac91c314f3fcd9 ef8f45ac-7ae6-4dbe-a196-8a067dfcdc33 \
+              "FINESS en CSV, archive du mois (zip, toujours la dernière version)" \
+              "Instantané mensuel ${instantane}, produit par l'ANS le ${produit}, converti le ${aujourdhui}. Même adresse chaque mois : le fichier est remplacé le 2." \
+              "https://irreductix.fr/telecharger/finess.zip"
+          fi
+          if [ -f sortie/bdpm/bdpm-resume.json ]; then
+            base=$(node -p "require('./sortie/bdpm/bdpm-resume.json').miseAJour || 'inconnue'")
+            maj 6ace165d35e307cfd16ce39e 226cd996-6a5f-45a0-abcd-eae6c85427c2 \
+              "Base des médicaments en CSV, archive du mois (zip, toujours la dernière version)" \
+              "Base mise à jour le ${base} d'après sa page de téléchargement, convertie le ${aujourdhui}. Même adresse chaque mois : le fichier est remplacé le 2." \
+              "https://irreductix.fr/telecharger/bdpm.zip"
+          fi
+
+      - name: Signal de vie
+        if: success()
+        run: |
+          if [ -z "$HEALTHCHECKS_URL" ]; then
+            echo "Secret HEALTHCHECKS_URL absent : pas de signal de vie."
+            exit 0
+          fi
+          curl -fsS -m 10 --retry 3 "$HEALTHCHECKS_URL" > /dev/null && echo "signal de vie envoyé"
 
       - name: Ticket en cas d'échec
         if: failure()

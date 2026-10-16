@@ -55,3 +55,11 @@ test('ecrireMention lit les résumés du dossier et refuse un dossier incomplet'
   assert.throws(() => ecrireMention('bdpm', dossier, '1.2.3'), /bdpm-resume\.json absent/);
   assert.throws(() => ecrireMention('ccam', dossier, '1.2.3'), /type inconnu/);
 });
+
+test('la mention FINESS date chaque table NOS quand le résumé le permet', () => {
+  const tablesLibellesDates = { 'TRE_R66-CategorieEtablissement': '2026-02-23', 'ASS_X10-AgregatCategorieEtablissement': null };
+  const texte = mentionFiness({ structures: { ...structures, tablesLibellesDates }, version: '1.2.3' });
+  assert.match(texte, /TRE_R66-CategorieEtablissement : 2026-02-23/);
+  assert.match(texte, /ASS_X10-AgregatCategorieEtablissement : date non lue/);
+  assert.doesNotMatch(texte, /listées dans structures-resume\.json/);
+});

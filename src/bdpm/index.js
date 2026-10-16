@@ -115,6 +115,27 @@ export function convertirTexte(contenu, definition) {
 }
 
 /**
+ * Compare, colonne typée par colonne typée, le nombre de valeurs présentes dans la
+ * source et dans la conversion : une valeur lue mais non convertie est une perte.
+ * Renvoie les colonnes qui perdent des valeurs.
+ */
+export function controlerConservation(contenu, definition, lignes) {
+  const brutes = contenu.split(/\r?\n/).filter((l) => l.trim() !== '').map((l) => l.split('\t'));
+  const pertes = [];
+  for (const [colonne, type] of Object.entries(definition.types)) {
+    if (type !== 'd' && type !== 'n') continue;
+    const i = definition.colonnes.indexOf(colonne);
+    const source = brutes.filter((v) => texte(v[i]) !== null).length;
+    const converti = lignes.filter((l) => l[colonne] !== null && l[colonne] !== undefined).length;
+    if (converti < source) pertes.push({ colonne, source, converti });
+  }
+  return pertes;
+}
+
+/** Au-delà d'une valeur sur deux cents perdue dans une colonne, la conversion est refusée. */
+export const SEUIL_PERTE = 0.005;
+
+/**
  * Lit sur la page de téléchargement la date de mise à jour de la base et celle
  * de chaque fichier, que la Licence Ouverte demande de citer. Date absente : null.
  */
@@ -165,14 +186,19 @@ export async function exporterBdpm({ fichiers, sortie = 'data/bdpm', cache = '.c
       cacheUtilise = true;
       journal(`${definition.fichier} pris dans le cache : date de mise à jour inconnue (--forcer pour la connaître)`);
     }
-    const lignes = convertirTexte(decoderTexte(readFileSync(chemin)), definition);
+    const brut = decoderTexte(readFileSync(chemin));
+    const lignes = convertirTexte(brut, definition);
+    const pertes = controlerConservation(brut, definition, lignes);
+    for (const p of pertes) journal(`${cle} : ${p.source - p.converti} valeur(s) de ${p.colonne} lue(s) dans la source mais non converties`);
+    const grave = pertes.find((p) => p.source - p.converti > p.source * SEUIL_PERTE);
+    if (grave) throw new Error(`${cle} : ${grave.source - grave.converti} valeurs de ${grave.colonne} sur ${grave.source} perdues à la conversion, fichier refusé`);
     const nomCsv = `bdpm-${cle.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase())}.csv`;
     const colonnes = [...definition.colonnes];
     for (const l of lignes) for (const k of Object.keys(l)) if (!colonnes.includes(k)) colonnes.push(k);
     const csv = new EcrivainCsv(join(sortie, nomCsv), colonnes);
     for (const l of lignes) await csv.ecrire(l);
     await csv.fermer();
-    resume.fichiers[cle] = { source: definition.fichier, fichier: nomCsv, lignes: lignes.length, miseAJour: telecharge ? (dates.fichiers[cle] ?? null) : null };
+    resume.fichiers[cle] = { source: definition.fichier, fichier: nomCsv, lignes: lignes.length, miseAJour: telecharge ? (dates.fichiers[cle] ?? null) : null, pertes };
     journal(`${cle} : ${lignes.length} lignes`);
   }
   if (cacheUtilise) resume.miseAJour = null;

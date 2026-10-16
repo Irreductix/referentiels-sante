@@ -6,6 +6,7 @@
  */
 
 import { chargerTable, chargerAssociation, indexLibelles } from '../nos/index.js';
+import { dateIso } from '../commun/dates.js';
 
 const TABLES_STRUCTURES = {
   categorie: 'TRE_R66-CategorieEtablissement',
@@ -59,6 +60,7 @@ export function libellesVides() {
   l.statutVersAgregat = new Map();
   l.tablesChargees = [];
   l.tablesEnEchec = [];
+  l.datesTables = {};
   return l;
 }
 
@@ -76,6 +78,7 @@ export async function chargerLibelles({ cache, forcer, journal = () => {}, activ
       l[cle] = indexLibelles(table);
       l[`${cle}Long`] = indexLibelles(table, 'libelleLong');
       l.tablesChargees.push(nom);
+      l.datesTables[nom] = table.dateMaj ?? null;
     } catch (erreur) {
       journal(`table ${nom} indisponible : ${erreur.message}`);
       l.tablesEnEchec.push(nom);
@@ -89,6 +92,7 @@ export async function chargerLibelles({ cache, forcer, journal = () => {}, activ
       l.categorieVersAgregat.set(ligne[cCat], { niv1: ligne[c1], niv2: ligne[c2], niv3: ligne[c3], domaine: ligne[cDom] ?? null });
     }
     l.tablesChargees.push('ASS_X10-AgregatCategorieEtablissement');
+    l.datesTables['ASS_X10-AgregatCategorieEtablissement'] = dateIso(ass.descripteur['Date MàJ']);
   } catch (erreur) {
     journal(`association catégorie/agrégat indisponible : ${erreur.message}`);
     l.tablesEnEchec.push('ASS_X10-AgregatCategorieEtablissement');
@@ -101,6 +105,7 @@ export async function chargerLibelles({ cache, forcer, journal = () => {}, activ
       l.statutVersAgregat.set(ligne[cStatut], { niv1: ligne[c1], niv2: ligne[c2], niv3: ligne[c3] });
     }
     l.tablesChargees.push('ASS_X11-FinessAgregatStatutJuridique');
+    l.datesTables['ASS_X11-FinessAgregatStatutJuridique'] = dateIso(ass.descripteur['Date MàJ']);
   } catch (erreur) {
     journal(`association statut/agrégat indisponible : ${erreur.message}`);
     l.tablesEnEchec.push('ASS_X11-FinessAgregatStatutJuridique');

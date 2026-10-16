@@ -108,6 +108,7 @@ export async function convertirStructures({ entree, sortie, libelles, jsonl = tr
     dureeSecondes: Math.round((Date.now() - debut) / 100) / 10,
     tablesLibelles: L.tablesChargees ?? [],
     tablesLibellesEnEchec: L.tablesEnEchec ?? [],
+    tablesLibellesDates: L.datesTables ?? {},
     ...stats,
     fichiers: ['entites-juridiques.csv', 'etablissements.csv', 'groupements-conventionnels.csv',
       'groupements-cooperation.csv', 'groupements-membres.csv',
@@ -157,6 +158,7 @@ export async function convertirActivites({ entree, sortie, libelles, jsonl = tru
     dureeSecondes: Math.round((Date.now() - debut) / 100) / 10,
     tablesLibelles: L.tablesChargees ?? [],
     tablesLibellesEnEchec: L.tablesEnEchec ?? [],
+    tablesLibellesDates: L.datesTables ?? {},
     ...stats,
     fichiers: ['activites.csv', ...(jsonl ? ['activites.jsonl'] : [])],
   };
