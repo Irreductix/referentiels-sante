@@ -1,5 +1,10 @@
 # Journal des versions
 
+## 0.6.1 (octobre 2026)
+
+- Page « Nomenclatures » sur le site (`site/nomenclatures/`) : CCAM, NABM, LPP et UCD à partir des fichiers convertis sur le poste (l'Assurance Maladie ne permet pas de les rediffuser, rien ne quitte le navigateur). Recherche d'un code par son numéro ou son libellé ; contrôle d'une liste de codes à la date de référence ou à la date de chaque ligne : code inconnu, fermé ou radié, activité CCAM inexistante, acte non remboursable, entente préalable, tarif de base CCAM (par activité si `ccam-phases` est chargé), cotation NABM, tarif et prix limite LPP, listes d'inscription, prix et état des UCD (clé des codes à 13 chiffres vérifiée). Rapport CSV. Logique dans `site/nomenclatures/nomenclatures.js`, testée avec Node ; archive hors ligne `nomenclatures-hors-ligne.zip` produite au déploiement du site.
+- Commande `nabm` : le code de l'acte est écrit sur quatre chiffres (`0552`), comme dans la nomenclature ; la source le stocke en numérique.
+
 ## 0.6.0 (octobre 2026)
 
 - Page « Médicaments » sur le site (`site/medicaments/`) : recherche d'une spécialité par nom, laboratoire, groupe générique, CIS ou CIP, et contrôle d'une liste de codes CIP13, CIP7 ou CIS collée ou déposée (présentations arrêtées ou abrogées, tensions et ruptures d'approvisionnement, spécialités non commercialisées, prix, remboursement, agrément aux collectivités, clé de contrôle des CIP13 et présentation retrouvée par le CIP7 inclus), avec rapport CSV. Tout se calcule dans le navigateur ; logique dans `site/medicaments/medicaments.js`, testée avec Node.
