@@ -137,6 +137,7 @@
 <a href="controle/">Contrôler une liste</a>
 <a href="tarifs/">Tarifs GHS</a>
 <a href="medicaments/">Médicaments</a>
+<a href="nomenclatures/">Nomenclatures</a>
 <a href="https://irreductix.fr/outils">Les autres outils</a>
 </nav>
 </div>
@@ -230,6 +231,8 @@
 <p>Pour la base des médicaments, la page <a href="medicaments/">Médicaments</a> charge l'index du mois dans votre navigateur : recherche d'une spécialité par nom, CIS ou CIP, et contrôle d'une liste de codes CIP13, CIP7 ou CIS (livret, références, marché) avec arrêts de commercialisation, tensions d'approvisionnement, prix et remboursement. Rien n'est envoyé.</p>
 
 <p>Pour les tarifs GHS, la page <a href="tarifs/">Tarifs GHS</a> compare deux campagnes GHS par GHS, à partir des fichiers <code>ghs.csv</code> convertis sur votre poste, et chiffre l'effet des nouveaux tarifs sur vos volumes de séjours, sans que ces volumes quittent votre navigateur.</p>
+
+<p>Pour la CCAM, la NABM, la LPP et les UCD, la page <a href="nomenclatures/">Nomenclatures</a> lit les fichiers convertis sur votre poste : recherche d'un code par son numéro ou son libellé, et contrôle d'une liste de codes à une date (codes fermés ou radiés, activité inexistante, cotation, tarif et prix en vigueur, entente préalable). L'Assurance Maladie ne permet pas de rediffuser ces nomenclatures, rien ne quitte votre poste.</p>
 
 <p>Chaque commande se lance de la même façon : <code>npx referentiels-sante ccam</code>, <code>npx referentiels-sante cim10 --edition 2025</code>, et ainsi de suite. <code>npx referentiels-sante ccam --date 2025-06-30</code> donne la CCAM telle qu'elle était à cette date. La NGAP n'est pas couverte : l'Assurance Maladie ne la publie qu'en PDF.</p>
 

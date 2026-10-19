@@ -33,6 +33,9 @@ jobs:
             gh release download donnees-du-mois --pattern "$f" --dir site --clobber || echo "$f absent de la release : la page de contrôle proposera le chargement depuis un fichier"
           done
           ls -la site/index-finess.* 2>/dev/null || true
+      # La page Nomenclatures ne lit que des fichiers locaux : son archive hors ligne est la page elle-même.
+      - name: Archive hors ligne de la page Nomenclatures
+        run: (cd site/nomenclatures && zip -q -9 nomenclatures-hors-ligne.zip index.html nomenclatures.js logo.png irreductix.webp && ls -la nomenclatures-hors-ligne.zip)
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

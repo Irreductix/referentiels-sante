@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
+<title>Nomenclatures : CCAM, NABM, LPP et UCD, recherche et contrôle d'une liste de codes dans le navigateur</title>
+<meta name="description" content="Retrouvez un acte CCAM ou NABM, un code LPP ou une UCD par son code ou son libellé, et contrôlez une liste de codes à une date : codes fermés ou radiés, activité inexistante, cotation, tarif et prix en vigueur, entente préalable. À partir des fichiers convertis sur votre poste, sans rien envoyer.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://referentiels-sante.irreductix.fr/nomenclatures/">
+<link rel="icon" href="data:image/png;base64,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" sizes="64x64" type="image/png">
+<style>
+  :root {
+    --bg: #282722; --panel: #302f29; --ivory: #f5f0e4; --muted: #c0beb0; --ochre: #dda34f; --sage: #bdc6a7; --line: #ffffff24;
+    --fond: #f3f1ea; --carte: #ffffff; --trait: #e2ddd0; --texte: #2a2b24; --texte-2: #5f6057; --lien: #8a4f0a; --doux: #faf8f2;
+    --rouge: #a8321f; --orange: #b4700f; --jaune: #7d6d14; --vert: #3e6b3a;
+    --sans: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "Cascadia Mono", Consolas, "SF Mono", Menlo, monospace;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--fond); color: var(--texte); font: 15px/1.5 var(--sans); overflow-wrap: anywhere; min-height: 100vh; display: flex; flex-direction: column; }
+  a { color: var(--lien); text-underline-offset: 3px; }
+  a:hover { color: var(--texte); }
+  a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible, label:focus-visible { outline: 2px solid var(--ochre); outline-offset: 2px; }
+  .page { width: 100%; max-width: 1600px; margin: 0 auto; padding-inline: clamp(16px, 2.5vw, 44px); }
+  svg.ic { width: 20px; height: 20px; vertical-align: -4px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .barre { background: var(--bg); color: var(--ivory); }
+  .barre .page { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; padding-block: 10px; }
+  .barre .logo { display: inline-block; background: var(--ivory); border-radius: 8px; padding: 8px 14px; line-height: 0; }
+  .barre .logo img { height: 30px; width: auto; display: block; }
+  .barre .droite { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 22px; }
+  .barre nav { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 14.5px; }
+  .barre nav a { color: var(--muted); text-decoration: none; }
+  .barre nav a:hover { color: var(--ochre); }
+  .barre .village { line-height: 0; }
+  .barre .village img { height: 36px; width: auto; display: block; opacity: 0.95; }
+  .fil { background: var(--carte); border-bottom: 1px solid var(--trait); font-size: 13.5px; color: var(--texte-2); }
+  .fil .page { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 24px; padding-block: 9px; }
+  .fil a { color: var(--texte-2); text-decoration: none; }
+  .fil a:hover { color: var(--lien); }
+  .fil span.sep { margin-inline: 8px; color: var(--trait); }
+  .fil strong { color: var(--texte); font-weight: 600; }
+  main.page { flex: 1; padding-block: 26px 44px; }
+  .entete { display: grid; grid-template-columns: 1fr; gap: 20px 32px; align-items: start; margin-bottom: 22px; }
+  @media (min-width: 1000px) { .entete { grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr); } }
+  .badge { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--texte-2); background: #e9e5d8; border-radius: 4px; padding: 4px 10px; margin-bottom: 8px; }
+  h1 { font-size: clamp(30px, 4vw, 40px); line-height: 1.1; margin: 0 0 12px; font-weight: 800; letter-spacing: -0.01em; }
+  .intro { font-size: 17px; color: var(--texte-2); margin: 0; max-width: 70ch; }
+  .carte { background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; padding: 20px 22px; box-shadow: 0 1px 2px #2a2b240a; }
+  .apropos { background: #eef1e6; border-color: #d6ddc6; }
+  .apropos h2 { font-size: 16px; margin: 0 0 8px; }
+  .apropos p { margin: 0 0 10px; font-size: 14px; color: #42463a; }
+  .etat { display: flex; align-items: baseline; gap: 8px; font-size: 14px; color: var(--texte); }
+  .etat .pastille { flex: none; width: 9px; height: 9px; border-radius: 50%; background: var(--ochre); position: relative; top: -1px; }
+  .etat.ok .pastille { background: #5b8f55; }
+  .etat.erreur .pastille { background: var(--rouge); }
+  .apropos details { font-size: 13.5px; }
+  .apropos summary { cursor: pointer; color: var(--lien); }
+  .apropos details p { margin: 8px 0 0; }
+  input[type="file"] { font: inherit; color: var(--texte); max-width: 100%; }
+  .panneaux { display: grid; grid-template-columns: 1fr; gap: 20px 24px; }
+  @media (min-width: 1100px) { .panneaux { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+  .carte h2 { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; margin: 0 0 4px; }
+  .carte h2 svg.ic { width: 24px; height: 24px; color: var(--texte-2); }
+  .sous { color: var(--texte-2); font-size: 13.5px; margin: 0 0 14px; }
+  input[type="search"], textarea { width: 100%; font: inherit; color: var(--texte); background: #fff; border: 1px solid #cfc9bb; border-radius: 8px; padding: 10px 12px; }
+  input[type="search"] { font-size: 16px; }
+  textarea { min-height: 128px; font-family: var(--mono); font-size: 13px; line-height: 1.45; resize: vertical; }
+  .astuce { display: flex; gap: 10px; background: var(--doux); border: 1px solid var(--trait); border-radius: 8px; padding: 10px 14px; margin-top: 14px; font-size: 13.5px; color: var(--texte-2); }
+  .astuce svg.ic { flex: none; color: var(--ochre); }
+  .depot { border: 1.5px dashed #c9c2b2; border-radius: 10px; padding: 18px 16px; text-align: center; background: var(--doux); color: var(--texte-2); font-size: 13.5px; margin-bottom: 12px; transition: border-color .15s, background .15s; }
+  .depot.survol { border-color: var(--ochre); background: #fbf4e3; }
+  .depot svg.ic { width: 26px; height: 26px; color: var(--texte-2); }
+  .depot strong { display: block; color: var(--texte); font-size: 15px; margin: 6px 0 2px; }
+  .depot .indic { display: block; }
+  .depot .choisir { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--texte); background: #fff; border: 1px solid #cfc9bb; border-radius: 6px; padding: 7px 14px; cursor: pointer; }
+  .depot .choisir:hover { border-color: var(--texte-2); }
+  .depot input[type="file"] { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+  .ou { display: flex; align-items: center; gap: 12px; color: var(--texte-2); font-size: 13px; margin: 10px 0; }
+  .ou::before, .ou::after { content: ""; flex: 1; border-top: 1px solid var(--trait); }
+  .bouton { display: inline-flex; align-items: center; gap: 8px; font: inherit; font-size: 15px; font-weight: 600; color: var(--ivory); background: var(--bg); border: 1px solid var(--bg); border-radius: 8px; padding: 10px 18px; cursor: pointer; }
+  .bouton:hover { background: #3b3a33; }
+  .bouton.second { background: #fff; color: var(--texte); border-color: #cfc9bb; }
+  .bouton.second:hover { border-color: var(--texte-2); background: var(--doux); }
+  .bouton[disabled] { opacity: 0.45; cursor: default; }
+  .lien-bouton { font: inherit; font-size: 14px; color: var(--texte-2); background: none; border: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .lien-bouton:hover { color: var(--texte); }
+  .actions { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 16px; align-items: center; margin: 12px 0 6px; }
+  .discret { color: var(--texte-2); font-size: 13.5px; margin: 8px 0 0; }
+  .resultats { margin-top: 22px; }
+  .resultats .tete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; margin-bottom: 14px; }
+  .resultats .tete h2 { margin: 0; }
+  .compteurs { display: inline-flex; flex-wrap: wrap; gap: 6px; margin-left: 4px; }
+  .compteurs span { font-size: 13px; font-weight: 600; background: #efece2; border-radius: 999px; padding: 4px 11px; color: var(--texte-2); }
+  .compteurs span b { color: var(--texte); font-weight: 700; margin-right: 3px; }
+  .boutons { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tableau { width: 100%; overflow: auto; border: 1px solid var(--trait); border-radius: 8px; background: #fff; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; vertical-align: top; padding: 9px 12px; border-bottom: 1px solid var(--trait); }
+  thead th { position: sticky; top: 0; background: var(--doux); font-weight: 600; white-space: nowrap; z-index: 1; color: var(--texte); }
+  th.tri { cursor: pointer; user-select: none; }
+  th.tri::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-left: 8px; border-right: 1.5px solid #b5ae9d; border-bottom: 1.5px solid #b5ae9d; transform: translateY(-2px) rotate(45deg); }
+  th.tri.asc::after { border-color: var(--texte); transform: translateY(2px) rotate(-135deg); }
+  th.tri.desc::after { border-color: var(--texte); }
+  tbody tr:hover td { background: #faf8f2; }
+  tr:last-child td { border-bottom: 0; }
+  td.num, th.num { white-space: nowrap; font-variant-numeric: tabular-nums; }
+  td small { display: block; color: var(--texte-2); font-size: 12.5px; }
+  td .v3 { color: var(--rouge); font-weight: 600; } td .v2 { color: var(--orange); font-weight: 600; } td .v1 { color: var(--jaune); }
+  .niveau { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; font-size: 12.5px; font-weight: 600; border-radius: 999px; padding: 3px 10px 3px 8px; }
+  .niveau::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .niveau.n0 { color: var(--vert); background: #e3ecdc; } .niveau.n1 { color: var(--jaune); background: #f3eccb; }
+  .niveau.n2 { color: var(--orange); background: #f8e5c6; } .niveau.n3 { color: var(--rouge); background: #f7dcd5; }
+  #recherche-tableau { margin-top: 12px; max-height: 60vh; }
+  #resultats-tableau { max-height: 75vh; }
+  .aide { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 22px; }
+  @media (min-width: 1100px) { .aide { grid-template-columns: 1fr 1fr; } }
+  .aide details.carte { padding: 0; }
+  .aide summary { cursor: pointer; padding: 14px 20px; font-weight: 700; font-size: 15px; display: flex; align-items: center; gap: 10px; list-style: none; }
+  .aide summary::-webkit-details-marker { display: none; }
+  .aide summary::after { content: ""; margin-left: auto; width: 8px; height: 8px; border-right: 1.5px solid var(--texte-2); border-bottom: 1.5px solid var(--texte-2); transform: translateY(-2px) rotate(45deg); }
+  .aide details[open] summary::after { transform: translateY(2px) rotate(-135deg); }
+  .aide .corps { padding: 0 20px 16px; font-size: 14px; }
+  .aide dl { margin: 0 0 10px; display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+  .aide dt { font-weight: 600; }
+  .aide dd { margin: 0; }
+  @media (max-width: 640px) { .aide dl { grid-template-columns: 1fr; gap: 2px; } .aide dd { margin-bottom: 8px; } }
+  code { font-family: var(--mono); font-size: 0.92em; background: #2a2b240c; border-radius: 4px; padding: 1px 5px; }
+  footer { background: var(--bg); color: var(--muted); font-size: 13.5px; margin-top: 10px; }
+  footer .page { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 28px; padding-block: 18px 22px; }
+  footer .gauche { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; }
+  footer .gauche img { height: 34px; width: auto; display: block; }
+  footer p { margin: 0; }
+  footer a { color: var(--ivory); text-decoration: none; }
+  footer a:hover { color: var(--ochre); }
+  .cache { display: none; }
+</style>
+<style>
+  .fichiers .depot { margin-bottom: 14px; }
+  .fichiers .depot .choisir + .choisir { margin-left: 8px; }
+  .charges { list-style: none; margin: 0 0 6px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+  .charges li { font-size: 13.5px; background: #efece2; border-radius: 999px; padding: 5px 13px; color: var(--texte-2); }
+  .charges li.oui { background: #e3ecdc; color: var(--vert); }
+  .charges li b { color: var(--texte); font-weight: 700; }
+  .charges li.oui b { color: var(--vert); }
+  .reference { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--trait); }
+  .reference label { font-weight: 600; display: inline-flex; align-items: center; gap: 10px; }
+  input[type="date"], select { font: inherit; color: var(--texte); background: #fff; border: 1px solid #cfc9bb; border-radius: 8px; padding: 7px 10px; }
+  .reference .discret { margin: 0; }
+  .ligne-outils { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 10px; }
+  .ligne-outils input[type="search"] { flex: 1 1 260px; width: auto; }
+  .ligne-outils label { font-size: 13.5px; color: var(--texte-2); display: inline-flex; align-items: center; gap: 8px; }
+  td .statut { white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<header class="barre">
+<div class="page">
+<a class="logo" href="../" title="referentiels-sante, accueil"><img src="logo.png" width="899" height="136" alt="referentiels-sante"></a>
+<div class="droite">
+<nav aria-label="Liens du projet">
+<a href="../">Le convertisseur</a>
+<a href="../controle/">Contrôle FINESS</a>
+<a href="../tarifs/">Tarifs GHS</a>
+<a href="../medicaments/">Médicaments</a>
+<a href="https://github.com/Irreductix/referentiels-sante/tree/main/site/nomenclatures">Code de cette page</a>
+<a href="https://github.com/Irreductix/referentiels-sante/issues">Signaler un écart</a>
+</nav>
+<a class="village" href="https://irreductix.fr/" title="Le collectif Irréductix"><img src="irreductix.webp" width="1086" height="362" alt="Irréductix"></a>
+</div>
+</div>
+</header>
+
+<div class="fil">
+<div class="page">
+<p style="margin:0"><a href="../">referentiels-sante</a><span class="sep">›</span><a href="https://irreductix.fr/outils">Outils</a><span class="sep">›</span><strong>Nomenclatures</strong></p>
+<p style="margin:0">Un outil libre pour le service public</p>
+</div>
+</div>
+
+<main class="page">
+
+<div class="entete">
+<div>
+<span class="badge">Outil</span>
+<h1>Nomenclatures</h1>
+<p class="intro">CCAM, NABM, LPP et UCD : retrouvez un acte, un produit ou une unité de dispensation par son code ou son libellé, et contrôlez une liste de codes à une date (codes fermés ou radiés, activité inexistante, cotation, tarif et prix en vigueur, entente préalable), à partir des fichiers convertis sur votre poste.</p>
+</div>
+<aside class="carte apropos">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg> À propos de cet outil</h2>
+<p>L'Assurance Maladie ne permet pas de rediffuser ces nomenclatures : la page lit les fichiers que le convertisseur a produits sur votre poste, et rien n'en sort. Aucune requête, pas de cookie, pas de traceur, pas de compte.</p>
+<p class="etat" id="etat"><span class="pastille"></span><span id="etat-texte">Aucun fichier chargé : déposez ci-dessous les fichiers convertis.</span></p>
+<details>
+<summary>Quels fichiers charger</summary>
+<p>Pour la CCAM : <code>ccam-actes.csv</code>, et <code>ccam-phases.csv</code> pour le tarif de chaque activité. Pour la NABM : <code>nabm_fiche</code> et <code>nabm_histo</code>. Pour la LPP : <code>lpp_fiche</code> et <code>lpp_histo</code>. Pour les UCD : <code>ucd_total</code>, et <code>ucd_histo_prix</code> pour les prix à une date passée. Vous pouvez déposer tout le dossier : les autres fichiers sont ignorés sans être lus.</p>
+</details>
+</aside>
+</div>
+
+<section class="carte fichiers" id="fichiers">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/></svg> Les fichiers à charger</h2>
+<p class="sous">Déposez d'un coup les fichiers CSV produits par les commandes <code>ccam</code>, <code>nabm</code>, <code>lpp</code> ou <code>ucd</code> du convertisseur : la page reconnaît chacun à ses colonnes. Une seule nomenclature suffit pour commencer.</p>
+<div class="depot" id="depot-fichiers">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5M8 9l4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+<strong>Glissez les fichiers convertis ici</strong>
+<span class="indic">plusieurs fichiers à la fois, ou le dossier entier avec le second bouton</span>
+<label class="choisir" for="fichier-nomenclatures">Choisir des fichiers</label>
+<input type="file" id="fichier-nomenclatures" accept=".csv" multiple>
+<label class="choisir" for="dossier-nomenclatures">Choisir un dossier</label>
+<input type="file" id="dossier-nomenclatures" webkitdirectory multiple>
+</div>
+<ul class="charges" id="charges"></ul>
+<p class="discret" id="ignores"></p>
+<div class="reference">
+<label for="date">Date de référence <input type="date" id="date"></label>
+<p class="discret">Validité, cotations, tarifs et prix sont lus à cette date, sauf si votre liste a une colonne de dates.</p>
+</div>
+</section>
+
+<div class="panneaux">
+
+<section class="carte" id="rechercher">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg> Rechercher un code</h2>
+<p class="sous"><label for="recherche">Un début de code, ou des mots du libellé.</label></p>
+<div class="ligne-outils">
+<input type="search" id="recherche" placeholder="Ex. : JJFA005, cataracte, 1393295, pansement hydrocellulaire, gamunex" autocomplete="off" disabled>
+<label for="recherche-nomenclature">dans <select id="recherche-nomenclature" disabled><option value="">toutes les nomenclatures chargées</option><option value="ccam">CCAM</option><option value="nabm">NABM</option><option value="lpp">LPP</option><option value="ucd">UCD</option></select></label>
+</div>
+<p class="discret" id="recherche-info"></p>
+<div class="tableau cache" id="recherche-tableau"></div>
+<div class="astuce"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1.1 2.1h4.8c.1-.9.5-1.6 1.1-2.1A6 6 0 0 0 12 3z"/></svg><span><strong>Astuce :</strong> la validité et les tarifs affichés sont ceux de la date de référence. Les accents et la casse ne comptent pas.</span></div>
+</section>
+
+<section class="carte" id="controler">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M12 11v6M9 14h6"/></svg> Contrôler une liste</h2>
+<p class="sous">Collez une colonne de codes (CCAM avec ou sans activité et phase, NABM, LPP, UCD à 7 ou 13 chiffres, même mélangés), avec si vous voulez une date et un libellé à côté, ou importez un fichier CSV. Un relevé d'actes, un paramétrage, une liste de produits : la page dit ce qui n'existe pas ou plus à la date, et donne cotation, tarif ou prix.</p>
+<div class="depot" id="depot">
+<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V5M8 9l4-4 4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+<strong>Glissez un fichier ici</strong>
+<span class="indic">CSV ou texte, UTF-8 ou ANSI (enregistré depuis Excel)</span>
+<label class="choisir" for="fichier-liste">Choisir un fichier</label>
+<input type="file" id="fichier-liste" accept=".csv,.txt,.tsv" disabled>
+</div>
+<p class="ou">ou</p>
+<textarea id="liste" placeholder="Collez vos codes ici, un par ligne&#10;Ex. : Acte	Date	Libellé&#10;JJFA00510	15/03/2026	Ovariectomie" disabled></textarea>
+<div class="actions">
+<div class="boutons">
+<button class="bouton" id="bouton-controler" disabled><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg> Contrôler la liste</button>
+<label class="discret" for="nomenclature" style="margin:0">nomenclature <select id="nomenclature" disabled><option value="">détectée d'après le code</option><option value="ccam">CCAM</option><option value="nabm">NABM</option><option value="lpp">LPP</option><option value="ucd">UCD</option></select></label>
+</div>
+<button class="lien-bouton" id="bouton-effacer" type="button">Effacer</button>
+</div>
+<p class="discret" id="colonnes"></p>
+</section>
+
+</div>
+
+<section id="resultats" class="carte resultats cache">
+<div class="tete">
+<h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Résultats <span class="compteurs" id="resume"></span></h2>
+<div class="boutons">
+<button class="bouton second" id="bouton-rapport"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg> Exporter CSV</button>
+<button class="bouton second" id="bouton-copier"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a1 1 0 0 1 1-1h10"/></svg> Copier</button>
+</div>
+</div>
+<div class="tableau" id="resultats-tableau"></div>
+</section>
+
+<div class="aide">
+<details class="carte">
+<summary><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg> Comment lire les résultats</summary>
+<div class="corps">
+<dl>
+<dt>CCAM</dt><dd>Code à sept caractères, seul ou suivi de l'activité et de la phase (JJFA005, JJFA00510, « JJFA005 1 0 »). La page vérifie que l'acte existe à la date et que l'activité existe pour cet acte, puis donne le tarif de base (grille secteur 1) : celui de l'activité 1 par défaut, celui de l'activité demandée si <code>ccam-phases.csv</code> est chargé. Actes non remboursables et ententes préalables sont signalés.</dd>
+<dt>NABM</dt><dd>Code à quatre chiffres (un zéro de tête perdu par Excel est rétabli). La cotation, lettre clé et coefficient comme B 17, est celle en vigueur à la date d'après <code>nabm_histo</code>.</dd>
+<dt>LPP</dt><dd>Code à sept chiffres. Le tarif de responsabilité et le prix limite de vente sont ceux de la version tarifaire en vigueur à la date d'après <code>lpp_histo</code> ; un code sans tarif à cette date est signalé.</dd>
+<dt>UCD</dt><dd>Code à sept chiffres, ou à treize commençant par 34008 (la clé de contrôle est vérifiée). La page dit sur quelles listes le code est inscrit à la date (rétrocession, en sus MCO, en sus SMR), s'il a été radié, s'il est commercialisé, et donne le prix hors taxe et TTC publié. Un code à treize chiffres commençant par 34009 est un CIP de présentation : il relève de la page Médicaments.</dd>
+<dt>Sept chiffres</dt><dd>Un code à sept chiffres est cherché dans la LPP et dans les UCD. S'il existe dans les deux, choisissez la nomenclature dans la liste déroulante avant de contrôler.</dd>
+<dt>Dates</dt><dd>Sans colonne de dates dans votre liste, tout est lu à la date de référence. Une date de fin est comptée comme dernier jour de validité.</dd>
+<dt>Niveaux</dt><dd>« écart » demande une correction (code inconnu, fermé ou radié, activité inexistante, non remboursable), « à vérifier » un contrôle à la source, « à regarder » un simple coup d'œil (entente préalable, nomenclature non chargée), « ok » concorde.</dd>
+</dl>
+<p class="discret" style="margin:0">Les nomenclatures sont publiées par l'Assurance Maladie, qui en reste propriétaire ; elles sont converties sur votre poste par <a href="../">referentiels-sante</a>. Cette page ne corrige rien et ne fait pas foi.</p>
+</div>
+</details>
+<details class="carte">
+<summary><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"/><path d="M8 9h8M8 13h5"/></svg> Obtenir les fichiers</summary>
+<div class="corps">
+<ol>
+<li>Avec la <a href="https://github.com/Irreductix/referentiels-sante/releases/latest">version Windows</a> de l'outil, qui n'installe rien : double-cliquez sur <code>Convertir.cmd</code> et choisissez CCAM, NABM, LPP ou UCD ; le dossier <code>donnees\ccam</code> (ou <code>nabm</code>, <code>lpp</code>, <code>ucd</code>) s'ouvre à la fin.</li>
+<li>Avec Node.js : <code>npx referentiels-sante ccam</code>, puis <code>nabm</code>, <code>lpp</code>, <code>ucd</code> ; les fichiers sortent dans <code>data\ccam</code>, <code>data\nabm</code>, et ainsi de suite.</li>
+<li>Déposez ici les fichiers du dossier : <code>ccam-actes.csv</code> et <code>ccam-phases.csv</code>, <code>nabm_fiche</code> et <code>nabm_histo</code>, <code>lpp_fiche</code> et <code>lpp_histo</code>, <code>ucd_total</code> et <code>ucd_histo_prix</code>. Les autres sont ignorés sans être lus.</li>
+</ol>
+<p>Pour contrôler des actes anciens avec la CCAM de l'époque : <code>npx referentiels-sante ccam --date 2025-06-30</code> convertit la nomenclature telle qu'elle était à cette date.</p>
+</div>
+</details>
+<details class="carte">
+<summary><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M4 17v2a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-2"/></svg> Utiliser la page hors ligne</summary>
+<div class="corps">
+<p>Pour un poste sans accès à internet : téléchargez <a href="nomenclatures-hors-ligne.zip">nomenclatures-hors-ligne.zip</a>, décompressez-le et ouvrez <code>index.html</code>. La page n'a besoin d'aucune connexion : elle ne lit que vos fichiers.</p>
+</div>
+</details>
+</div>
+
+</main>
+
+<footer>
+<div class="page">
+<div class="gauche">
+<a href="https://irreductix.fr/" title="Le collectif Irréductix"><img src="irreductix.webp" width="1086" height="362" alt="Irréductix"></a>
+<p>Des outils libres pour le service public, construits à partir de données publiques.</p>
+</div>
+<p>Code sous licence MIT, <a href="https://github.com/Irreductix/referentiels-sante">sur GitHub</a>. Données : CCAM, NABM, LPP et UCD de l'Assurance Maladie, tous droits réservés, lues sur votre poste et jamais rediffusées.</p>
+</div>
+</footer>
+
+<script src="nomenclatures.js"></script>
+<script>
+(function () {
+  'use strict';
+  const N = window.Nomenclatures;
+  const NOMS = N.NOMENCLATURES;
+  const $ = (id) => document.getElementById(id);
+  const lus = new Map();
+  let base = N.construire([]);
+  let dernierResultat = null;
+  let tri = { cle: 'gravite', sens: -1 };
+
+  const echapper = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const nombre = (n) => Number(n).toLocaleString('fr-FR');
+  const euros = (v) => Number(v).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
+  const tarifTexte = (tarif, unite) => (tarif === '' || tarif == null ? '' : /€/.test(unite) ? euros(tarif) + (unite === '€ TTC' ? ' TTC' : '') : unite + ' ' + Number(tarif).toLocaleString('fr-FR'));
+  const dateFr = (iso) => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? m[3] + '/' + m[2] + '/' + m[1] : iso || ''; };
+  const aujourdhui = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  const dateRef = () => $('date').value || aujourdhui();
+  const chargee = () => ['ccam', 'nabm', 'lpp', 'ucd'].some((n) => base[n]);
+  const statutHtml = (f) => '<span class="niveau statut ' + (f.statut === 'en vigueur' ? 'n0' : f.gravite >= 3 ? 'n3' : 'n2') + '">' + echapper(f.statut) + '</span>';
+  const periode = (f) => (f.debut || f.fin ? '<small>' + (f.debut ? 'du ' + echapper(dateFr(f.debut)) : '') + (f.fin ? ' au ' + echapper(dateFr(f.fin)) : '') + '</small>' : '');
+
+  $('date').value = aujourdhui();
+  function etat(classe, texte) { $('etat').className = 'etat ' + classe; $('etat-texte').textContent = texte; }
+  function activer() { const ok = chargee(); for (const id of ['recherche', 'recherche-nomenclature', 'liste', 'bouton-controler', 'fichier-liste', 'nomenclature']) $(id).disabled = !ok; }
+
+  async function lireFichierTexte(f) {
+    const octets = await f.arrayBuffer();
+    try { return new TextDecoder('utf-8', { fatal: true }).decode(octets); } catch (e) { return new TextDecoder('windows-1252').decode(octets); }
+  }
+  const mo = (n) => (n / 1048576).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' Mo';
+  const souffler = () => new Promise((r) => setTimeout(r, 0));
+
+  async function chargerFichiers(liste) {
+    const fichiers = Array.prototype.slice.call(liste || []).filter((f) => /\.csv$/i.test(f.name));
+    if (!fichiers.length) { etat('erreur', 'Aucun fichier CSV parmi les fichiers déposés.'); return; }
+    const ignores = [];
+    try {
+      for (const f of fichiers) {
+        // La reconnaissance lit les premiers octets seulement : les gros fichiers inutiles (ccam-tarifs-grilles fait 70 Mo) ne sont pas chargés.
+        const r = N.reconnaitreFichier(await f.slice(0, 20000).text(), f.name);
+        if (r.type === 'ignore' || r.type === 'inconnu') { ignores.push(f.name + ' : ' + r.message); continue; }
+        etat('', 'Lecture de ' + f.name + ' (' + mo(f.size) + ')…');
+        await souffler();
+        const lu = N.lireFichier(await lireFichierTexte(f), f.name);
+        lus.set(lu.type, lu);
+      }
+      base = N.construire(Array.from(lus.values()));
+    } catch (e) { etat('erreur', 'Lecture impossible : ' + e.message); return; }
+    afficherCharges(ignores);
+    activer();
+    afficherRecherche($('recherche').value);
+    if (dernierResultat) controlerTexte($('liste').value);
+  }
+  function afficherCharges(ignores) {
+    const puces = [];
+    const b = base;
+    if (b.ccam) puces.push('<li class="oui"><b>CCAM ' + echapper(b.ccam.version) + '</b> : ' + nombre(b.ccam.nombre) + ' actes' + (b.ccam.phases ? ', phases chargées' : ', sans ccam-phases (tarif de l\'activité 1 seulement)') + '</li>'); else puces.push('<li>CCAM : non chargée</li>');
+    if (b.nabm) puces.push('<li class="oui"><b>NABM ' + echapper(b.nabm.version) + '</b> : ' + nombre(b.nabm.nombre) + ' actes' + (b.nabm.histo ? ', cotations chargées' : ', sans nabm_histo (pas de cotation)') + '</li>'); else puces.push('<li>NABM : non chargée</li>');
+    if (b.lpp) puces.push('<li class="oui"><b>LPP ' + echapper(b.lpp.version) + '</b> : ' + nombre(b.lpp.nombre) + ' codes' + (b.lpp.histo ? ', tarifs chargés' : ', sans lpp_histo (pas de tarif)') + '</li>'); else puces.push('<li>LPP : non chargée</li>');
+    if (b.ucd) puces.push('<li class="oui"><b>UCD ' + echapper(b.ucd.version) + '</b> : ' + nombre(b.ucd.nombre) + ' codes' + (b.ucd.prix ? ', historique des prix chargé' : ', prix en vigueur seulement') + '</li>'); else puces.push('<li>UCD : non chargée</li>');
+    $('charges').innerHTML = puces.join('');
+    $('ignores').textContent = ignores.length ? 'Fichiers ignorés : ' + ignores.join(' ; ') + '.' : '';
+    const noms = ['ccam', 'nabm', 'lpp', 'ucd'].filter((n) => b[n]).map((n) => NOMS[n]);
+    if (noms.length) etat('ok', noms.join(', ') + ' chargée' + (noms.length > 1 ? 's' : '') + ' : recherche et contrôle possibles, rien n\'a quitté votre poste.');
+    else etat('erreur', 'Aucun fichier reconnu. Il faut les CSV produits par les commandes ccam, nabm, lpp ou ucd.');
+  }
+  $('fichier-nomenclatures').addEventListener('change', function () { chargerFichiers(this.files); this.value = ''; });
+  $('dossier-nomenclatures').addEventListener('change', function () { chargerFichiers(this.files); this.value = ''; });
+  const depotFichiers = $('depot-fichiers');
+  for (const ev of ['dragenter', 'dragover']) depotFichiers.addEventListener(ev, (e) => { e.preventDefault(); depotFichiers.classList.add('survol'); });
+  for (const ev of ['dragleave', 'drop']) depotFichiers.addEventListener(ev, (e) => { e.preventDefault(); depotFichiers.classList.remove('survol'); });
+  depotFichiers.addEventListener('drop', (e) => chargerFichiers(e.dataTransfer && e.dataTransfer.files));
+  $('date').addEventListener('change', () => { afficherRecherche($('recherche').value); if (dernierResultat) controlerTexte($('liste').value); });
+
+  let minuteur = null;
+  $('recherche').addEventListener('input', function () { clearTimeout(minuteur); const q = this.value; minuteur = setTimeout(() => afficherRecherche(q), 150); });
+  $('recherche-nomenclature').addEventListener('change', () => afficherRecherche($('recherche').value));
+  function afficherRecherche(q) {
+    const tableau = $('recherche-tableau');
+    if (!chargee() || String(q || '').trim().length < 2) { tableau.className = 'tableau cache'; $('recherche-info').textContent = ''; return; }
+    const r = N.chercher(base, q, dateRef(), { max: 50, nomenclature: $('recherche-nomenclature').value });
+    $('recherche-info').textContent = r.length ? (r.length >= 50 ? '50 premiers résultats au ' + dateFr(dateRef()) + ', précisez la recherche' : r.length + ' résultat' + (r.length > 1 ? 's' : '') + ' au ' + dateFr(dateRef())) : 'Aucun code ne correspond dans les nomenclatures chargées.';
+    tableau.className = 'tableau' + (r.length ? '' : ' cache');
+    tableau.innerHTML = '<table><thead><tr><th class="num">Code</th><th>Nomenclature</th><th>Libellé</th><th>Validité</th><th class="num">Tarif</th><th>Précisions</th></tr></thead><tbody>'
+      + r.map((f) => '<tr><td class="num">' + echapper(f.code) + '</td><td>' + NOMS[f.nomenclature] + '</td><td>' + echapper(f.libelle) + (f.detail ? '<small>' + echapper(f.detail) + '</small>' : '') + '</td><td>' + statutHtml(f) + periode(f) + '</td><td class="num">' + tarifTexte(f.tarif, f.unite) + '</td><td>' + echapper(f.precisions.join(' ; ')) + (f.pistes.length ? '<small>' + echapper(f.pistes.join(' ; ')) + '</small>' : '') + '</td></tr>').join('')
+      + '</tbody></table>';
+  }
+
+  $('bouton-controler').addEventListener('click', () => controlerTexte($('liste').value));
+  $('bouton-effacer').addEventListener('click', () => { $('liste').value = ''; $('colonnes').textContent = ''; $('resultats').className = 'carte resultats cache'; dernierResultat = null; });
+  async function chargerFichierListe(f) { if (!f || !chargee()) return; const texte = await lireFichierTexte(f); $('liste').value = texte; controlerTexte(texte); }
+  $('fichier-liste').addEventListener('change', function () { chargerFichierListe(this.files && this.files[0]); });
+  const depot = $('depot');
+  for (const ev of ['dragenter', 'dragover']) depot.addEventListener(ev, (e) => { e.preventDefault(); depot.classList.add('survol'); });
+  for (const ev of ['dragleave', 'drop']) depot.addEventListener(ev, (e) => { e.preventDefault(); depot.classList.remove('survol'); });
+  depot.addEventListener('drop', (e) => chargerFichierListe(e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]));
+
+  const NIVEAUX = ['ok', 'à regarder', 'à vérifier', 'écart'];
+  function controlerTexte(texte) {
+    if (!chargee()) return;
+    const liste = N.lireListe(texte);
+    if (!liste.lignes.length || liste.colonnes.code === undefined) { $('colonnes').textContent = 'Aucune colonne de codes reconnue : il faut des codes CCAM (quatre lettres et trois chiffres), NABM (quatre chiffres), LPP ou UCD (sept chiffres, ou treize pour les UCD).'; $('resultats').className = 'carte resultats cache'; return; }
+    const c = liste.colonnes;
+    $('colonnes').textContent = 'Codes en colonne ' + (c.code + 1) + (c.date !== undefined ? ', dates en colonne ' + (c.date + 1) : '') + (c.nom !== undefined ? ', libellés en colonne ' + (c.nom + 1) : '') + (liste.entete ? ' ; en-tête lu ligne ' + liste.ligneEntete : ' ; pas de ligne d\'en-tête') + '. ' + liste.lignes.length + ' lignes de données' + (c.date !== undefined ? '.' : ', contrôlées au ' + dateFr(dateRef()) + '.');
+    dernierResultat = N.controler(base, liste, { date: dateRef(), nomenclature: $('nomenclature').value });
+    tri = { cle: 'gravite', sens: -1 };
+    afficherResultats();
+    $('resultats').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function trier(lignes) {
+    const v = (x) => (tri.cle === 'gravite' ? x.gravite : tri.cle === 'ligne' ? x.ligne : tri.cle === 'nomenclature' ? (x.nomenclature || 'zz') : tri.cle === 'nom' ? (x.nom || x.saisi || '').toLowerCase() : (x.libelle || '').toLowerCase());
+    return lignes.slice().sort((a, b) => { const x = v(a); const y = v(b); return (x < y ? -1 : x > y ? 1 : a.ligne - b.ligne) * tri.sens; });
+  }
+  function afficherResultats() {
+    const r = dernierResultat; const c = r.comptes;
+    $('resume').innerHTML = '<span><b>' + c.lignes + '</b>lignes</span><span><b>' + c.ecarts + '</b>écarts</span><span><b>' + c.aVerifier + '</b>à regarder</span><span><b>' + c.conformes + '</b>concordent</span>';
+    const th = (cle, titre, num) => '<th class="tri' + (num ? ' num' : '') + (tri.cle === cle ? (tri.sens > 0 ? ' asc' : ' desc') : '') + '" data-cle="' + cle + '">' + titre + '</th>';
+    $('resultats-tableau').innerHTML = '<table><thead><tr>' + th('gravite', 'Niveau') + th('ligne', 'Ligne', true) + th('nom', 'Dans la liste') + th('nomenclature', 'Nomenclature') + th('libelle', 'Résultat') + '<th>Validité</th><th class="num">Tarif</th><th>Précisions</th></tr></thead><tbody>'
+      + trier(r.resultats).map((x) => '<tr><td><span class="niveau n' + x.gravite + '">' + NIVEAUX[x.gravite] + '</span></td><td class="num">' + x.ligne + '</td>'
+        + '<td>' + echapper(x.nom || x.saisi) + '<small class="num">' + (x.nom ? echapper(x.saisi) + (x.code && x.code !== x.saisi.toUpperCase().replace(/[\s .]/g, '') ? ' (' + echapper(x.code) + ')' : '') : '') + (x.date ? (x.nom ? ', ' : '') + 'au ' + echapper(dateFr(x.date)) : '') + '</small></td>'
+        + '<td>' + (x.nomenclature ? NOMS[x.nomenclature] : '') + '</td>'
+        + '<td><span' + (x.gravite === 3 ? ' class="v3"' : '') + '>' + echapper(x.resultat) + '</span>' + (x.libelle ? '<small>' + echapper(x.libelle) + (x.detail ? ' (' + echapper(x.detail) + ')' : '') + '</small>' : '') + '</td>'
+        + '<td>' + (x.statut && x.statut !== x.resultat ? statutHtml(x) : '') + periode(x) + '</td>'
+        + '<td class="num">' + tarifTexte(x.tarif, x.unite) + '</td><td>' + echapper(x.precisions.join(' ; ')) + (x.pistes.length ? '<small>' + echapper(x.pistes.join(' ; ')) + '</small>' : '') + '</td></tr>').join('')
+      + '</tbody></table>';
+    for (const e of $('resultats-tableau').querySelectorAll('th.tri')) e.addEventListener('click', () => { const cle = e.getAttribute('data-cle'); tri = tri.cle === cle ? { cle, sens: -tri.sens } : { cle, sens: cle === 'gravite' ? -1 : 1 }; afficherResultats(); });
+    $('resultats').className = 'carte resultats';
+  }
+  $('bouton-rapport').addEventListener('click', () => {
+    if (!dernierResultat) return;
+    const blob = new Blob([N.rapportCsv(dernierResultat)], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'controle-nomenclatures.csv'; document.body.appendChild(a); a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  });
+  $('bouton-copier').addEventListener('click', async () => {
+    if (!dernierResultat) return;
+    const texte = N.rapportCsv(dernierResultat).replace(/^﻿/, '').split('\r\n').map((l) => l.replace(/;/g, '\t')).join('\n');
+    const bouton = $('bouton-copier');
+    try { await navigator.clipboard.writeText(texte); bouton.lastChild.textContent = ' Copié'; } catch (e) { bouton.lastChild.textContent = ' Copie refusée par le navigateur'; }
+    setTimeout(() => { bouton.lastChild.textContent = ' Copier'; }, 2000);
+  });
+})();
+</script>
+</body>
+</html>
