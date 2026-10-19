@@ -1,5 +1,9 @@
 # Journal des versions
 
+## 0.5.1 (octobre 2026)
+
+- Replis mis à jour : LPP 906 et UCD 00807. Les tests des replis reçoivent leur propre jeu de versions et ne dépendent plus de `src/replis.json`.
+
 ## 0.5.0 (octobre 2026)
 
 - Page « Tarifs GHS » sur le site (`site/tarifs/`) : comparaison de deux campagnes GHS par GHS (tarifs, écarts, bornes, EXH, GHS nouveaux ou supprimés), filtres par secteur, CMD et évolution, export CSV ; et calcul de l'effet des nouveaux tarifs sur des volumes de séjours collés (par GHS ou par GHM), avec export. La page lit les fichiers `ghs.csv` convertis sur le poste : les archives de l'ATIH ne sont pas rediffusées, et les volumes ne quittent pas le navigateur. Logique dans `site/tarifs/tarifs.js`, testée avec Node.
