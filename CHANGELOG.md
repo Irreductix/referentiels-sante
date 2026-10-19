@@ -1,5 +1,10 @@
 # Journal des versions
 
+## 0.6.0 (octobre 2026)
+
+- Page « Médicaments » sur le site (`site/medicaments/`) : recherche d'une spécialité par nom, laboratoire, groupe générique, CIS ou CIP, et contrôle d'une liste de codes CIP13, CIP7 ou CIS collée ou déposée (présentations arrêtées ou abrogées, tensions et ruptures d'approvisionnement, spécialités non commercialisées, prix, remboursement, agrément aux collectivités, clé de contrôle des CIP13 et présentation retrouvée par le CIP7 inclus), avec rapport CSV. Tout se calcule dans le navigateur ; logique dans `site/medicaments/medicaments.js`, testée avec Node.
+- La publication mensuelle produit `index-medicaments.csv.gz` (une ligne par présentation, avec sa spécialité, son groupe générique et sa disponibilité), `index-medicaments.json` et l'archive hors ligne `controle-medicaments-hors-ligne.zip`, puis redéploie le site avec l'index.
+
 ## 0.5.1 (octobre 2026)
 
 - Replis mis à jour : LPP 906 et UCD 00807. Les tests des replis reçoivent leur propre jeu de versions et ne dépendent plus de `src/replis.json`.

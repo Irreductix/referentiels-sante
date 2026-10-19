@@ -5,6 +5,7 @@
 <p align="center">
 <a href="https://referentiels-sante.irreductix.fr/controle/"><img src="https://img.shields.io/badge/Contr%C3%B4le_FINESS-v%C3%A9rifier_une_liste_dans_le_navigateur-dda34f?style=for-the-badge&labelColor=282722" alt="Contrôle FINESS"></a>
 <a href="https://referentiels-sante.irreductix.fr/tarifs/"><img src="https://img.shields.io/badge/Tarifs_GHS-comparer_deux_campagnes-dda34f?style=for-the-badge&labelColor=282722" alt="Tarifs GHS"></a>
+<a href="https://referentiels-sante.irreductix.fr/medicaments/"><img src="https://img.shields.io/badge/M%C3%A9dicaments-contr%C3%B4ler_une_liste_de_codes_CIP-dda34f?style=for-the-badge&labelColor=282722" alt="Médicaments"></a>
 <a href="https://referentiels-sante.irreductix.fr/"><img src="https://img.shields.io/badge/Site-mode_d'emploi_et_fichiers_du_mois-bdc6a7?style=for-the-badge&labelColor=282722" alt="Site"></a>
 <a href="https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess"><img src="https://img.shields.io/badge/data.gouv.fr-FINESS_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="FINESS en CSV sur data.gouv.fr"></a>
 <a href="https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle"><img src="https://img.shields.io/badge/data.gouv.fr-M%C3%A9dicaments_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="Base des médicaments en CSV sur data.gouv.fr"></a>
@@ -15,7 +16,7 @@
 **Les référentiels publics de la santé en France, convertis en CSV propres, et
 en JSON pour FINESS+, NOS, CIM-10 et GHS. Sans dépendance, en une commande.**
 
-Site : <https://referentiels-sante.irreductix.fr/>, avec deux pages qui travaillent dans le navigateur sans rien envoyer : [Contrôle FINESS](https://referentiels-sante.irreductix.fr/controle/) pour vérifier une liste d'établissements, et [Tarifs GHS](https://referentiels-sante.irreductix.fr/tarifs/) pour comparer deux campagnes et chiffrer l'effet des nouveaux tarifs sur des volumes de séjours  
+Site : <https://referentiels-sante.irreductix.fr/>, avec trois pages qui travaillent dans le navigateur sans rien envoyer : [Contrôle FINESS](https://referentiels-sante.irreductix.fr/controle/) pour vérifier une liste d'établissements, [Médicaments](https://referentiels-sante.irreductix.fr/medicaments/) pour chercher une spécialité et contrôler une liste de codes CIP, et [Tarifs GHS](https://referentiels-sante.irreductix.fr/tarifs/) pour comparer deux campagnes et chiffrer l'effet des nouveaux tarifs sur des volumes de séjours  
 Fichiers du mois sur data.gouv.fr : [FINESS en CSV](https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess) et [Base des médicaments en CSV](https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle)  
 Un outil libre du collectif [Irréductix](https://irreductix.fr)
 
@@ -209,6 +210,7 @@ src/
 site/
   index.html            le site
   controle/             page Contrôle FINESS (recherche et contrôle d'une liste dans le navigateur)
+  medicaments/          page Médicaments (recherche et contrôle d'une liste de codes CIP ou CIS)
   tarifs/               page Tarifs GHS (comparaison de campagnes et impact sur des volumes)
 tests/                  node:test, fixtures publiées par l'ANS et l'INSEE
 ```
