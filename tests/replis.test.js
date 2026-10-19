@@ -13,12 +13,30 @@ import { actualiserReplis, formaterReplis } from '../src/verifier/replis.js';
 
 const zip = { statut: 200, ok: true, type: 'application/zip' };
 
+// Un jeu de replis fixe : les tests ne dépendent pas des versions du moment dans src/replis.json,
+// que la surveillance du lundi met à jour.
+const FIXE = {
+  cnam: {
+    nabm: { version: '105', fichiers: [{ nom: 'NABM_FICHE_TOT105.dbf', url: 'http://exemple.fr/NABM_FICHE_TOT105.dbf' }] },
+    lpp: { version: '905', fichiers: [{ nom: 'LPP905.zip', url: 'http://exemple.fr/LPP905.zip' }] },
+    ucd: { version: '00806', fichiers: [{ nom: 'ucd_total_00806.dbf', url: 'http://exemple.fr/ucd_total_00806.dbf' }] },
+  },
+  ccam: { version: '08400', archives: ['https://exemple.fr/CCAM08400_DBF_PART1.zip'] },
+  ghs: {
+    2024: 'https://exemple.fr/2024%20-%20ghs_web_20240301.zip',
+    2025: 'https://exemple.fr/2025%20-%20ghs_web_20250301.zip',
+    2026: 'https://exemple.fr/2026%20-%20ghs_web_20260101.zip',
+  },
+};
+const fixe = () => structuredClone(FIXE);
+
 test('les modules lisent leurs replis dans src/replis.json', () => {
   assert.equal(VERSIONS_CONNUES, REPLIS.cnam);
   assert.equal(ARCHIVES_CONNUES, REPLIS.ccam);
   assert.equal(ARCHIVES, REPLIS.ghs);
   assert.ok(ARCHIVES_CONNUES.archives.length >= 1);
   for (const url of Object.values(ARCHIVES)) assert.match(url, /ghs_web_\d{8}/);
+  for (const nom of ['nabm', 'lpp', 'ucd']) assert.match(REPLIS.cnam[nom].version, /^\d+$/, nom);
 });
 
 test('repli en retard : avertissement s’il se télécharge encore, échec sinon', () => {
@@ -42,17 +60,17 @@ test('repli en retard : avertissement s’il se télécharge encore, échec sino
 function lecteurs({ lpp = '905', ucd = '00806', ghs2027 = null, ccam = null } = {}) {
   const cnam = { nabm: '105', lpp, ucd };
   return {
-    cnam: async (nom) => (nom === 'nabm' ? { ...REPLIS.cnam.nabm, repli: true }
+    cnam: async (nom) => (nom === 'nabm' ? { ...FIXE.cnam.nabm, repli: true }
       : { version: cnam[nom], fichiers: [{ nom: `${nom}${cnam[nom]}.dbf`, url: `http://exemple.fr/${nom}${cnam[nom]}.dbf` }], repli: false }),
-    ccam: async () => (ccam ? { version: ccam, archives: [`https://exemple.fr/CCAM${ccam}_PART1.zip`], repli: false } : { ...REPLIS.ccam, repli: true }),
-    ghs: async (annee) => (REPLIS.ghs[annee] ? { url: REPLIS.ghs[annee], repli: false }
+    ccam: async () => (ccam ? { version: ccam, archives: [`https://exemple.fr/CCAM${ccam}_PART1.zip`], repli: false } : { ...FIXE.ccam, repli: true }),
+    ghs: async (annee) => (FIXE.ghs[annee] ? { url: FIXE.ghs[annee], repli: false }
       : ghs2027 && annee === 2027 ? { url: ghs2027, repli: false } : { url: undefined, repli: true }),
     sonder: async (url) => (url.includes('casse') ? { statut: 404, ok: false } : zip),
   };
 }
 
 test('replis : rien à faire quand les pages publient les versions connues', async () => {
-  const bilan = await actualiserReplis({ lecteurs: lecteurs() });
+  const bilan = await actualiserReplis({ replis: fixe(), lecteurs: lecteurs() });
   assert.deepEqual(bilan.changements, []);
   assert.deepEqual(bilan.ecartees, []);
   assert.equal(formaterReplis(bilan), 'Versions de repli à jour.');
@@ -61,7 +79,7 @@ test('replis : rien à faire quand les pages publient les versions connues', asy
 test('replis : nouvelles versions retenues et écrites, campagne GHS suivante ajoutée', async () => {
   const fichier = join(mkdtempSync(join(tmpdir(), 'replis-')), 'replis.json');
   const bilan = await actualiserReplis({
-    ecrire: true, fichier,
+    ecrire: true, fichier, replis: fixe(),
     lecteurs: lecteurs({ lpp: '906', ccam: '08500', ghs2027: 'https://exemple.fr/2027%20-%20ghs_web_20270301.zip' }),
   });
   assert.deepEqual(bilan.changements.map((c) => `${c.source} ${c.avant} ${c.apres}`),
@@ -70,11 +88,11 @@ test('replis : nouvelles versions retenues et écrites, campagne GHS suivante aj
   const ecrit = lireReplis(fichier);
   assert.equal(ecrit.cnam.lpp.version, '906');
   assert.equal(ecrit.cnam.lpp.fichiers[0].url, 'http://exemple.fr/lpp906.dbf');
-  assert.equal(ecrit.cnam.ucd.version, REPLIS.cnam.ucd.version);
+  assert.equal(ecrit.cnam.ucd.version, '00806');
   assert.equal(ecrit.ccam.version, '08500');
   assert.equal(ecrit.ghs['2027'], 'https://exemple.fr/2027%20-%20ghs_web_20270301.zip');
   assert.ok(readFileSync(fichier, 'utf8').endsWith('}\n'));
-  assert.equal(REPLIS.cnam.lpp.version, '905', 'le repli chargé en mémoire n’est pas modifié');
+  assert.equal(FIXE.cnam.lpp.version, '905', 'le jeu de replis de départ n’est pas modifié');
   assert.match(formaterReplis(bilan), /lpp : 905 remplacée par 906\n.*\n.*\nsrc\/replis\.json mis à jour\./);
 });
 
@@ -82,7 +100,7 @@ test('replis : une version dont un fichier ne répond pas est écartée, une arc
   const fichier = join(mkdtempSync(join(tmpdir(), 'replis-')), 'replis.json');
   const l = lecteurs({ ghs2027: 'https://exemple.fr/2026%20-%20ghs_web_20260101.zip' });
   l.cnam = async (nom) => ({ version: '999', fichiers: [{ nom: 'casse.dbf', url: 'http://exemple.fr/casse.dbf' }], repli: false });
-  const bilan = await actualiserReplis({ ecrire: true, fichier, lecteurs: l });
+  const bilan = await actualiserReplis({ ecrire: true, fichier, replis: fixe(), lecteurs: l });
   assert.deepEqual(bilan.changements, []);
   assert.equal(bilan.ecrit, false);
   assert.equal(bilan.ecartees.length, 3);
@@ -93,7 +111,7 @@ test('replis : une version dont un fichier ne répond pas est écartée, une arc
 test('replis : une page qui lève une erreur n’arrête pas les autres sources', async () => {
   const l = lecteurs({ lpp: '906' });
   l.ccam = async () => { throw new Error('ameli injoignable'); };
-  const bilan = await actualiserReplis({ lecteurs: l });
+  const bilan = await actualiserReplis({ replis: fixe(), lecteurs: l });
   assert.deepEqual(bilan.changements.map((c) => c.source), ['lpp']);
   assert.deepEqual(bilan.ecartees, [{ source: 'ccam', motif: 'ameli injoignable' }]);
   assert.equal(bilan.ecrit, false);
