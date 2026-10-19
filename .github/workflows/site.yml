@@ -29,7 +29,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for f in index-finess.csv.gz index-finess.json; do
+          for f in index-finess.csv.gz index-finess.json index-medicaments.csv.gz index-medicaments.json; do
             gh release download donnees-du-mois --pattern "$f" --dir site --clobber || echo "$f absent de la release : la page de contrôle proposera le chargement depuis un fichier"
           done
           ls -la site/index-finess.* 2>/dev/null || true

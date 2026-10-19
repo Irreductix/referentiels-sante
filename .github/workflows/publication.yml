@@ -162,18 +162,27 @@ jobs:
             node -e "const f = require('./sortie/bdpm/bdpm-resume.json').fichiers; if ((f.specialites?.lignes ?? 1e9) < 10000 || (f.presentations?.lignes ?? 1e9) < 15000) { console.error('Comptes anormalement bas : ' + f.specialites?.lignes + ' spécialités, ' + f.presentations?.lignes + ' présentations. Rien n est publié.'); process.exit(1); }"
             node .github/scripts/mention-source.mjs bdpm sortie/bdpm
             (cd sortie/bdpm && zip -q -9 "../${etiquette}.zip" ./*)
+            node .github/scripts/index-medicaments.mjs sortie/bdpm sortie/index-medicaments.csv.gz
+            node -e "const r = require('./sortie/bdpm/bdpm-resume.json'); require('fs').writeFileSync('sortie/index-medicaments.json', JSON.stringify({ base: r.miseAJour, converti: String(r.converti).slice(0, 10), presentations: r.fichiers.presentations ? r.fichiers.presentations.lignes : null }) + '\n')"
+            zip -q -j sortie/controle-medicaments-hors-ligne.zip site/medicaments/index.html site/medicaments/medicaments.js site/medicaments/logo.png site/medicaments/irreductix.webp sortie/index-medicaments.csv.gz sortie/index-medicaments.json
             notes="Base de données publique des médicaments convertie en CSV UTF-8 : spécialités, présentations, compositions, avis SMR et ASMR, génériques, conditions de prescription, informations importantes, disponibilité. Dernière mise à jour de la base : ${maj}. Source : ANSM, HAS, UNCAM, base-donnees-publique.medicaments.gouv.fr, Licence Ouverte. Détail dans MENTION-SOURCE.txt et docs/AUTRES-REFERENTIELS.md."
             if publiee; then
-              for f in "$archive" sortie/bdpm/bdpm-resume.json; do
+              for f in "$archive" sortie/bdpm/bdpm-resume.json sortie/index-medicaments.csv.gz sortie/index-medicaments.json sortie/controle-medicaments-hors-ligne.zip; do
                 bash .github/scripts/remplacer-piece.sh "$etiquette" "$f"
               done
               gh release edit "$etiquette" --notes "$notes"
             else
-              gh release create "$etiquette" "$archive" sortie/bdpm/bdpm-resume.json \
+              gh release create "$etiquette" "$archive" sortie/bdpm/bdpm-resume.json sortie/index-medicaments.csv.gz sortie/index-medicaments.json sortie/controle-medicaments-hors-ligne.zip \
                 --latest=false --title "Médicaments (BDPM) $(date -u +%Y-%m)" --notes "$notes"
             fi
           fi
           bash .github/scripts/remplacer-piece.sh "$STABLE" "$archive" bdpm.zip
+          if [ -f sortie/index-medicaments.csv.gz ]; then
+            for f in index-medicaments.csv.gz index-medicaments.json controle-medicaments-hors-ligne.zip; do
+              bash .github/scripts/remplacer-piece.sh "$STABLE" "sortie/$f" "$f"
+            done
+            gh workflow run site.yml --ref "${GITHUB_REF_NAME:-main}"
+          fi
 
       # Les fiches data.gouv.fr pointent vers les adresses fixes : le fichier y est toujours
       # le dernier. Cette étape met à jour leur date et leur description, si la clé est fournie.
