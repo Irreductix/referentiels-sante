@@ -113,6 +113,15 @@ export async function deposerDbf(chemin, dossierDbf, profondeur = 0) {
 }
 
 /**
+ * Mise en forme de colonnes à la conversion. Le code NABM est un champ numérique dans les tables de
+ * l'Assurance Maladie (552 pour l'acte 0552) : la nomenclature l'écrit sur quatre chiffres, les tables
+ * `fiche`, `histo` (code_nabm) et `incomp` (code1, code2) aussi.
+ */
+export const FORMATS = {
+  nabm: (colonne, valeur) => (/^CODE/i.test(colonne) && typeof valeur === 'number' ? String(valeur).padStart(4, '0') : valeur),
+};
+
+/**
  * Télécharge, extrait et convertit toutes les tables DBF d'une source.
  */
 export async function exporterTableCnam(nom, { sortie, cache = '.cache', forcer = false, encodage = 'cp850', journal = () => {} } = {}) {
@@ -132,7 +141,7 @@ export async function exporterTableCnam(nom, { sortie, cache = '.cache', forcer 
   if (!dbfs.length) throw new Error(`aucune table DBF obtenue pour ${nom} : vérifiez les fichiers dans ${dossierCache}`);
   const tables = [];
   for (const f of dbfs) {
-    tables.push(await convertirTableDbf(join(dossierDbf, f), dossierSortie, { encodage, journal }));
+    tables.push(await convertirTableDbf(join(dossierDbf, f), dossierSortie, { encodage, journal, formater: FORMATS[nom] ?? null }));
   }
 
   // Dictionnaire des colonnes, pour que les tables restent lisibles sans la notice.

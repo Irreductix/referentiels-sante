@@ -370,7 +370,7 @@ export async function convertirDbf({ dossierDbf, sortie, version = null, brut = 
  * Convertit une table DBF quelconque en CSV (colonnes du fichier, en minuscules).
  * Sert aux tables CCAM brutes, à la NABM, à la LPP, aux UCD et à tout DBF local.
  */
-export async function convertirTableDbf(chemin, dossierSortie, { encodage = 'cp850', journal = () => {} } = {}) {
+export async function convertirTableDbf(chemin, dossierSortie, { encodage = 'cp850', journal = () => {}, formater = null } = {}) {
   mkdirSync(dossierSortie, { recursive: true });
   const entete = lireEnteteDbf(chemin);
   const colonnes = entete.champs.map((c) => c.nom.toLowerCase());
@@ -379,7 +379,7 @@ export async function convertirTableDbf(chemin, dossierSortie, { encodage = 'cp8
   let n = 0;
   for await (const l of lireDbf(chemin, { encodage })) {
     n++;
-    await csv.ecrire(entete.champs.map((c) => l[c.nom]));
+    await csv.ecrire(entete.champs.map((c) => (formater ? formater(c.nom, l[c.nom]) : l[c.nom])));
   }
   await csv.fermer();
   journal(`${nom} : ${n} lignes`);
