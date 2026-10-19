@@ -15,7 +15,7 @@
 **Les référentiels publics de la santé en France, convertis en CSV propres, et
 en JSON pour FINESS+, NOS, CIM-10 et GHS. Sans dépendance, en une commande.**
 
-Site : <https://referentiels-sante.irreductix.fr/>, avec la page [Contrôle FINESS](https://referentiels-sante.irreductix.fr/controle/) pour vérifier une liste d'établissements dans le navigateur  
+Site : <https://referentiels-sante.irreductix.fr/>, avec deux pages qui travaillent dans le navigateur sans rien envoyer : [Contrôle FINESS](https://referentiels-sante.irreductix.fr/controle/) pour vérifier une liste d'établissements, et [Tarifs GHS](https://referentiels-sante.irreductix.fr/tarifs/) pour comparer deux campagnes et chiffrer l'effet des nouveaux tarifs sur des volumes de séjours  
 Fichiers du mois sur data.gouv.fr : [FINESS en CSV](https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess) et [Base des médicaments en CSV](https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle)  
 Un outil libre du collectif [Irréductix](https://irreductix.fr)
 
@@ -38,6 +38,7 @@ entrepôt de données ou un script.
 | **Médicaments** | Base de données publique des médicaments (Licence Ouverte) | spécialités, présentations CIP, compositions, avis SMR et ASMR, génériques, conditions de prescription, disponibilité |
 | **NABM, LPP, UCD** | Assurance Maladie, tables dBase | biologie, dispositifs et prestations, unités communes de dispensation, en CSV UTF-8 |
 | **Tarifs GHS, GHT, suppléments** | ATIH, arrêtés tarifaires MCO et HAD | tarifs des deux secteurs, nombres et dates normalisés |
+| **Code officiel géographique** | INSEE, millésime annuel (Licence Ouverte 2.0) | communes, arrondissements municipaux, communes déléguées et associées, collectivités d'outre-mer, pour lire les codes commune de FINESS |
 | **N'importe quel DBF** | | conversion d'une table dBase locale ou d'une archive en CSV |
 
 Le flux FINESS+ a remplacé l'ancienne extraction FINESS le 20 juillet 2026.
@@ -124,7 +125,7 @@ les replis (`npx referentiels-sante replis`), ou un ticket avec le lien pour
 l'ouvrir si l'organisation interdit aux workflows d'en créer.
 
 Détail des colonnes : [docs/FINESS.md](docs/FINESS.md), [docs/CCAM.md](docs/CCAM.md),
-[docs/AUTRES-REFERENTIELS.md](docs/AUTRES-REFERENTIELS.md) (CIM-10, médicaments, NABM, LPP, UCD).
+[docs/AUTRES-REFERENTIELS.md](docs/AUTRES-REFERENTIELS.md) (CIM-10, médicaments, NABM, LPP, UCD, code officiel géographique).
 
 Les téléchargements sont mis en cache dans `.cache/` ; `--forcer` les renouvelle.
 `--sans-libelles` évite tout appel aux tables NOS (codes seuls, hors ligne).
@@ -175,8 +176,9 @@ Mesures sur un poste de travail, flux du 14 septembre 2026 pour les structures, 
 - Il ne réinterprète pas les données : chaque colonne est tracée jusqu'au champ
   d'origine dans [docs/FINESS.md](docs/FINESS.md). Les seules règles de calcul
   (statut et capacités des activités) sont celles publiées par l'ANS.
-- Il ne couvre pas la NGAP, que l'Assurance Maladie ne publie qu'en PDF, ni
-  le RPPS. Voir [docs/SOURCES.md](docs/SOURCES.md) et
+- Il ne couvre pas la NGAP, que l'Assurance Maladie ne publie qu'en PDF (une
+  demande de communication sous forme structurée lui a été adressée en octobre
+  2026), ni le RPPS. Voir [docs/SOURCES.md](docs/SOURCES.md) et
   [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Architecture
@@ -202,7 +204,13 @@ src/
   bdpm/index.js         fichiers tabulés de la base des médicaments
   cnam/index.js         NABM, LPP, UCD depuis les pages de codage de l'Assurance Maladie
   ghs/index.js          archives tarifaires ATIH
-tests/                  node:test, fixtures publiées par l'ANS
+  communes/index.js     code officiel géographique de l'INSEE
+  verifier/             contrôle hebdomadaire des sources et des versions de repli
+site/
+  index.html            le site
+  controle/             page Contrôle FINESS (recherche et contrôle d'une liste dans le navigateur)
+  tarifs/               page Tarifs GHS (comparaison de campagnes et impact sur des volumes)
+tests/                  node:test, fixtures publiées par l'ANS et l'INSEE
 ```
 
 Aucune dépendance npm : Node.js seul (`node:zlib`, `node:stream`, `fetch`).
