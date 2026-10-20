@@ -83,6 +83,40 @@ function champsAdresse(adresse) {
 
 const CLES_ADRESSE = Object.keys(champsAdresse({}));
 
+/**
+ * Secteur lu dans les agrégats officiels du statut juridique (TRE_R68, TRE_R69) :
+ * `1000` organismes et établissements publics, `2100` privé à but non lucratif,
+ * `2200` privé à caractère commercial, `3000` personne morale de droit étranger.
+ */
+export function secteurDepuisAgregats(niv1, niv2) {
+  if (niv1 === '1000') return 'public';
+  if (niv2 === '2100') return 'privé non lucratif';
+  if (niv2 === '2200') return 'privé lucratif';
+  if (niv1 === '3000') return 'étranger';
+  return null;
+}
+
+const TYPES_GHT = new Set(['001', '002']);
+
+/** Membres (entités juridiques) d'un GCC s'il s'agit d'un groupement hospitalier de territoire, sinon rien. */
+export function membresGht(gcc) {
+  if (!TYPES_GHT.has(texte(gcc.typeGcc))) return [];
+  const membres = Array.isArray(gcc.pmejDuGcc) ? gcc.pmejDuGcc : [];
+  return membres.map((m) => ({ id_pmej: texte(m.pmSmsseId), ght_id: texte(gcc.gccId), ght_nom: texte(gcc.nomGcc), ght_role: texte(m.typeRoleEntiteGroupe) }));
+}
+
+/** Rattache les membres d'un GHT dans `contexte.ghtParPmej`, pour les lignes des entités et des établissements. */
+export function rattacherGht(contexte, gcc) {
+  if (!contexte.ghtParPmej) contexte.ghtParPmej = new Map();
+  for (const m of membresGht(gcc)) contexte.ghtParPmej.set(m.id_pmej, m);
+  return contexte;
+}
+
+function colonnesGht(contexte, idPmej) {
+  const g = contexte?.ghtParPmej?.get(idPmej);
+  return { ght_id: g?.ght_id ?? null, ght_nom: g?.ght_nom ?? null, ght_role: g?.ght_role ?? null };
+}
+
 export const COLONNES_ENTITE_JURIDIQUE = [
   'finess_ej', 'id_pmej', 'denomination', 'denomination_longue', 'complement_adresse', 'siren', 'code_ape',
   'statut_juridique', 'statut_juridique_libelle',
@@ -93,9 +127,10 @@ export const COLONNES_ENTITE_JURIDIQUE = [
   ...CLES_ADRESSE, 'departement_libelle',
   'telephone', 'telecopie', 'courriel',
   'nb_etablissements', 'nb_etablissements_actifs', 'date_derniere_maj',
+  'secteur', 'ght_id', 'ght_nom', 'ght_role',
 ];
 
-export function ligneEntiteJuridique(pmej, L) {
+export function ligneEntiteJuridique(pmej, L, contexte = {}) {
   const info = pmej.informationsGeneralesPMEJ ?? {};
   const adresse = champsAdresse(choisirAdresse(pmej.adresse, '02'));
   const contact = contactPrincipal(pmej.contact);
@@ -129,6 +164,8 @@ export function ligneEntiteJuridique(pmej, L) {
     nb_etablissements: eges.length,
     nb_etablissements_actifs: eges.filter((e) => e.etatObjet === 'A').length,
     date_derniere_maj: dateHeureIso(pmej.dateDerniereMaj),
+    secteur: secteurDepuisAgregats(agregats.niv1 ?? null, agregats.niv2 ?? null),
+    ...colonnesGht(contexte, texte(info.pmSmsseId)),
   };
 }
 
@@ -147,17 +184,29 @@ export const COLONNES_ETABLISSEMENT = [
   'ege_porteuse_id', 'ege_porteuse_finess', 'nb_ege_rattachees',
   'ej_denomination', 'ej_statut_juridique', 'ej_statut_juridique_libelle', 'ej_code_ape',
   'date_derniere_maj',
+  'ej_statut_juridique_agregat_niv1', 'ej_statut_juridique_agregat_niv1_libelle',
+  'ej_statut_juridique_agregat_niv2', 'ej_statut_juridique_agregat_niv2_libelle',
+  'secteur', 'ght_id', 'ght_nom', 'ght_role',
 ];
 
 function premier(tableau) {
   return Array.isArray(tableau) && tableau.length ? texte(tableau[0]) : null;
 }
 
-export function lignesEtablissements(pmej, L) {
+export function lignesEtablissements(pmej, L, contexte = {}) {
   const infoEj = pmej.informationsGeneralesPMEJ ?? {};
   const eges = pmej.ege ?? [];
   const finessParEgeId = new Map(eges.map((e) => [e.informationsGeneralesEGE?.egeId, e.informationsGeneralesEGE?.numFinessEge]));
   const statutEj = texte(infoEj.statutJuridique);
+  const agregatsEj = L.statutVersAgregat.get(statutEj) ?? {};
+  const colonnesEj = {
+    ej_statut_juridique_agregat_niv1: agregatsEj.niv1 ?? null,
+    ej_statut_juridique_agregat_niv1_libelle: L.agregatStatut1.get(agregatsEj.niv1) ?? null,
+    ej_statut_juridique_agregat_niv2: agregatsEj.niv2 ?? null,
+    ej_statut_juridique_agregat_niv2_libelle: L.agregatStatut2.get(agregatsEj.niv2) ?? null,
+    secteur: secteurDepuisAgregats(agregatsEj.niv1 ?? null, agregatsEj.niv2 ?? null),
+    ...colonnesGht(contexte, texte(infoEj.pmSmsseId)),
+  };
 
   return eges.map((ege) => {
     const info = ege.informationsGeneralesEGE ?? {};
@@ -214,6 +263,7 @@ export function lignesEtablissements(pmej, L) {
       ej_statut_juridique_libelle: L.statutJuridique.get(statutEj) ?? null,
       ej_code_ape: texte(infoEj.codeApe),
       date_derniere_maj: dateHeureIso(ege.dateDerniereMaj),
+      ...colonnesEj,
     };
   });
 }

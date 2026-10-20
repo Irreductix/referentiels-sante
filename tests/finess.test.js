@@ -1,10 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 import { lireCsv } from '../src/commun/csv.js';
-import { decomposerCommune, majusculesSansAccents, libelleDepartement, ligneEntiteJuridique, lignesEtablissements, ligneHistorique, COLONNES_HISTORIQUE } from '../src/finess/aplatir.js';
+import { decomposerCommune, majusculesSansAccents, libelleDepartement, ligneEntiteJuridique, lignesEtablissements, ligneHistorique, COLONNES_HISTORIQUE, secteurDepuisAgregats, membresGht, rattacherGht } from '../src/finess/aplatir.js';
 import { libellesVides } from '../src/finess/libelles.js';
 import { convertirStructures } from '../src/finess/convertir.js';
 import { telechargerFlux } from '../src/finess/sources.js';
@@ -21,6 +21,9 @@ function libellesTest() {
   L.categorieVersAgregat.set('365', { niv1: '1000', niv2: '1100', niv3: '1110', domaine: 'SAN' });
   L.agregatCategorie3.set('1110', 'Etablissements de Soins de Courte Durée');
   L.statutJuridique.set('73', 'Société Anonyme (S.A.)');
+  L.statutVersAgregat.set('73', { niv1: '2000', niv2: '2200' });
+  L.agregatStatut1.set('2000', 'Organismes Privés');
+  L.agregatStatut2.set('2200', 'Organisme Privé à Caractère Commercial');
   L.mft.set('07', 'ARS établissements Privés Commerciaux');
   L.espic.set('0', 'Non concerné');
   L.departement.set('01', 'Ain');
@@ -53,6 +56,31 @@ test('ligneEntiteJuridique aplatit une PMEJ avec adresse et contact', () => {
   assert.equal(ej.etat_libelle, 'actif');
   assert.equal(ej.nb_etablissements, CLINIQUE.ege.length);
   assert.equal(ej.date_derniere_maj, '2021-10-18T00:00:00');
+  assert.equal(ej.secteur, 'privé lucratif');
+  assert.equal(ej.ght_id, null);
+});
+
+test('secteur et GHT : agrégats du statut juridique, membres des groupements hospitaliers de territoire', () => {
+  assert.equal(secteurDepuisAgregats('1000', '1200'), 'public');
+  assert.equal(secteurDepuisAgregats('1000', '1100'), 'public');
+  assert.equal(secteurDepuisAgregats('2000', '2100'), 'privé non lucratif');
+  assert.equal(secteurDepuisAgregats('2000', '2200'), 'privé lucratif');
+  assert.equal(secteurDepuisAgregats('3000', '3100'), 'étranger');
+  assert.equal(secteurDepuisAgregats(null, null), null);
+  const ght = { gccId: '2', nomGcc: '77 Nord', typeGcc: '001', pmejDuGcc: [{ pmSmsseId: '42', typeRoleEntiteGroupe: 'S' }, { pmSmsseId: '43', typeRoleEntiteGroupe: 'M' }] };
+  assert.deepEqual(membresGht(ght).map((m) => m.id_pmej + m.ght_role), ['42S', '43M']);
+  assert.deepEqual(membresGht({ ...ght, typeGcc: '003' }), [], 'un groupement conventionnel qui n\'est pas un GHT n\'est pas rattaché');
+  const contexte = rattacherGht({}, ght);
+  const pmej = { ...CLINIQUE, informationsGeneralesPMEJ: { ...CLINIQUE.informationsGeneralesPMEJ, pmSmsseId: '42' } };
+  const ej = ligneEntiteJuridique(pmej, libellesTest(), contexte);
+  assert.equal(ej.ght_nom, '77 Nord');
+  assert.equal(ej.ght_role, 'S');
+  const [et] = lignesEtablissements(pmej, libellesTest(), contexte);
+  assert.equal(et.ght_id, '2');
+  assert.equal(et.ght_nom, '77 Nord');
+  assert.equal(et.secteur, 'privé lucratif');
+  assert.equal(et.ej_statut_juridique_agregat_niv2_libelle, 'Organisme Privé à Caractère Commercial');
+  assert.equal(lignesEtablissements(CLINIQUE, libellesTest())[0].ght_nom, null, 'sans contexte, pas de GHT');
 });
 
 test('lignesEtablissements aplatit les EGE avec libellés et agrégats', () => {
@@ -74,6 +102,8 @@ test('lignesEtablissements aplatit les EGE avec libellés et agrégats', () => {
   assert.equal(et.usage_adresse, '03');
   assert.equal(et.ej_denomination, 'CLINIQUE CONVERT');
   assert.equal(et.ej_code_ape, '86.10Z');
+  assert.equal(et.ej_statut_juridique_agregat_niv1, '2000');
+  assert.equal(et.secteur, 'privé lucratif');
 });
 
 test('ligneHistorique reproduit les 32 champs de l’ancien flux', () => {
@@ -160,6 +190,29 @@ test('convertirStructures produit tous les fichiers à partir du flux exemple', 
   assert.equal(gcc[0].nom, DOCUMENT.gcc[0].nomGcc);
   assert.equal(membres.filter((m) => m.groupement_type === 'GCC').length,
     DOCUMENT.gcc.reduce((n, g) => n + g.pmejDuGcc.length + g.egeDuGcc.length, 0));
+  assert.equal(resume.entitesEnGht, 0, 'aucun membre des GHT de l\'exemple n\'est une entité de l\'exemple');
+  assert.equal(resume.ghtApresEntites, false);
+});
+
+test('convertirStructures : les GHT lus avant les entités donnent les colonnes ght_* des entités et des établissements', async () => {
+  const sortie = dossierTemp();
+  const doc = structuredClone(DOCUMENT);
+  doc.gcc[1].pmejDuGcc.push({ pmSmsseId: CLINIQUE.informationsGeneralesPMEJ.pmSmsseId, typeRoleEntiteGroupe: 'S' });
+  const flux = join(sortie, 'flux.json');
+  writeFileSync(flux, JSON.stringify(doc));
+  const resume = await convertirStructures({ entree: flux, sortie, libelles: libellesTest(), jsonl: false, historique: false });
+  assert.equal(resume.entitesEnGht, 1);
+  const ej = lireCsv(readFileSync(join(sortie, 'entites-juridiques.csv'), 'utf8')).find((l) => l.finess_ej === '010000156');
+  assert.equal(ej.ght_nom, doc.gcc[1].nomGcc);
+  assert.equal(ej.ght_role, 'S');
+  assert.equal(ej.secteur, 'privé lucratif');
+  const et = lireCsv(readFileSync(join(sortie, 'etablissements.csv'), 'utf8')).find((l) => l.finess_et === '010780195');
+  assert.equal(et.ght_id, doc.gcc[1].gccId);
+  assert.equal(et.ght_nom, doc.gcc[1].nomGcc);
+  assert.equal(et.secteur, 'privé lucratif');
+  assert.equal(et.ej_statut_juridique_agregat_niv2, '2200');
+  const membres = lireCsv(readFileSync(join(sortie, 'groupements-membres.csv'), 'utf8'));
+  assert.ok(membres.some((m) => m.membre_finess === '010000156' && m.role === 'S'), 'le membre ajouté est aussi dans groupements-membres.csv');
 });
 
 test('instantané mensuel introuvable : échec, sans repli sur le flux du jour', async () => {

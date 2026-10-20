@@ -12,7 +12,7 @@ import { EcrivainCsv, EcrivainJsonl } from '../commun/csv.js';
 import {
   COLONNES_ENTITE_JURIDIQUE, COLONNES_ETABLISSEMENT, COLONNES_HISTORIQUE,
   COLONNES_GCC, COLONNES_GCO, COLONNES_MEMBRES,
-  ligneEntiteJuridique, lignesEtablissements, ligneHistorique, lignesGcc, lignesGco,
+  ligneEntiteJuridique, lignesEtablissements, ligneHistorique, lignesGcc, lignesGco, rattacherGht,
 } from './aplatir.js';
 import { COLONNES_ACTIVITE, lignesActivites } from './activites.js';
 import { libellesVides } from './libelles.js';
@@ -43,8 +43,12 @@ export async function convertirStructures({ entree, sortie, libelles, jsonl = tr
   const index = { pmej: new Map(), ege: new Map() };
   const gccs = [];
   const gcos = [];
-  const stats = { entitesJuridiques: 0, etablissements: 0, etablissementsActifs: 0, gcc: 0, gco: 0, membres: 0 };
+  // Les GHT (GCC) précèdent les entités juridiques dans le flux : leurs membres sont
+  // connus avant d'écrire les lignes, qui portent ainsi le GHT de leur entité.
+  const contexte = { ghtParPmej: new Map() };
+  const stats = { entitesJuridiques: 0, etablissements: 0, etablissementsActifs: 0, gcc: 0, gco: 0, membres: 0, entitesEnGht: 0 };
   let enteteHistorique = false;
+  let ghtApresEntites = false;
 
   for await (const e of lireElements(entree)) {
     if (e.type === 'meta') {
@@ -52,12 +56,13 @@ export async function convertirStructures({ entree, sortie, libelles, jsonl = tr
       continue;
     }
     if (e.collection === 'pmej') {
-      const ligneEj = ligneEntiteJuridique(e.objet, L);
+      const ligneEj = ligneEntiteJuridique(e.objet, L, contexte);
       index.pmej.set(ligneEj.id_pmej, { finess: ligneEj.finess_ej, denomination: ligneEj.denomination });
       await ej.ecrire(ligneEj);
       if (ejJsonl) await ejJsonl.ecrire(ligneEj);
       stats.entitesJuridiques++;
-      for (const ligneEt of lignesEtablissements(e.objet, L)) {
+      if (ligneEj.ght_id) stats.entitesEnGht++;
+      for (const ligneEt of lignesEtablissements(e.objet, L, contexte)) {
         index.ege.set(ligneEt.id_ege, { finess: ligneEt.finess_et, denomination: ligneEt.nom_court });
         await et.ecrire(ligneEt);
         if (etJsonl) await etJsonl.ecrire(ligneEt);
@@ -73,8 +78,14 @@ export async function convertirStructures({ entree, sortie, libelles, jsonl = tr
         if (ligneEt.etat === 'A') stats.etablissementsActifs++;
       }
       if (stats.entitesJuridiques % 20000 === 0) journal(`${stats.entitesJuridiques} entités juridiques, ${stats.etablissements} établissements…`);
-    } else if (e.collection === 'gcc') gccs.push(e.objet);
-    else if (e.collection === 'gco') gcos.push(e.objet);
+    } else if (e.collection === 'gcc') {
+      gccs.push(e.objet);
+      if (stats.entitesJuridiques > 0 && !ghtApresEntites) {
+        ghtApresEntites = true;
+        journal('les groupements arrivent après les entités juridiques : colonnes ght_* incomplètes, voir groupements-membres.csv');
+      }
+      rattacherGht(contexte, e.objet);
+    } else if (e.collection === 'gco') gcos.push(e.objet);
   }
 
   // Les groupements référencent les entités par identifiant interne : on les
@@ -110,6 +121,7 @@ export async function convertirStructures({ entree, sortie, libelles, jsonl = tr
     tablesLibellesEnEchec: L.tablesEnEchec ?? [],
     tablesLibellesDates: L.datesTables ?? {},
     ...stats,
+    ghtApresEntites,
     fichiers: ['entites-juridiques.csv', 'etablissements.csv', 'groupements-conventionnels.csv',
       'groupements-cooperation.csv', 'groupements-membres.csv',
       ...(jsonl ? ['entites-juridiques.jsonl', 'etablissements.jsonl'] : []),

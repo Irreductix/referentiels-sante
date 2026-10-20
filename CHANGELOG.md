@@ -1,5 +1,10 @@
 # Journal des versions
 
+## 0.7.0 (octobre 2026)
+
+- FINESS : `etablissements.csv` et `entites-juridiques.csv` reçoivent une colonne `secteur` (`public`, `privé non lucratif`, `privé lucratif`, `étranger`), lue dans les agrégats officiels du statut juridique de l'entité, et trois colonnes `ght_id`, `ght_nom`, `ght_role` (groupement hospitalier de territoire de l'entité, `S` support ou `M` membre). Les établissements reçoivent aussi les agrégats du statut juridique de leur entité (`ej_statut_juridique_agregat_niv1`, `niv2` et libellés). Les colonnes sont ajoutées en fin de ligne, les existantes ne bougent pas. Demandé sur data.gouv.fr le 20 octobre 2026 (distinguer public et privé).
+- Pages Médicaments et Nomenclatures : les en-têtes « CIP13 », « CIP7 » et « UCD13 » sont reconnus dans une liste collée.
+
 ## 0.6.1 (octobre 2026)
 
 - Page « Nomenclatures » sur le site (`site/nomenclatures/`) : CCAM, NABM, LPP et UCD à partir des fichiers convertis sur le poste (l'Assurance Maladie ne permet pas de les rediffuser, rien ne quitte le navigateur). Recherche d'un code par son numéro ou son libellé ; contrôle d'une liste de codes à la date de référence ou à la date de chaque ligne : code inconnu, fermé ou radié, activité CCAM inexistante, acte non remboursable, entente préalable, tarif de base CCAM (par activité si `ccam-phases` est chargé), cotation NABM, tarif et prix limite LPP, listes d'inscription, prix et état des UCD (clé des codes à 13 chiffres vérifiée). Rapport CSV. Logique dans `site/nomenclatures/nomenclatures.js`, testée avec Node ; archive hors ligne `nomenclatures-hors-ligne.zip` produite au déploiement du site.

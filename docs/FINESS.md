@@ -54,6 +54,9 @@ jointure.
 | nb_ege_rattachees | roleEge[] | nombre d'EGE dont celui-ci est porteur |
 | ej_denomination, ej_statut_juridique, ej_statut_juridique_libelle, ej_code_ape | PMEJ parente | |
 | date_derniere_maj | dateDerniereMaj | horodatage ISO 8601 |
+| ej_statut_juridique_agregat_niv1, niv2 et libellés | PMEJ parente, ASS_X11, TRE_R68, TRE_R69 | agrégats officiels du statut juridique de l'entité : `1000` organismes et établissements publics (`1100` État et collectivités, `1200` établissements publics), `2100` privé à but non lucratif, `2200` privé à caractère commercial, `3000` droit étranger |
+| secteur | déduit des agrégats | `public`, `privé non lucratif`, `privé lucratif` ou `étranger` ; la nature juridique est celle de l'entité, les ESPIC sont des `privé non lucratif` dont la colonne `espic` dit le statut |
+| ght_id, ght_nom, ght_role | GCC de type `001` ou `002` dont l'entité est membre | groupement hospitalier de territoire de l'entité juridique : `S` établissement support, `M` membre ; vides hors GHT |
 
 ## entites-juridiques.csv
 
@@ -68,6 +71,8 @@ jointure.
 | colonnes d'adresse et de contact | comme pour les établissements, adresse d'usage `02` (siège) |
 | nb_etablissements, nb_etablissements_actifs | calculés sur `ege[]` |
 | date_derniere_maj | dateDerniereMaj |
+| secteur | déduit des agrégats du statut juridique : `public`, `privé non lucratif`, `privé lucratif`, `étranger` |
+| ght_id, ght_nom, ght_role | GCC de type `001` ou `002` dont l'entité est membre : son GHT, et son rôle (`S` support, `M` membre) ; les GHT précèdent les entités dans le flux, ce qui permet de les écrire sur chaque ligne |
 
 Jusqu'à la 0.3.4, ce fichier portait aussi `categorie` et `categorie_libelle` : la catégorie n'existe qu'au niveau de l'établissement dans FINESS+, et ces deux colonnes étaient vides pour les 98 000 entités juridiques. Elles ont été retirées en 0.3.5.
 

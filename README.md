@@ -90,7 +90,7 @@ de l'ANS, et écrit dans `data/finess/` :
 
 | Fichier | Contenu |
 |---|---|
-| `etablissements.csv` / `.jsonl` | un établissement (FINESS ET) par ligne : identifiants, catégorie et ses agrégats, statut ESPIC, mode de fixation tarifaire, dates, adresse normalisée, coordonnées, contacts, rattachement à l'entité juridique |
+| `etablissements.csv` / `.jsonl` | un établissement (FINESS ET) par ligne : identifiants, catégorie et ses agrégats, statut ESPIC, mode de fixation tarifaire, dates, adresse normalisée, coordonnées, contacts, rattachement à l'entité juridique, secteur (public, privé non lucratif, privé lucratif) et GHT |
 | `entites-juridiques.csv` / `.jsonl` | une entité juridique (FINESS EJ) par ligne : SIREN, statut juridique et agrégats, code APE, adresse du siège, nombre d'établissements |
 | `groupements-conventionnels.csv` | groupements sans personnalité morale, dont les 135 GHT, avec leur établissement support |
 | `groupements-cooperation.csv` | groupements dotés de la personnalité morale (GCS…) |
