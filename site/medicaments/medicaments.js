@@ -152,7 +152,7 @@
   function reconnaitreEntete(l) {
     const col = {};
     l.forEach((v, i) => {
-      if (col.code === undefined && estCelluleEntete(v, /\bCIP\b|\bCIS\b|\bCODE\b|\bUCD\b|EAN/)) col.code = i;
+      if (col.code === undefined && estCelluleEntete(v, /\bCIP\d*\b|\bCIS\b|\bCODE\b|\bUCD\d*\b|EAN/)) col.code = i;
       else if (col.nom === undefined && estCelluleEntete(v, /NOM|LIBELLE|DENOMINATION|SPECIALITE|PRODUIT|MEDICAMENT|DESIGNATION/)) col.nom = i;
     });
     return col.code !== undefined ? col : null;

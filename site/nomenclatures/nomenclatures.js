@@ -394,7 +394,7 @@
     l.forEach((v, i) => {
       if (col.date === undefined && estCelluleEntete(v, /\bDATE|\bJOUR\b/)) col.date = i;
       else if (col.nom === undefined && estCelluleEntete(v, /\bNOM\b|LIBELLE|DESIGNATION|INTITULE|PRODUIT|PRESTATION|SPECIALITE/)) col.nom = i;
-      else if (col.code === undefined && estCelluleEntete(v, /\bCODE|\bACTE\b|\bCCAM\b|\bNABM\b|\bLPP\b|\bUCD\b|\bTIPS\b|NOMENCLATURE/)) col.code = i;
+      else if (col.code === undefined && estCelluleEntete(v, /\bCODE|\bACTE\b|\bCCAM\b|\bNABM\b|\bLPP\b|\bUCD\d*\b|\bTIPS\b|NOMENCLATURE/)) col.code = i;
     });
     return col.code !== undefined ? col : null;
   }

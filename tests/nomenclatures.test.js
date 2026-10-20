@@ -184,4 +184,5 @@ test('controler : nomenclature forcée, nomenclature non chargée, liste sans en
   assert.equal(r2.resultats.find((x) => x.ligne === 1).resultat, 'NABM non chargée');
   assert.equal(r2.resultats.find((x) => x.ligne === 2).resultat, 'CCAM non chargée');
   assert.equal(r2.comptes.aVerifier, 2);
+  assert.deepEqual(N.lireListe('Produit;UCD13\nGamunex;3400894464761\n').colonnes, { nom: 0, code: 1 }, 'l\'en-tête UCD13 est reconnu');
 });

@@ -57,6 +57,13 @@ test('controler : présentations trouvées, arrêtées, tensions, codes inconnus
   assert.ok(M.rapportCsv(r).startsWith('﻿ligne;nom_liste;code;'));
 });
 
+test('lireListe reconnaît les en-têtes CIP13, CIP7 et UCD13', () => {
+  assert.deepEqual(M.lireListe('Produit;CIP13\nDoliprane;3400949497294\n').colonnes, { code: 1, nom: 0 });
+  assert.equal(M.lireListe('Produit;CIP13\nDoliprane;3400949497294\n').lignes.length, 1, 'la ligne d\'en-tête n\'est pas une ligne de données');
+  assert.deepEqual(M.lireListe('CIP7;Nom\n4949729;Doliprane\n').colonnes, { code: 0, nom: 1 });
+  assert.equal(M.lireListe('Code UCD13;Libellé\n3400949497294;x\n').colonnes.code, 0);
+});
+
 test('lireListe accepte une simple colonne de codes sans en-tête, mélangeant CIP13 et CIP7', () => {
   const l = M.lireListe('3400949497294\n4949729\n\n2784980\n');
   assert.deepEqual(l.colonnes, { code: 0 });
