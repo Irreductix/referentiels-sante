@@ -22,7 +22,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deploiement.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # La page de contrôle lit l'index du mois sur la même origine que le site : on le
       # prend dans la release à adresse fixe, sans jamais le commiter.
       - name: Index FINESS du mois
@@ -36,9 +36,9 @@ jobs:
       # La page Nomenclatures ne lit que des fichiers locaux : son archive hors ligne est la page elle-même.
       - name: Archive hors ligne de la page Nomenclatures
         run: (cd site/nomenclatures && zip -q -9 nomenclatures-hors-ligne.zip index.html nomenclatures.js logo.png irreductix.webp && ls -la nomenclatures-hors-ligne.zip)
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
       - id: deploiement
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
