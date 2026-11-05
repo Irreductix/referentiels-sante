@@ -1,5 +1,10 @@
 # Journal des versions
 
+## Site (novembre 2026, sans nouvelle version du convertisseur)
+
+- Page « Extraire » sur le site (`site/extraire/`) : composer une liste d'établissements FINESS en activité par département, commune ou code postal, domaine, catégorie, secteur (public, privé non lucratif, privé lucratif), groupement hospitalier de territoire, entité support, et activités de soins exercées (médecine, chirurgie, obstétrique, urgences, soins critiques, psychiatrie, soins médicaux et de réadaptation, soins de longue durée, cancer, dialyse, hospitalisation à domicile). Présentation par établissement ou par entité juridique ; export en Excel véritable (numéros en texte, zéros conservés, en-tête figé et filtrable), en CSV ou en GeoJSON. Tout se calcule dans le navigateur ; logique dans `site/extraire/extraire.js`, testée avec Node. Demandé sur data.gouv.fr (filtrer les établissements, distinguer public et privé, ne garder que les principaux hôpitaux).
+- La publication mensuelle produit `index-extraction.csv.gz` (les établissements en activité avec adresse, coordonnées, secteur, GHT et activités de soins exercées, lues dans le flux des activités : autorisations AMM et AMF actives et mises en œuvre) et l'archive `extraire-finess-hors-ligne.zip` ; le site embarque cet index.
+
 ## 0.7.0 (octobre 2026)
 
 - FINESS : `etablissements.csv` et `entites-juridiques.csv` reçoivent une colonne `secteur` (`public`, `privé non lucratif`, `privé lucratif`, `étranger`), lue dans les agrégats officiels du statut juridique de l'entité, et trois colonnes `ght_id`, `ght_nom`, `ght_role` (groupement hospitalier de territoire de l'entité, `S` support ou `M` membre). Les établissements reçoivent aussi les agrégats du statut juridique de leur entité (`ej_statut_juridique_agregat_niv1`, `niv2` et libellés). Les colonnes sont ajoutées en fin de ligne, les existantes ne bougent pas. Demandé sur data.gouv.fr le 20 octobre 2026 (distinguer public et privé).
