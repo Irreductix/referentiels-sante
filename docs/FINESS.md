@@ -5,6 +5,8 @@ dont elle provient, et signale les choix faits. Le schéma de référence est
 `flux/out/data.gouv/structure/schema/schema-structures-v1.json` dans le dépôt
 [ansforge/finess](https://github.com/ansforge/finess).
 
+Vous utilisez ces fichiers ? Dites-nous en une ligne ce qui vous manque ou ce qui vous gêne : contact@irreductix.fr, ou une discussion sur [la fiche data.gouv.fr](https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess). Les prochaines améliorations sont choisies d'après ces retours.
+
 ## Vocabulaire
 
 | Terme FINESS+ | Sens |

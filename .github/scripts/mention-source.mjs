@@ -41,6 +41,10 @@ export function mentionFiness({ structures, activites, version }) {
     "NOS ajoutés, format de l'ancienne extraction reconstitué. L'ANS ne les a ni produits ni validés.",
     `Description des colonnes : ${DEPOT}/blob/main/docs/FINESS.md`,
     `Outil et signalements : ${DEPOT}`,
+    '',
+    'Vous utilisez ces fichiers ? Dites-nous en une ligne ce qui vous manque ou ce qui vous gêne :',
+    'contact@irreductix.fr, ou une discussion sur la fiche data.gouv.fr du jeu. Les prochaines',
+    'améliorations sont choisies d\'après ces retours.',
   );
   return lignes.join(FIN) + FIN;
 }
@@ -63,6 +67,10 @@ export function mentionBdpm({ resume, version }) {
     'format ISO, nombres normalisés. Les producteurs de la base ne les ont ni produits ni validés.',
     `Description des colonnes : ${DEPOT}/blob/main/docs/AUTRES-REFERENTIELS.md`,
     `Outil et signalements : ${DEPOT}`,
+    '',
+    'Vous utilisez ces fichiers ? Dites-nous en une ligne ce qui vous manque ou ce qui vous gêne :',
+    'contact@irreductix.fr, ou une discussion sur la fiche data.gouv.fr du jeu. Les prochaines',
+    'améliorations sont choisies d\'après ces retours.',
   ].join(FIN) + FIN;
 }
 
