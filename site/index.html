@@ -223,6 +223,7 @@
     <tr><td>CIM-10 FR à usage PMSI</td><td>ATIH, XML ClaML (l'édition 2026 n'existe encore qu'en PDF)</td><td><code>cim10 --edition 2025</code></td></tr>
     <tr><td>Base publique des médicaments</td><td>ANSM, fichiers texte tabulés</td><td><code>bdpm</code></td></tr>
     <tr><td>NABM, LPP, UCD</td><td>Assurance Maladie, tables dBase</td><td><code>nabm</code>, <code>lpp</code>, <code>ucd</code></td></tr>
+    <tr><td>NGAP</td><td>Assurance Maladie, document Word communiqué sur demande</td><td><code>ngap fichier.docx</code></td></tr>
     <tr><td>Tarifs GHS, GHT et suppléments</td><td>ATIH, CSV des arrêtés tarifaires</td><td><code>ghs --annee 2026</code></td></tr>
     <tr><td>Nomenclatures NOS</td><td>ANS, tables de codes</td><td><code>nos TRE_R66-CategorieEtablissement</code></td></tr>
 <tr><td>Code officiel géographique (communes, arrondissements, outre-mer)</td><td>INSEE, CSV d'un millésime par an</td><td><code>communes</code></td></tr>
@@ -237,7 +238,7 @@
 
 <p>Pour la CCAM, la NABM, la LPP et les UCD, la page <a href="nomenclatures/">Nomenclatures</a> lit les fichiers convertis sur votre poste : recherche d'un code par son numéro ou son libellé, et contrôle d'une liste de codes à une date (codes fermés ou radiés, activité inexistante, cotation, tarif et prix en vigueur, entente préalable). L'Assurance Maladie ne permet pas de rediffuser ces nomenclatures, rien ne quitte votre poste.</p>
 
-<p>Chaque commande se lance de la même façon : <code>npx referentiels-sante ccam</code>, <code>npx referentiels-sante cim10 --edition 2025</code>, et ainsi de suite. <code>npx referentiels-sante ccam --date 2025-06-30</code> donne la CCAM telle qu'elle était à cette date. La NGAP n'est pas couverte : l'Assurance Maladie ne la publie qu'en PDF.</p>
+<p>Chaque commande se lance de la même façon : <code>npx referentiels-sante ccam</code>, <code>npx referentiels-sante cim10 --edition 2025</code>, et ainsi de suite. <code>npx referentiels-sante ccam --date 2025-06-30</code> donne la CCAM telle qu'elle était à cette date. La NGAP n'est publiée en ligne qu'en PDF : la commande <code>ngap</code> convertit le document Word que l'Assurance Maladie communique sur demande.</p>
 
 <h2 id="anomalies">Anomalies de FINESS+</h2>
 

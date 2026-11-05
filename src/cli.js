@@ -16,6 +16,7 @@ import { exporterCim10, EDITIONS } from './cim10/index.js';
 import { exporterBdpm } from './bdpm/index.js';
 import { exporterTableCnam, SOURCES } from './cnam/index.js';
 import { exporterCommunes } from './communes/index.js';
+import { exporterNgap } from './ngap/index.js';
 import { verifierTout, formaterRapport } from './verifier/index.js';
 import { actualiserReplis, formaterReplis } from './verifier/replis.js';
 import { extraireZip } from './commun/zip.js';
@@ -32,6 +33,7 @@ Usage
   referentiels-sante bdpm      [FICHIER ...]   (défaut : les dix fichiers pris en charge : specialites, presentations, compositions…)
   referentiels-sante nabm | lpp | ucd          tables de codage de l'Assurance Maladie
   referentiels-sante communes  [--annee 2026]  code officiel géographique de l'INSEE : communes, arrondissements, outre-mer
+  referentiels-sante ngap      <fichier.docx>  document Word de la NGAP communiqué par l'Assurance Maladie
   referentiels-sante dbf       <fichier.dbf | archive.zip> [--encodage cp850|latin1|utf8]
   referentiels-sante verifier  [SOURCE ...]    contrôle que pages et fichiers sources répondent (code de sortie 1 sinon)
   referentiels-sante replis    [--ecrire]      compare les versions de repli aux pages ; --ecrire met src/replis.json à jour
@@ -52,6 +54,7 @@ Exemples
   referentiels-sante cim10 --edition 2025       codes CIM-10 FR à usage PMSI avec hiérarchie et rubriques
   referentiels-sante bdpm specialites presentations
   referentiels-sante communes                   codes et libellés des communes, pour lire les codes commune de FINESS
+  referentiels-sante ngap NGAP.docx             actes de la NGAP : désignation, coefficient, lettre clé, accord préalable
   referentiels-sante dbf LPP_fiche_tot901.dbf   n'importe quelle table DBF vers CSV
 `;
 
@@ -160,6 +163,12 @@ async function principal(argv) {
   if (commande in SOURCES) {
     const resume = await exporterTableCnam(commande, { ...commun, sortie: values.sortie, encodage: values.encodage });
     journal(`${resume.libelle} version ${resume.version} : ${resume.tables.length} table(s), ${resume.tables.reduce((n, t) => n + t.lignes, 0)} lignes`);
+    return 0;
+  }
+
+  if (commande === 'ngap') {
+    if (!reste.length) { process.stderr.write('indiquez le document Word de la NGAP, au format .docx\n'); return 2; }
+    await exporterNgap(reste[0], { sortie: values.sortie ?? 'data/ngap', journal });
     return 0;
   }
 

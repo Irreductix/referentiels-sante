@@ -135,12 +135,50 @@ place un ticket « replis » avec le lien pour la créer. La CCAM,
 refusée aux serveurs d'intégration continue, se met à jour depuis un poste en
 France avec la même commande.
 
+## NGAP (`ngap`)
+
+L'Assurance Maladie ne publie la nomenclature générale des actes professionnels
+qu'en PDF, d'où l'on ne tire pas de table fiable. Elle communique en revanche
+son document Word à qui le demande (droit d'accès aux documents administratifs).
+Ce document porte les actes dans des tableaux « Désignation de l'acte,
+Coefficient, Lettre clé », parfois avec une colonne d'accord préalable : la
+commande les recopie ligne à ligne, sans rien corriger ni interpréter.
+
+```
+npx referentiels-sante ngap NGAP.docx
+```
+
+Le fichier doit être au format `.docx` : un `.doc` s'enregistre sous ce format
+depuis Word. Rien n'est téléchargé, et le projet ne rediffuse pas ces tables.
+
+`ngap-actes.csv`, une ligne par ligne de tableau d'actes :
+
+| Colonne | Contenu |
+|---|---|
+| ordre | rang de la ligne dans le document |
+| partie, titre, sous_titre, chapitre, section, article, rubrique | intitulés sous lesquels se trouve le tableau, tels qu'écrits ; `sous_titre` porte les « PARTIE I, PARTIE II » d'un titre |
+| modifie_par | mention « (Modifié par décision UNCAM du…) » qui suit le dernier intitulé |
+| tableau, ligne | numéro du tableau d'actes et de la ligne dans ce tableau |
+| type | `acte` (ligne cotée), `regroupement` (intitulé terminé par deux-points, sans cotation), `note` (texte sans cotation) |
+| regroupement | pour un acte dont la désignation commence par un tiret, l'intitulé de regroupement qui le précède |
+| code | code à quatre chiffres des actes d'anatomie et de cytologie pathologiques |
+| designation | texte de la première colonne ; les paragraphes d'une même cellule sont séparés par ` / ` |
+| coefficient | tel qu'écrit ; plusieurs cotations dans la cellule sont séparées par ` / ` |
+| coefficient_nombre | le coefficient avec un point décimal, quand la cellule n'en porte qu'un |
+| lettre_cle | telle qu'écrite, par exemple `AMI ou SFI` |
+| lettres | les lettres clés séparées par des espaces, par exemple `AMI SFI` |
+| accord_prealable | `oui` quand la colonne AP du tableau porte la mention |
+
+`ngap-plan.csv` donne le plan du document (niveau, intitulé, `abroge`, `modifie_par`),
+y compris les dispositions générales et les articles abrogés. Les autres tableaux
+(stations thermales, forfaits du bilan de soins infirmiers, table des décisions)
+ne sont pas convertis ; `ngap-resume.json` en donne le nombre. La valeur des
+lettres clés ne figure pas dans la NGAP : elle relève des conventions.
+
 ## Ce qui manque encore
 
-- **NGAP** (actes cliniques et lettres clés) : l'Assurance Maladie ne la
-  publie qu'en PDF. Sans source structurée officielle, l'outil ne fabrique pas
-  de table. Une contribution qui identifierait une source machine fiable est
-  bienvenue.
+- **NGAP à jour** : le document Word que lit la commande `ngap` n'est pas en
+  ligne ; chaque version doit être demandée à l'Assurance Maladie.
 - **CIM-10 FR 2026** en ClaML, dès que l'ATIH la publie.
 - Les fichiers texte à longueur fixe « TOT » de la LPP et des UCD (mêmes
   données que les DBF, autre format) ne sont pas lus.

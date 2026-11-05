@@ -40,6 +40,7 @@ entrepôt de données ou un script.
 | **CIM-10 FR à usage PMSI** | ATIH, fichiers ClaML annuels | codes avec hiérarchie (chapitre, bloc, catégorie), inclusions, exclusions, notes, variantes françaises |
 | **Médicaments** | Base de données publique des médicaments (Licence Ouverte) | spécialités, présentations CIP, compositions, avis SMR et ASMR, génériques, conditions de prescription, disponibilité |
 | **NABM, LPP, UCD** | Assurance Maladie, tables dBase | biologie, dispositifs et prestations, unités communes de dispensation, en CSV UTF-8 |
+| **NGAP** | Assurance Maladie, document Word communiqué sur demande (PDF seul en ligne) | actes avec coefficient, lettre clé et accord préalable, et plan de la nomenclature, en CSV |
 | **Tarifs GHS, GHT, suppléments** | ATIH, arrêtés tarifaires MCO et HAD | tarifs des deux secteurs, nombres et dates normalisés |
 | **Code officiel géographique** | INSEE, millésime annuel (Licence Ouverte 2.0) | communes, arrondissements municipaux, communes déléguées et associées, collectivités d'outre-mer, pour lire les codes commune de FINESS |
 | **N'importe quel DBF** | | conversion d'une table dBase locale ou d'une archive en CSV |
@@ -110,6 +111,7 @@ npx referentiels-sante cim10 --edition 2025    # data/cim10 : 11 969 codes avec 
 npx referentiels-sante bdpm                    # data/bdpm : dix fichiers de la base des médicaments
 npx referentiels-sante communes                # data/communes : code officiel géographique de l'INSEE, pour lire les codes commune de FINESS
 npx referentiels-sante nabm                    # idem lpp, ucd
+npx referentiels-sante ngap NGAP.docx          # data/ngap : actes de la NGAP depuis le document Word communiqué par l'Assurance Maladie
 npx referentiels-sante ghs --annee 2026
 npx referentiels-sante dbf fichier.dbf
 npx referentiels-sante verifier                # les sources répondent-elles encore ?
@@ -179,9 +181,10 @@ Mesures sur un poste de travail, flux du 14 septembre 2026 pour les structures, 
 - Il ne réinterprète pas les données : chaque colonne est tracée jusqu'au champ
   d'origine dans [docs/FINESS.md](docs/FINESS.md). Les seules règles de calcul
   (statut et capacités des activités) sont celles publiées par l'ANS.
-- Il ne couvre pas la NGAP, que l'Assurance Maladie ne publie qu'en PDF (une
-  demande de communication sous forme structurée lui a été adressée en octobre
-  2026), ni le RPPS. Voir [docs/SOURCES.md](docs/SOURCES.md) et
+- Il ne couvre pas le RPPS. Pour la NGAP, que l'Assurance Maladie ne publie
+  qu'en PDF, il convertit le document Word qu'elle communique sur demande
+  (commande `ngap`) ; ce document n'est pas téléchargeable et ses tables ne
+  sont pas rediffusées ici. Voir [docs/SOURCES.md](docs/SOURCES.md) et
   [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Architecture
@@ -208,6 +211,7 @@ src/
   cnam/index.js         NABM, LPP, UCD depuis les pages de codage de l'Assurance Maladie
   ghs/index.js          archives tarifaires ATIH
   communes/index.js     code officiel géographique de l'INSEE
+  ngap/index.js         NGAP depuis le document Word de l'Assurance Maladie (actes, coefficients, lettres clés)
   verifier/             contrôle hebdomadaire des sources et des versions de repli
 site/
   index.html            le site

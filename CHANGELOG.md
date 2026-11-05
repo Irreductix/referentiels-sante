@@ -1,5 +1,9 @@
 # Journal des versions
 
+## 0.8.0 (novembre 2026)
+
+- Commande `ngap` : conversion du document Word de la NGAP que l'Assurance Maladie communique sur demande (elle ne publie en ligne qu'un PDF). `ngap-actes.csv` recopie les tableaux d'actes ligne à ligne (désignation, coefficient, lettre clé, accord préalable, regroupements et notes) avec la partie, le titre, le chapitre et l'article où ils se trouvent ; `ngap-plan.csv` donne le plan, articles abrogés et mentions de modification compris. Le document doit être au format `.docx` ; il n'est ni téléchargé ni rediffusé.
+
 ## Site (novembre 2026, sans nouvelle version du convertisseur)
 
 - Page « Extraire » sur le site (`site/extraire/`) : composer une liste d'établissements FINESS en activité par département, commune ou code postal, domaine, catégorie, secteur (public, privé non lucratif, privé lucratif), groupement hospitalier de territoire, entité support, et activités de soins exercées (médecine, chirurgie, obstétrique, urgences, soins critiques, psychiatrie, soins médicaux et de réadaptation, soins de longue durée, cancer, dialyse, hospitalisation à domicile). Présentation par établissement ou par entité juridique ; export en Excel véritable (numéros en texte, zéros conservés, en-tête figé et filtrable), en CSV ou en GeoJSON. Tout se calcule dans le navigateur ; logique dans `site/extraire/extraire.js`, testée avec Node. Demandé sur data.gouv.fr (filtrer les établissements, distinguer public et privé, ne garder que les principaux hôpitaux).
