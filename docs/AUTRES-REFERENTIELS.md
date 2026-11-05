@@ -149,7 +149,26 @@ npx referentiels-sante ngap NGAP.docx
 ```
 
 Le fichier doit être au format `.docx` : un `.doc` s'enregistre sous ce format
-depuis Word. Rien n'est téléchargé, et le projet ne rediffuse pas ces tables.
+depuis Word. Rien n'est téléchargé : le document n'est pas en ligne. Sa date
+de version, écrite dans ses pieds de page, est reportée dans `ngap-resume.json`.
+
+Les tables converties sont publiées par le projet. Ce sont des informations
+publiques communiquées au titre du droit d'accès : les articles L. 321-1 et
+L. 322-1 du code des relations entre le public et l'administration permettent
+de les réutiliser en citant la source et sa date, sans en altérer le sens. Elles
+ne font pas foi : seuls les textes publiés au Journal officiel font foi, et la
+version consolidée la plus récente est le PDF d'ameli.fr.
+
+Elles sont décrites sur data.gouv.fr :
+<https://www.data.gouv.fr/datasets/ngap-en-csv-actes-coefficients-lettres-cles>.
+Chaque nouvelle version doit être redemandée à l'Assurance Maladie. Pour savoir
+quand, la surveillance du lundi lit le Journal officiel (données ouvertes de la
+DILA) : toute modification de la NGAP passe par une décision de l'Union
+nationale des caisses d'assurance maladie « relative à la liste des actes et
+prestations ». Quand les articles d'une telle décision citent la NGAP, un ticket
+s'ouvre avec le lien du texte et ce qu'il dit de son entrée en vigueur
+(`.github/scripts/veille-ngap.mjs`). Les décisions qui ne touchent que la CCAM
+ou la biologie n'ouvrent rien.
 
 `ngap-actes.csv`, une ligne par ligne de tableau d'actes :
 

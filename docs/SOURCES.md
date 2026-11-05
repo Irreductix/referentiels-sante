@@ -105,7 +105,7 @@ Tables utilisées pour FINESS+ :
 
 | Source | État | Point d'attention |
 |---|---|---|
-| NGAP (Assurance Maladie) | convertie depuis le document Word communiqué sur demande | publiée en ligne uniquement en PDF, d'où l'outil ne tire pas de table ; le document Word n'est pas téléchargeable et ses tables ne sont pas rediffusées par le projet |
+| NGAP (Assurance Maladie) | convertie depuis le document Word communiqué sur demande | publiée en ligne uniquement en PDF, d'où l'outil ne tire pas de table ; informations publiques communiquées au titre du droit d'accès aux documents administratifs, réutilisées avec la mention de la source et de la date de version (articles L. 321-1 et L. 322-1 du code des relations entre le public et l'administration) |
 | RPPS, annuaire santé en libre accès (ANS) | à faire | Licence Ouverte 2.0 ; fichiers de plusieurs centaines de Mo, données à caractère personnel de professionnels : réutilisation encadrée |
 | Tables NOEMIE et B2 (Assurance Maladie) | exclue | cahiers des charges sous droits de la CNAM |
 

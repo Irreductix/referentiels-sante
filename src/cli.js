@@ -33,7 +33,7 @@ Usage
   referentiels-sante bdpm      [FICHIER ...]   (défaut : les dix fichiers pris en charge : specialites, presentations, compositions…)
   referentiels-sante nabm | lpp | ucd          tables de codage de l'Assurance Maladie
   referentiels-sante communes  [--annee 2026]  code officiel géographique de l'INSEE : communes, arrondissements, outre-mer
-  referentiels-sante ngap      <fichier.docx>  document Word de la NGAP communiqué par l'Assurance Maladie
+  referentiels-sante ngap      <fichier.docx> [--communique AAAA-MM-JJ]  document Word de la NGAP communiqué par l'Assurance Maladie
   referentiels-sante dbf       <fichier.dbf | archive.zip> [--encodage cp850|latin1|utf8]
   referentiels-sante verifier  [SOURCE ...]    contrôle que pages et fichiers sources répondent (code de sortie 1 sinon)
   referentiels-sante replis    [--ecrire]      compare les versions de repli aux pages ; --ecrire met src/replis.json à jour
@@ -71,6 +71,7 @@ const options = {
   'sans-jsonl': { type: 'boolean', default: false },
   'sans-historique': { type: 'boolean', default: false },
   annee: { type: 'string' },
+  communique: { type: 'string' },
   source: { type: 'string' },
   edition: { type: 'string' },
   date: { type: 'string' },
@@ -168,7 +169,7 @@ async function principal(argv) {
 
   if (commande === 'ngap') {
     if (!reste.length) { process.stderr.write('indiquez le document Word de la NGAP, au format .docx\n'); return 2; }
-    await exporterNgap(reste[0], { sortie: values.sortie ?? 'data/ngap', journal });
+    await exporterNgap(reste[0], { sortie: values.sortie ?? 'data/ngap', communique: values.communique ?? null, journal });
     return 0;
   }
 

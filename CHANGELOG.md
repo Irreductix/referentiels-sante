@@ -1,5 +1,11 @@
 # Journal des versions
 
+## 0.8.1 (novembre 2026)
+
+- Commande `ngap` : la date de version du document est lue dans ses pieds de page et reportée dans `ngap-resume.json` ; l'option `--communique` y ajoute la date à laquelle l'Assurance Maladie a communiqué le document.
+- Les tables de la NGAP sont publiées : release `ngap-AAAAMMJJ` (archive des tables et document source) et adresse fixe `donnees-du-mois/ngap.zip`, avec une mention de source dans `MENTION-SOURCE.txt`. Ce sont des informations publiques communiquées au titre du droit d'accès, réutilisées avec leur source et leur date (articles L. 321-1 et L. 322-1 du code des relations entre le public et l'administration). README, site et documentation mis à jour.
+- Surveillance du lundi : veille de la NGAP au Journal officiel. Une décision de l'UNCAM dont les articles citent la NGAP ouvre un ticket, avec le lien du texte et ce qu'il dit de son entrée en vigueur : c'est le moment de redemander le document Word à l'Assurance Maladie. Les décisions qui ne touchent que la CCAM ou la biologie n'ouvrent rien.
+
 ## 0.8.0 (novembre 2026)
 
 - Commande `ngap` : conversion du document Word de la NGAP que l'Assurance Maladie communique sur demande (elle ne publie en ligne qu'un PDF). `ngap-actes.csv` recopie les tableaux d'actes ligne à ligne (désignation, coefficient, lettre clé, accord préalable, regroupements et notes) avec la partie, le titre, le chapitre et l'article où ils se trouvent ; `ngap-plan.csv` donne le plan, articles abrogés et mentions de modification compris. Le document doit être au format `.docx` ; il n'est ni téléchargé ni rediffusé.

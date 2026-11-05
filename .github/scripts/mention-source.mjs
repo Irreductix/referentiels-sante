@@ -74,6 +74,29 @@ export function mentionBdpm({ resume, version }) {
   ].join(FIN) + FIN;
 }
 
+export function mentionNgap({ resume, version }) {
+  return [
+    `Nomenclature générale des actes professionnels (NGAP) convertie en CSV par referentiels-sante ${version}`,
+    '',
+    "Source : Caisse nationale de l'Assurance Maladie (Cnam), document Word de la NGAP",
+    `  version en vigueur du ${jour(resume.versionDocument)}, d'après ses pieds de page`,
+    ...(resume.communique ? [`  communiqué par la Cnam le ${jour(resume.communique)}, au titre du droit d'accès aux documents administratifs`] : []),
+    "  La version consolidée la plus récente est celle que l'Assurance Maladie publie en PDF sur ameli.fr.",
+    'Réutilisation : informations publiques, articles L. 321-1 et L. 322-1 du code des relations entre le public',
+    "  et l'administration : citer la source et sa date, ne pas en altérer le sens.",
+    `Conversion : ${jour(resume.converti)}`,
+    '',
+    "Ces fichiers recopient les tableaux d'actes du document, ligne à ligne, sans correction ni interprétation.",
+    "L'Assurance Maladie ne les a ni produits ni validés. Seuls les textes publiés au Journal officiel font foi.",
+    `Description des colonnes : ${DEPOT}/blob/main/docs/AUTRES-REFERENTIELS.md`,
+    `Outil et signalements : ${DEPOT}`,
+    '',
+    'Vous utilisez ces fichiers ? Dites-nous en une ligne ce qui vous manque ou ce qui vous gêne :',
+    'contact@irreductix.fr, ou une discussion sur la fiche data.gouv.fr du jeu. Les prochaines',
+    'améliorations sont choisies d\'après ces retours.',
+  ].join(FIN) + FIN;
+}
+
 export function ecrireMention(type, dossier, version) {
   const lire = (nom) => {
     const chemin = join(dossier, nom);
@@ -88,8 +111,12 @@ export function ecrireMention(type, dossier, version) {
     const resume = lire('bdpm-resume.json');
     if (!resume) throw new Error(`bdpm-resume.json absent de ${dossier}`);
     texte = mentionBdpm({ resume, version });
+  } else if (type === 'ngap') {
+    const resume = lire('ngap-resume.json');
+    if (!resume) throw new Error(`ngap-resume.json absent de ${dossier}`);
+    texte = mentionNgap({ resume, version });
   } else {
-    throw new Error(`type inconnu : ${type} (finess ou bdpm)`);
+    throw new Error(`type inconnu : ${type} (finess, bdpm ou ngap)`);
   }
   const chemin = join(dossier, 'MENTION-SOURCE.txt');
   writeFileSync(chemin, texte);

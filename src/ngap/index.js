@@ -123,6 +123,13 @@ export function lireNgap(source) {
   const documentXml = fichiers.get('word/document.xml');
   if (!documentXml) throw new Error('word/document.xml absent : ce fichier n\'est pas un document Word .docx');
   const styles = lireStyles(fichiers.get('word/styles.xml')?.toString('utf8'));
+  // Le document se date dans ses pieds de page : « Version en vigueur du 28/05/2026 ».
+  let versionDocument = null;
+  for (const [nom, contenu] of fichiers) {
+    if (!/^word\/(footer|header)\d*\.xml$/.test(nom)) continue;
+    const m = /Version en vigueur du\s*(\d{2})\/(\d{2})\/(\d{4})/i.exec(texteDe(analyserXml(contenu.toString('utf8'))));
+    if (m) { versionDocument = `${m[3]}-${m[2]}-${m[1]}`; break; }
+  }
   const corps = enfant(analyserXml(documentXml.toString('utf8')), 'w:body');
   if (!corps) throw new Error('corps du document introuvable');
 
@@ -199,13 +206,16 @@ export function lireNgap(source) {
       actes.push(base);
     });
   }
-  return { actes, plan, comptes };
+  return { actes, plan, comptes, versionDocument };
 }
 
-/** Convertit le document Word de la NGAP en `ngap-actes.csv`, `ngap-plan.csv` et `ngap-resume.json`. */
-export async function exporterNgap(fichier, { sortie = 'data/ngap', journal = () => {} } = {}) {
+/**
+ * Convertit le document Word de la NGAP en `ngap-actes.csv`, `ngap-plan.csv` et `ngap-resume.json`.
+ * `communique` est la date à laquelle l'Assurance Maladie a communiqué le document, pour la mention de source.
+ */
+export async function exporterNgap(fichier, { sortie = 'data/ngap', communique = null, journal = () => {} } = {}) {
   if (/\.doc$/i.test(fichier)) throw new Error('le format .doc (Word 97-2003) n\'est pas lu : ouvrez le fichier dans Word et enregistrez-le au format .docx');
-  const { actes, plan, comptes } = lireNgap(fichier);
+  const { actes, plan, comptes, versionDocument } = lireNgap(fichier);
   if (!comptes.tableauxActes) throw new Error('aucun tableau d\'actes reconnu dans ce document : est-ce bien la NGAP de l\'Assurance Maladie ?');
   mkdirSync(sortie, { recursive: true });
   const csvActes = new EcrivainCsv(join(sortie, 'ngap-actes.csv'), COLONNES_ACTES);
@@ -215,6 +225,8 @@ export async function exporterNgap(fichier, { sortie = 'data/ngap', journal = ()
   await Promise.all([csvActes.fermer(), csvPlan.fermer()]);
   const resume = {
     source: basename(fichier),
+    versionDocument,
+    communique,
     libelle: 'Nomenclature générale des actes professionnels (NGAP), document Word de l\'Assurance Maladie',
     converti: new Date().toISOString(),
     ...comptes,
@@ -222,6 +234,6 @@ export async function exporterNgap(fichier, { sortie = 'data/ngap', journal = ()
     fichiers: ['ngap-actes.csv', 'ngap-plan.csv'],
   };
   writeFileSync(join(sortie, 'ngap-resume.json'), JSON.stringify(resume, null, 2) + '\n');
-  journal(`${comptes.actes} actes cotés, ${comptes.regroupements} regroupements et ${comptes.notes} notes dans ${comptes.tableauxActes} tableaux ; ${comptes.tableauxNonConvertis} autres tableaux laissés de côté ; plan de ${plan.length} lignes`);
+  journal(`NGAP, version du ${versionDocument ?? 'date non lue'} : ${comptes.actes} actes cotés, ${comptes.regroupements} regroupements et ${comptes.notes} notes dans ${comptes.tableauxActes} tableaux ; ${comptes.tableauxNonConvertis} autres tableaux laissés de côté ; plan de ${plan.length} lignes`);
   return resume;
 }

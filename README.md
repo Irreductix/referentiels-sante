@@ -11,6 +11,7 @@
 <a href="https://referentiels-sante.irreductix.fr/"><img src="https://img.shields.io/badge/Site-mode_d'emploi_et_fichiers_du_mois-bdc6a7?style=for-the-badge&labelColor=282722" alt="Site"></a>
 <a href="https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess"><img src="https://img.shields.io/badge/data.gouv.fr-FINESS_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="FINESS en CSV sur data.gouv.fr"></a>
 <a href="https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle"><img src="https://img.shields.io/badge/data.gouv.fr-M%C3%A9dicaments_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="Base des médicaments en CSV sur data.gouv.fr"></a>
+<a href="https://www.data.gouv.fr/datasets/ngap-en-csv-actes-coefficients-lettres-cles"><img src="https://img.shields.io/badge/data.gouv.fr-NGAP_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="NGAP en CSV sur data.gouv.fr"></a>
 <a href="https://www.npmjs.com/package/referentiels-sante"><img src="https://img.shields.io/npm/v/referentiels-sante?style=for-the-badge&labelColor=282722&color=c0beb0&label=npm" alt="npm"></a>
 <a href="https://irreductix.fr/"><img src="https://img.shields.io/badge/Irr%C3%A9ductix-le_collectif-282722?style=for-the-badge&labelColor=dda34f" alt="Irréductix"></a>
 </p>
@@ -20,6 +21,7 @@ en JSON pour FINESS+, NOS, CIM-10 et GHS. Sans dépendance, en une commande.**
 
 Site : <https://referentiels-sante.irreductix.fr/>, avec cinq pages qui travaillent dans le navigateur sans rien envoyer : [Contrôle FINESS](https://referentiels-sante.irreductix.fr/controle/) pour vérifier une liste d'établissements, [Extraire](https://referentiels-sante.irreductix.fr/extraire/) pour composer une liste d'établissements par critères et la télécharger en Excel, [Médicaments](https://referentiels-sante.irreductix.fr/medicaments/) pour chercher une spécialité et contrôler une liste de codes CIP, [Tarifs GHS](https://referentiels-sante.irreductix.fr/tarifs/) pour comparer deux campagnes et chiffrer l'effet des nouveaux tarifs sur des volumes de séjours, et [Nomenclatures](https://referentiels-sante.irreductix.fr/nomenclatures/) pour chercher un code CCAM, NABM, LPP ou UCD et contrôler une liste de codes à une date, à partir des fichiers convertis sur le poste  
 Fichiers du mois sur data.gouv.fr : [FINESS en CSV](https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess) et [Base des médicaments en CSV](https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle)  
+NGAP en CSV (actes, coefficients, lettres clés), convertie depuis le document Word de l'Assurance Maladie : [fiche data.gouv.fr](https://www.data.gouv.fr/datasets/ngap-en-csv-actes-coefficients-lettres-cles) et [ngap.zip](https://github.com/Irreductix/referentiels-sante/releases/download/donnees-du-mois/ngap.zip)  
 Un outil libre du collectif [Irréductix](https://irreductix.fr)
 
 Les données de référence du système de santé sont publiques, mais publiées dans
@@ -65,6 +67,7 @@ adresse :
 
 - FINESS+ : <https://github.com/Irreductix/referentiels-sante/releases/download/donnees-du-mois/finess.zip>
 - médicaments : <https://github.com/Irreductix/referentiels-sante/releases/download/donnees-du-mois/bdpm.zip>
+- NGAP : <https://github.com/Irreductix/referentiels-sante/releases/download/donnees-du-mois/ngap.zip>, refaite à chaque version du document obtenue de l'Assurance Maladie ; sa date de version est dans `MENTION-SOURCE.txt`
 
 Les autres référentiels ne sont jamais publiés tout convertis : leur licence ne
 le permet pas ([docs/SOURCES.md](docs/SOURCES.md)).
@@ -183,8 +186,8 @@ Mesures sur un poste de travail, flux du 14 septembre 2026 pour les structures, 
   (statut et capacités des activités) sont celles publiées par l'ANS.
 - Il ne couvre pas le RPPS. Pour la NGAP, que l'Assurance Maladie ne publie
   qu'en PDF, il convertit le document Word qu'elle communique sur demande
-  (commande `ngap`) ; ce document n'est pas téléchargeable et ses tables ne
-  sont pas rediffusées ici. Voir [docs/SOURCES.md](docs/SOURCES.md) et
+  (commande `ngap`) et en publie les tables, avec leur source et la date de
+  version du document. Voir [docs/SOURCES.md](docs/SOURCES.md) et
   [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Architecture

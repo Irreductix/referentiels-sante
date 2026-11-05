@@ -3,7 +3,9 @@ name: Surveillance des sources
 # Chaque lundi, vérifie que les pages et fichiers sources répondent encore. Un
 # échec ouvre ou complète un ticket, refermé quand la vérification repasse. Une
 # nouvelle version publiée par une source donne une pull request qui met à jour
-# les versions de repli (src/replis.json).
+# les versions de repli (src/replis.json). Une décision de l'UNCAM qui modifie
+# la NGAP, publiée au Journal officiel, ouvre un ticket : c'est le moment de
+# redemander le document Word à l'Assurance Maladie, qui ne le met pas en ligne.
 
 on:
   schedule:
@@ -82,3 +84,29 @@ jobs:
       - name: Échec du job si la vérification a échoué
         if: steps.verification.outcome == 'failure'
         run: exit 1
+
+  veille-ngap:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Décisions de l'UNCAM au Journal officiel
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -o pipefail
+          publiee=$(gh release list --limit 1000 --json tagName --jq '[.[].tagName | select(startswith("ngap-"))] | sort | last // ""')
+          # Seize jours pour une veille hebdomadaire : chaque décision est vue deux fois, un ticket existant n'est pas rouvert.
+          node .github/scripts/veille-ngap.mjs --jours 16 --publiee "$publiee" > veille-ngap.json
+          gh label create ngap --description "Nouvelle version de la NGAP à demander" --color 1D76DB --force
+          gh issue list --label ngap --state all --limit 1000 --json body --jq '.[].body' > tickets-ngap.txt
+          jq -c '.[] | select(.ticket)' veille-ngap.json | while read -r decision; do
+            identifiant=$(jq -r .id <<<"$decision")
+            if grep -q "$identifiant" tickets-ngap.txt; then continue; fi
+            gh issue create --label ngap --title "$(jq -r .titreTicket <<<"$decision")" --body "$(jq -r .corps <<<"$decision")"
+          done

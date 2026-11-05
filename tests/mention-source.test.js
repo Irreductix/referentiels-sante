@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { ecrireMention, mentionBdpm, mentionFiness } from '../.github/scripts/mention-source.mjs';
+import { ecrireMention, mentionBdpm, mentionFiness, mentionNgap } from '../.github/scripts/mention-source.mjs';
 import { dossierTemp } from './_util.js';
 
 const structures = {
@@ -54,6 +54,22 @@ test('ecrireMention lit les résumés du dossier et refuse un dossier incomplet'
   assert.doesNotMatch(contenu, /Instantané des activités/);
   assert.throws(() => ecrireMention('bdpm', dossier, '1.2.3'), /bdpm-resume\.json absent/);
   assert.throws(() => ecrireMention('ccam', dossier, '1.2.3'), /type inconnu/);
+});
+
+test('la mention NGAP cite la Cnam, la date de version du document et le cadre de réutilisation', () => {
+  const resume = { source: 'NGAP.docx', versionDocument: '2026-05-28', communique: '2026-11-05', converti: '2026-11-06T08:00:00.000Z' };
+  const texte = mentionNgap({ resume, version: '1.2.3' });
+  assert.match(texte, /Caisse nationale de l'Assurance Maladie/);
+  assert.match(texte, /version en vigueur du 2026-05-28/);
+  assert.match(texte, /communiqué par la Cnam le 2026-11-05/);
+  assert.match(texte, /articles L\. 321-1 et L\. 322-1/);
+  assert.match(texte, /Seuls les textes publiés au Journal officiel font foi/);
+  assert.match(texte, /referentiels-sante 1\.2\.3/);
+  assert.doesNotMatch(mentionNgap({ resume: { ...resume, communique: null }, version: '1.2.3' }), /communiqué par la Cnam/);
+  assert.ok(texte.endsWith('\r\n'));
+  const dossier = dossierTemp();
+  writeFileSync(join(dossier, 'ngap-resume.json'), JSON.stringify(resume));
+  assert.match(readFileSync(ecrireMention('ngap', dossier, '1.2.3'), 'utf8'), /NGAP/);
 });
 
 test('la mention FINESS date chaque table NOS quand le résumé le permet', () => {

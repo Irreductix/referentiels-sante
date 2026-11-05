@@ -51,7 +51,8 @@ const CORPS = [
 ].join('');
 const DOCUMENT = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ${W}><w:body>${CORPS}<w:sectPr/></w:body></w:document>`;
 const STYLES = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles ${W}><w:style w:type="paragraph" w:styleId="Article"><w:name w:val="article"/></w:style><w:style w:type="paragraph" w:styleId="Date"><w:name w:val="Date"/></w:style><w:style w:type="paragraph" w:styleId="Abrog"><w:name w:val="Abrogé"/></w:style></w:styles>`;
-const docx = () => construireZip([{ nom: 'word/styles.xml', contenu: STYLES, deflate: true }, { nom: 'word/document.xml', contenu: DOCUMENT, deflate: true }]);
+const PIED = `<w:ftr ${W}><w:p><w:r><w:t xml:space="preserve">Version en vigueur du </w:t></w:r><w:r><w:t>28/05/2026</w:t></w:r><w:r><w:t>29</w:t></w:r></w:p></w:ftr>`;
+const docx = () => construireZip([{ nom: 'word/styles.xml', contenu: STYLES, deflate: true }, { nom: 'word/footer1.xml', contenu: PIED }, { nom: 'word/document.xml', contenu: DOCUMENT, deflate: true }]);
 
 test('niveauDe et natureTableau reconnaissent le plan et les tableaux d\'actes', () => {
   assert.equal(niveauDe('DEUXIÈME PARTIE', 'Normal'), 'partie');
@@ -71,7 +72,8 @@ test('niveauDe et natureTableau reconnaissent le plan et les tableaux d\'actes',
 });
 
 test('lireNgap recopie les tableaux d\'actes avec leur place dans la nomenclature', () => {
-  const { actes, plan, comptes } = lireNgap(docx());
+  const { actes, plan, comptes, versionDocument } = lireNgap(docx());
+  assert.equal(versionDocument, '2026-05-28', 'la date de version est lue dans le pied de page');
   assert.deepEqual(comptes, { paragraphes: 14, tableaux: 8, tableauxActes: 4, tableauxNonConvertis: 2, actes: 10, regroupements: 1, notes: 1 });
   const [groupe, a, b, note, ponction] = actes;
   assert.equal(groupe.type, 'regroupement');
@@ -106,7 +108,8 @@ test('exporterNgap écrit les fichiers et refuse ce qui n\'est pas le document a
   const fichier = join(dossier, 'NGAP.docx');
   writeFileSync(fichier, docx());
   const sortie = join(dossier, 'sortie');
-  const resume = await exporterNgap(fichier, { sortie });
+  const resume = await exporterNgap(fichier, { sortie, communique: '2026-11-05' });
+  assert.deepEqual([resume.versionDocument, resume.communique], ['2026-05-28', '2026-11-05']);
   assert.equal(resume.actes, 10);
   assert.equal(resume.source, 'NGAP.docx');
   const actes = lireCsv(readFileSync(join(sortie, 'ngap-actes.csv'), 'utf8'));
