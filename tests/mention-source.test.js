@@ -79,3 +79,10 @@ test('la mention FINESS date chaque table NOS quand le résumé le permet', () =
   assert.match(texte, /ASS_X10-AgregatCategorieEtablissement : date non lue/);
   assert.doesNotMatch(texte, /listées dans structures-resume\.json/);
 });
+
+test('la mention FINESS dit combien de positions ont été calculées, quand il y en a', () => {
+  const avec = mentionFiness({ structures: { ...structures, etablissementsPositionCalculee: 53506 }, activites, version: '1.2.3' });
+  assert.ok(avec.includes('Positions calculées : 53506 établissements dont le flux donne x et y sans latitude ni longitude ; colonne latitude_longitude_origine'));
+  assert.ok(!mentionFiness({ structures, activites, version: '1.2.3' }).includes('Positions calculées'));
+  assert.ok(!mentionFiness({ structures: { ...structures, etablissementsPositionCalculee: 0 }, activites, version: '1.2.3' }).includes('Positions calculées'));
+});

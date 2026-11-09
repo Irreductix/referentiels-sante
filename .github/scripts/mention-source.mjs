@@ -36,6 +36,9 @@ export function mentionFiness({ structures, activites, version }) {
   }
   lignes.push(
     `Conversion : ${jour(structures.converti)}`,
+    ...(structures.etablissementsPositionCalculee
+      ? [`Positions calculées : ${structures.etablissementsPositionCalculee} établissements dont le flux donne x et y sans latitude ni longitude ; colonne latitude_longitude_origine`]
+      : []),
     '',
     "Ces fichiers transforment les données de l'ANS : tables mises à plat, libellés des nomenclatures",
     "NOS ajoutés, format de l'ancienne extraction reconstitué. L'ANS ne les a ni produits ni validés.",

@@ -1,5 +1,10 @@
 # Journal des versions
 
+## 0.9.0 (novembre 2026)
+
+- FINESS : la latitude et la longitude sont calculées depuis `coordonnee_x` et `coordonnee_y` quand le flux ne les donne pas. Depuis le fichier mensuel de novembre 2026, un quart des établissements actifs (environ 26 000, dont de grands sites hospitaliers) portaient x et y sans latitude ni longitude. Le calcul suit la projection du territoire (Lambert 93 en métropole, UTM outre-mer) et retombe au centimètre près sur les positions du flux là où les deux existent. Nouvelle colonne `latitude_longitude_origine` en fin de ligne des établissements et des entités juridiques : `source`, `calcul` ou vide. `structures-resume.json` compte les positions calculées et les établissements restés sans position ; la mention de source le dit aussi.
+- Surveillance du lundi : la veille de la NGAP lit les archives du Journal officiel en flux et se rabat sur l'archive complète quand la DILA a retiré les archives quotidiennes de la période, ce qui s'est produit le 8 novembre 2026. Une archive coupée fait échouer la veille au lieu de passer pour vide.
+
 ## 0.8.1 (novembre 2026)
 
 - Commande `ngap` : la date de version du document est lue dans ses pieds de page et reportée dans `ngap-resume.json` ; l'option `--communique` y ajoute la date à laquelle l'Assurance Maladie a communiqué le document.

@@ -46,7 +46,7 @@ export async function convertirStructures({ entree, sortie, libelles, jsonl = tr
   // Les GHT (GCC) précèdent les entités juridiques dans le flux : leurs membres sont
   // connus avant d'écrire les lignes, qui portent ainsi le GHT de leur entité.
   const contexte = { ghtParPmej: new Map() };
-  const stats = { entitesJuridiques: 0, etablissements: 0, etablissementsActifs: 0, gcc: 0, gco: 0, membres: 0, entitesEnGht: 0 };
+  const stats = { entitesJuridiques: 0, etablissements: 0, etablissementsActifs: 0, gcc: 0, gco: 0, membres: 0, entitesEnGht: 0, etablissementsPositionCalculee: 0, etablissementsSansPosition: 0 };
   let enteteHistorique = false;
   let ghtApresEntites = false;
 
@@ -76,6 +76,8 @@ export async function convertirStructures({ entree, sortie, libelles, jsonl = tr
         }
         stats.etablissements++;
         if (ligneEt.etat === 'A') stats.etablissementsActifs++;
+        if (ligneEt.latitude_longitude_origine === 'calcul') stats.etablissementsPositionCalculee++;
+        else if (!ligneEt.latitude_longitude_origine) stats.etablissementsSansPosition++;
       }
       if (stats.entitesJuridiques % 20000 === 0) journal(`${stats.entitesJuridiques} entités juridiques, ${stats.etablissements} établissements…`);
     } else if (e.collection === 'gcc') {

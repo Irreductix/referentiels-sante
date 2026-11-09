@@ -10,6 +10,7 @@
  */
 
 import { dateIso, dateHeureIso, texte } from '../commun/dates.js';
+import { positionDepuisXY } from '../commun/projection.js';
 
 export const ETATS = { A: 'actif', I: 'inactif' };
 
@@ -84,6 +85,20 @@ function champsAdresse(adresse) {
 const CLES_ADRESSE = Object.keys(champsAdresse({}));
 
 /**
+ * Quand le flux donne x et y sans latitude ni longitude, les calcule et les écrit dans l'adresse.
+ * Rend l'origine de la position : `source` (donnée par le flux), `calcul` (déduite de x et y), ou rien.
+ */
+export function completerPosition(adresse) {
+  if (adresse.latitude !== null && adresse.longitude !== null) return 'source';
+  if (adresse.coordonnee_x === null || adresse.coordonnee_y === null) return null;
+  const position = positionDepuisXY(Number(adresse.coordonnee_x), Number(adresse.coordonnee_y), adresse.departement);
+  if (!position) return null;
+  adresse.latitude = position.latitude;
+  adresse.longitude = position.longitude;
+  return 'calcul';
+}
+
+/**
  * Secteur lu dans les agrégats officiels du statut juridique (TRE_R68, TRE_R69) :
  * `1000` organismes et établissements publics, `2100` privé à but non lucratif,
  * `2200` privé à caractère commercial, `3000` personne morale de droit étranger.
@@ -128,11 +143,13 @@ export const COLONNES_ENTITE_JURIDIQUE = [
   'telephone', 'telecopie', 'courriel',
   'nb_etablissements', 'nb_etablissements_actifs', 'date_derniere_maj',
   'secteur', 'ght_id', 'ght_nom', 'ght_role',
+  'latitude_longitude_origine',
 ];
 
 export function ligneEntiteJuridique(pmej, L, contexte = {}) {
   const info = pmej.informationsGeneralesPMEJ ?? {};
   const adresse = champsAdresse(choisirAdresse(pmej.adresse, '02'));
+  const originePosition = completerPosition(adresse);
   const contact = contactPrincipal(pmej.contact);
   const statut = texte(info.statutJuridique);
   const agregats = L.statutVersAgregat.get(statut) ?? {};
@@ -166,6 +183,7 @@ export function ligneEntiteJuridique(pmej, L, contexte = {}) {
     date_derniere_maj: dateHeureIso(pmej.dateDerniereMaj),
     secteur: secteurDepuisAgregats(agregats.niv1 ?? null, agregats.niv2 ?? null),
     ...colonnesGht(contexte, texte(info.pmSmsseId)),
+    latitude_longitude_origine: originePosition,
   };
 }
 
@@ -187,6 +205,7 @@ export const COLONNES_ETABLISSEMENT = [
   'ej_statut_juridique_agregat_niv1', 'ej_statut_juridique_agregat_niv1_libelle',
   'ej_statut_juridique_agregat_niv2', 'ej_statut_juridique_agregat_niv2_libelle',
   'secteur', 'ght_id', 'ght_nom', 'ght_role',
+  'latitude_longitude_origine',
 ];
 
 function premier(tableau) {
@@ -215,6 +234,7 @@ export function lignesEtablissements(pmej, L, contexte = {}) {
     const mft = texte(ege.modefixationtarifaire);
     const espic = premier(info.espic);
     const adresse = champsAdresse(choisirAdresse(ege.adresse, '03'));
+    const originePosition = completerPosition(adresse);
     const contact = contactPrincipal(ege.contact);
     const roles = Array.isArray(ege.roleEge) ? ege.roleEge : [];
     const commePorteuse = roles.filter((r) => r.idEgePorteuse === info.egeId && r.idEgeNonPorteuse !== info.egeId);
@@ -264,6 +284,7 @@ export function lignesEtablissements(pmej, L, contexte = {}) {
       ej_code_ape: texte(infoEj.codeApe),
       date_derniere_maj: dateHeureIso(ege.dateDerniereMaj),
       ...colonnesEj,
+      latitude_longitude_origine: originePosition,
     };
   });
 }

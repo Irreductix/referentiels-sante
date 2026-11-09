@@ -198,7 +198,7 @@
 <table class="fichiers">
   <thead><tr><th>Fichier</th><th>Contenu</th></tr></thead>
   <tbody>
-    <tr><td><code>etablissements.csv</code></td><td>Un établissement par ligne (numéro FINESS ET) : nom, catégorie et ses agrégats, statut ESPIC, mode de fixation tarifaire, dates d'ouverture et de fermeture, adresse, code commune INSEE, département, coordonnées GPS, téléphone, entité juridique de rattachement, secteur (public, privé non lucratif, privé lucratif) et groupement hospitalier de territoire.</td></tr>
+    <tr><td><code>etablissements.csv</code></td><td>Un établissement par ligne (numéro FINESS ET) : nom, catégorie et ses agrégats, statut ESPIC, mode de fixation tarifaire, dates d'ouverture et de fermeture, adresse, code commune INSEE, département, coordonnées GPS (calculées depuis les coordonnées Lambert quand la source ne les donne pas, ce qu'une colonne signale), téléphone, entité juridique de rattachement, secteur (public, privé non lucratif, privé lucratif) et groupement hospitalier de territoire.</td></tr>
     <tr><td><code>entites-juridiques.csv</code></td><td>Une entité juridique par ligne (numéro FINESS EJ) : dénomination, SIREN, statut juridique, code APE, adresse du siège, nombre d'établissements.</td></tr>
     <tr><td><code>groupements-conventionnels.csv</code></td><td>Les 135 groupements hospitaliers de territoire.</td></tr>
     <tr><td><code>groupements-cooperation.csv</code></td><td>Les groupements dotés de la personnalité morale, dont les GCS.</td></tr>
@@ -249,6 +249,7 @@
 <ul>
   <li>Dans 1 364 adresses d'établissements du fichier du 14 septembre 2026, la séquence « TH » avait été remplacée par « E » : « rue de la Catherinette » était devenue « Caeerinette », « Thoiry » « Eoiry ». Quelques adresses restent touchées dans le fichier du 13 octobre, comme « rue Paul Bereelot ». <a href="https://github.com/ansforge/finess/issues/28">Ticket de l'ANS</a>.</li>
   <li>Pour la majorité des adresses, les coordonnées projetées et géographiques étaient permutées entre leurs colonnes. Elles sont à leur place pour tous les établissements géolocalisés de métropole dans le fichier du 13 octobre. <a href="https://github.com/ansforge/finess/issues/24">Ticket de l'ANS</a>.</li>
+  <li>Depuis le fichier de novembre 2026, un quart des établissements actifs ont des coordonnées Lambert sans latitude ni longitude. Les fichiers convertis les calculent, et la colonne <code>latitude_longitude_origine</code> dit pour chaque ligne si la position vient de la source ou du calcul.</li>
 </ul>
 
 <p>Les fichiers produits à partir d'un flux antérieur au 6 octobre 2026, dont le fichier du mois publié en octobre, contiennent encore ces défauts.</p>

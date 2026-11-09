@@ -47,8 +47,8 @@ jointure.
 | departement, code_commune | déduits du COG | `2A`, `2B`, `971` à `989` traités |
 | departement_historique, code_commune_historique | déduits du COG | codage de l'ancien flux : `9A` Guadeloupe, `9B` Martinique, `9C` Guyane, `9D` La Réunion, `9E` Saint-Pierre-et-Miquelon, `9F` Mayotte, `9J` Wallis-et-Futuna, commune sur trois caractères |
 | departement_libelle | TRE_G09 | |
-| latitude, longitude | coordonneesGeographique.directionLatitude, directionLongitude | WGS 84, en degrés décimaux, sauf dans les fichiers produits depuis un flux antérieur au 6 octobre 2026 (voir la ligne suivante) |
-| coordonnee_x, coordonnee_y | coordonneesGeographique.coordonneeX, coordonneeY | Lambert 93, recopiées telles quelles. Avant le 6 octobre 2026, pour la majorité des adresses, `coordonnee_x` et `coordonnee_y` contenaient la longitude et la latitude en degrés, et `latitude` et `longitude` les coordonnées Lambert 93 en mètres : les deux couples étaient permutés. Voir « Anomalies observées dans la source » |
+| latitude, longitude | coordonneesGeographique.directionLatitude, directionLongitude | WGS 84, en degrés décimaux. Quand le flux donne x et y sans latitude ni longitude, elles sont calculées depuis x et y (voir `latitude_longitude_origine`). Dans les fichiers produits depuis un flux antérieur au 6 octobre 2026, voir la ligne suivante |
+| coordonnee_x, coordonnee_y | coordonneesGeographique.coordonneeX, coordonneeY | Lambert 93 en métropole, projection UTM du territoire outre-mer (fuseau 20 nord aux Antilles, 22 nord en Guyane, 40 sud à La Réunion, 38 sud à Mayotte, 21 nord à Saint-Pierre-et-Miquelon), recopiées telles quelles. Avant le 6 octobre 2026, pour la majorité des adresses, `coordonnee_x` et `coordonnee_y` contenaient la longitude et la latitude en degrés, et `latitude` et `longitude` les coordonnées Lambert 93 en mètres : les deux couples étaient permutés. Voir « Anomalies observées dans la source » |
 | cle_ban, score_ban | cleInInteropBAN, scoreBAN | rapprochement avec la Base adresse nationale |
 | telephone, telecopie, courriel | contact[] | contact de rôle `01` si présent, sinon le premier |
 | numero_education_nationale, numero_reference_externe | idem | |
@@ -59,6 +59,7 @@ jointure.
 | ej_statut_juridique_agregat_niv1, niv2 et libellés | PMEJ parente, ASS_X11, TRE_R68, TRE_R69 | agrégats officiels du statut juridique de l'entité : `1000` organismes et établissements publics (`1100` État et collectivités, `1200` établissements publics), `2100` privé à but non lucratif, `2200` privé à caractère commercial, `3000` droit étranger |
 | secteur | déduit des agrégats | `public`, `privé non lucratif`, `privé lucratif` ou `étranger` ; la nature juridique est celle de l'entité, les ESPIC sont des `privé non lucratif` dont la colonne `espic` dit le statut |
 | ght_id, ght_nom, ght_role | GCC de type `001` ou `002` dont l'entité est membre | groupement hospitalier de territoire de l'entité juridique : `S` établissement support, `M` membre ; vides hors GHT |
+| latitude_longitude_origine | calculé | `source` quand le flux donne la latitude et la longitude, `calcul` quand elles sont déduites de `coordonnee_x` et `coordonnee_y` par la projection du territoire, vide quand l'adresse n'a pas de position. Le calcul retombe au centimètre près sur les positions du flux là où les deux existent ; il n'est pas fait quand x et y sortent de l'emprise du territoire |
 
 ## entites-juridiques.csv
 
@@ -75,6 +76,7 @@ jointure.
 | date_derniere_maj | dateDerniereMaj |
 | secteur | déduit des agrégats du statut juridique : `public`, `privé non lucratif`, `privé lucratif`, `étranger` |
 | ght_id, ght_nom, ght_role | GCC de type `001` ou `002` dont l'entité est membre : son GHT, et son rôle (`S` support, `M` membre) ; les GHT précèdent les entités dans le flux, ce qui permet de les écrire sur chaque ligne |
+| latitude_longitude_origine | `source` quand le flux donne la latitude et la longitude, `calcul` quand elles sont déduites de `coordonnee_x` et `coordonnee_y` par la projection du territoire, vide quand l'adresse n'a pas de position. Le calcul retombe au centimètre près sur les positions du flux là où les deux existent ; il n'est pas fait quand x et y sortent de l'emprise du territoire |
 
 Jusqu'à la 0.3.4, ce fichier portait aussi `categorie` et `categorie_libelle` : la catégorie n'existe qu'au niveau de l'établissement dans FINESS+, et ces deux colonnes étaient vides pour les 98 000 entités juridiques. Elles ont été retirées en 0.3.5.
 
@@ -209,6 +211,16 @@ de latitude et de longitude portant alors le Lambert
 2026). Dans le flux du 13 octobre, les deux couples sont à leur place pour tous
 les établissements géolocalisés de métropole. Pour un fichier produit avant cette date,
 vérifiez la plage de valeurs avant tout usage cartographique.
+
+Depuis le fichier mensuel de novembre 2026 (`finess-structures-mensuel-202610`), le flux
+donne des coordonnées à environ 54 000 adresses de plus, mais seulement en x et y :
+`directionLatitude` et `directionLongitude` y sont à `null` pour 53 508 blocs de
+coordonnées, alors qu'aucun ne l'était le mois précédent. Un quart des établissements
+actifs étaient ainsi sans latitude ni longitude, dont de grands sites hospitaliers.
+Depuis la version 0.9.0, l'outil calcule ces positions depuis x et y et le dit dans la
+colonne `latitude_longitude_origine` ; `structures-resume.json` en donne le nombre
+(`etablissementsPositionCalculee`) et celui des établissements restés sans position
+(`etablissementsSansPosition`).
 
 Les fichiers produits à partir d'un flux antérieur au 6 octobre 2026 contiennent
 encore ces deux défauts, y compris l'archive `finess-202610`, construite depuis
