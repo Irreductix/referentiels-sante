@@ -2,10 +2,13 @@
 // caisses d'assurance maladie (UNCAM) publiée au Journal officiel. Ce script lit les archives quotidiennes du
 // Journal officiel (données ouvertes de la DILA), repère ces décisions et dit lesquelles touchent la NGAP :
 // c'est le moment de redemander le document Word à l'Assurance Maladie, qui ne le met pas en ligne.
-import { readFileSync, readdirSync, realpathSync } from 'node:fs';
+// Quand la DILA refait son archive complète, elle retire les archives quotidiennes antérieures : la période
+// à couvrir se lit alors dans l'archive complète. Tout est lu en flux, sans rien garder sur le disque.
+import { createReadStream, readdirSync, realpathSync } from 'node:fs';
 import { join } from 'node:path';
+import { pipeline, Readable } from 'node:stream';
 import { fileURLToPath } from 'node:url';
-import { gunzipSync } from 'node:zlib';
+import { createGunzip } from 'node:zlib';
 
 import { AGENT_UTILISATEUR } from '../../src/commun/telecharger.js';
 import { decoderEntites } from '../../src/commun/xml.js';
@@ -42,16 +45,96 @@ export function dateEnClair(date) {
   return `${jour === 1 ? '1er' : jour} ${MOIS[Number(trouve[2]) - 1]} ${trouve[1]}`;
 }
 
-/** Contenu des fichiers ordinaires d'une archive tar déjà décompressée. */
-export function* fichiersTar(tampon) {
-  let position = 0;
-  while (position + 512 <= tampon.length && tampon[position] !== 0) {
-    const taille = parseInt(tampon.toString('latin1', position + 124, position + 136).replace(/[\0 ]+$/, '') || '0', 8);
+/** Lit un flux d'octets par quantités exactes, sans jamais le charger en entier. */
+function lecteur(flux) {
+  const iterateur = flux[Symbol.asyncIterator]();
+  let morceaux = [];
+  let disponible = 0;
+  async function remplir(quantite) {
+    while (disponible < quantite) {
+      const { value, done } = await iterateur.next();
+      if (done) return false;
+      if (value.length) {
+        morceaux.push(value);
+        disponible += value.length;
+      }
+    }
+    return true;
+  }
+  return {
+    /** Les octets suivants, ou null si le flux se termine avant. */
+    async lire(quantite) {
+      if (!quantite) return Buffer.alloc(0);
+      if (!(await remplir(quantite))) return null;
+      const tout = morceaux.length === 1 ? morceaux[0] : Buffer.concat(morceaux);
+      morceaux = tout.length > quantite ? [tout.subarray(quantite)] : [];
+      disponible = tout.length - quantite;
+      return tout.subarray(0, quantite);
+    },
+    /** Passe des octets sans les garder. */
+    async sauter(quantite) {
+      let reste = quantite;
+      while (reste > 0) {
+        if (!disponible && !(await remplir(1))) return;
+        const premier = morceaux[0];
+        if (premier.length <= reste) {
+          morceaux.shift();
+          disponible -= premier.length;
+          reste -= premier.length;
+        } else {
+          morceaux[0] = premier.subarray(reste);
+          disponible -= reste;
+          reste = 0;
+        }
+      }
+    },
+  };
+}
+
+function champ(entete, debut, longueur) {
+  const fin = entete.indexOf(0, debut);
+  return entete.toString('utf8', debut, fin < 0 || fin > debut + longueur ? debut + longueur : fin);
+}
+
+/**
+ * Fichiers ordinaires d'une archive tar lue en flux. Seuls ceux que retient `garder(nom)` sont lus,
+ * les autres sont passés.
+ * @param {AsyncIterable<Buffer>} flux archive décompressée
+ * @param {(nom: string) => boolean} [garder]
+ * @returns {AsyncGenerator<{ nom: string, octets: Buffer }>}
+ */
+export async function* fichiersTar(flux, garder = () => true) {
+  const source = lecteur(flux);
+  let nomSuivant = '';
+  for (;;) {
+    const entete = await source.lire(512);
+    // Une archive entière se termine par un bloc de zéros : un flux qui s'arrête avant a été coupé.
+    if (!entete) throw new Error('archive tar tronquée');
+    if (entete[0] === 0) return;
+    const taille = parseInt(entete.toString('latin1', 124, 136).replace(/[\0 ]+$/, '') || '0', 8);
     if (!Number.isFinite(taille)) throw new Error('archive tar illisible');
-    const type = tampon[position + 156];
-    const debut = position + 512;
-    if (type === 0 || type === 0x30) yield tampon.subarray(debut, debut + taille);
-    position = debut + Math.ceil(taille / 512) * 512;
+    const type = entete[156];
+    const place = Math.ceil(taille / 512) * 512;
+    if (type === 0x4c || type === 0x78) {
+      // Un nom trop long pour l'en-tête précède son fichier, dans une entrée « L » (GNU) ou « x » (pax).
+      const contenu = await source.lire(place);
+      if (!contenu) throw new Error('archive tar tronquée');
+      const texte = contenu.toString('utf8', 0, taille);
+      nomSuivant = type === 0x4c ? texte.replace(/\0+$/, '') : (texte.match(/\d+ path=([^\n]*)\n/)?.[1] ?? '');
+      continue;
+    }
+    // Le préfixe de chemin n'existe qu'au format ustar ; le format GNU range autre chose à cet endroit.
+    const ustar = entete.toString('latin1', 257, 262) === 'ustar' && entete[262] === 0;
+    const prefixe = ustar ? champ(entete, 345, 155) : '';
+    const nom = nomSuivant || (prefixe ? `${prefixe}/` : '') + champ(entete, 0, 100);
+    nomSuivant = '';
+    if ((type === 0 || type === 0x30) && garder(nom)) {
+      const contenu = await source.lire(place);
+      if (!contenu) throw new Error('archive tar tronquée');
+      yield { nom, octets: contenu.subarray(0, taille) };
+    } else {
+      await source.sauter(place);
+    }
   }
 }
 
@@ -63,35 +146,35 @@ function texteXml(octets) {
   }
 }
 
-function balise(xml, nom) {
-  const trouve = xml.match(new RegExp(`<${nom}>([^<]*)</${nom}>`));
-  return trouve ? decoderEntites(trouve[1]).replace(/\s+/g, ' ').trim() : '';
-}
+const estUnArticle = (nom) => nom.includes('/article/');
 
 /**
- * Décisions de l'UNCAM relatives à la liste des actes et prestations publiées dans une archive quotidienne,
- * avec les nomenclatures que citent leurs articles et ce qu'ils disent de l'entrée en vigueur.
- * @param {Buffer} tampon archive tar décompressée
+ * Lit une archive du Journal officiel et ajoute à `decisions` les décisions de l'UNCAM relatives à la liste des
+ * actes et prestations publiées depuis une date, avec les nomenclatures que citent leurs articles et ce qu'ils
+ * disent de l'entrée en vigueur. Chaque fichier d'article porte l'identifiant, la date de publication et
+ * l'intitulé de son texte : une passe suffit, quel que soit l'ordre des fichiers.
+ * @param {AsyncIterable<Buffer>} flux archive tar décompressée
+ * @param {{ depuis?: string, decisions?: Map<string, object> }} [options] depuis : AAAAMMJJ
  */
-export function decisionsDeLArchive(tampon) {
-  const decisions = new Map();
-  for (const octets of fichiersTar(tampon)) {
-    if (!octets.includes('<TEXTE_VERSION')) continue;
+export async function lireArchive(flux, { depuis = '', decisions = new Map() } = {}) {
+  const seuil = depuis.replace(/^(\d{4})(\d{2})(\d{2})$/, '$1-$2-$3');
+  for await (const { octets } of fichiersTar(flux, estUnArticle)) {
+    // La date se compare sur les octets, avant tout décodage : l'archive complète compte des millions d'articles.
+    const rang = octets.indexOf('date_publi="');
+    if (rang < 0 || octets.toString('latin1', rang + 12, rang + 22) < seuil) continue;
     const xml = texteXml(octets);
-    const titre = balise(xml, 'TITREFULL');
+    const contexte = xml.match(/<TEXTE\b([^>]*)>\s*<TITRE_TXT\b[^>]*>([^<]*)</);
+    if (!contexte) continue;
+    const titre = decoderEntites(contexte[2]).replace(/\s+/g, ' ').trim();
     const repere = normaliser(titre);
     if (!repere.includes("union nationale des caisses d'assurance maladie")) continue;
     if (!repere.includes('relative a la liste des actes et prestations')) continue;
-    const id = balise(xml, 'ID');
-    decisions.set(id, { id, nor: balise(xml, 'NOR'), publication: balise(xml, 'DATE_PUBLI'), date: balise(xml, 'DATE_TEXTE'), titre, nomenclatures: [], vigueur: [] });
-  }
-  if (!decisions.size) return [];
-  // Le corps des textes est dans des fichiers d'articles, rattachés au texte par son identifiant.
-  for (const octets of fichiersTar(tampon)) {
-    if (!octets.includes('<ARTICLE')) continue;
-    const xml = texteXml(octets);
-    const decision = decisions.get(xml.match(/<TEXTE\b[^>]*\bcid="(JORFTEXT\d+)"/)?.[1]);
-    if (!decision) continue;
+    const attribut = (nom) => contexte[1].match(new RegExp(` ${nom}="([^"]*)"`))?.[1] ?? '';
+    const id = attribut('cid');
+    if (!decisions.has(id)) {
+      decisions.set(id, { id, nor: attribut('nor'), publication: attribut('date_publi'), date: attribut('date_signature'), titre, nomenclatures: [], vigueur: [] });
+    }
+    const decision = decisions.get(id);
     const brut = decoderEntites((xml.match(/<BLOC_TEXTUEL>([\s\S]*?)<\/BLOC_TEXTUEL>/)?.[1] ?? '').replace(/<[^>]+>/g, ' '))
       .replace(/\s+/g, ' ')
       .replace(/\b1 er\b/g, '1er')
@@ -103,13 +186,26 @@ export function decisionsDeLArchive(tampon) {
       if (motif.test(corps) && !decision.nomenclatures.includes(nom)) decision.nomenclatures.push(nom);
     }
   }
-  return [...decisions.values()];
+  return decisions;
 }
 
 /** Noms des archives quotidiennes listées par la page d'index, à partir d'une date AAAAMMJJ. */
 export function archivesDepuis(page, depuis) {
   const noms = new Set(String(page).match(/JORF_\d{8}-\d{6}\.tar\.gz/g) ?? []);
   return [...noms].filter((nom) => nom.slice(5, 13) >= depuis).sort();
+}
+
+/**
+ * Archives à lire pour couvrir la période qui commence à une date AAAAMMJJ. Si la dernière archive complète
+ * date de cette période, les archives quotidiennes antérieures ont été retirées : on la lit d'abord, puis les
+ * archives quotidiennes produites depuis.
+ */
+export function archivesALire(page, depuis) {
+  const completes = [...new Set(String(page).match(/Freemium_jorf_global_\d{8}-\d{6}\.tar\.gz/g) ?? [])].sort();
+  const complete = completes.at(-1);
+  const jour = complete?.slice(21, 29);
+  if (complete && jour >= depuis) return [complete, ...archivesDepuis(page, jour)];
+  return archivesDepuis(page, depuis);
 }
 
 /**
@@ -153,8 +249,16 @@ export function ticketPour(decision, { publiee = '' } = {}) {
 
 async function recuperer(adresse) {
   const reponse = await fetch(adresse, { headers: { 'user-agent': AGENT_UTILISATEUR }, redirect: 'follow' });
-  if (!reponse.ok) throw new Error(`récupération impossible (${reponse.status}) : ${adresse}`);
-  return Buffer.from(await reponse.arrayBuffer());
+  if (!reponse.ok || !reponse.body) throw new Error(`récupération impossible (${reponse.status}) : ${adresse}`);
+  return reponse;
+}
+
+/** Flux décompressé d'une archive, locale ou en ligne. Une erreur de lecture interrompt le flux décompressé. */
+async function ouvrir(nom, dossier) {
+  const source = dossier ? createReadStream(join(dossier, nom)) : Readable.fromWeb((await recuperer(ARCHIVES + nom)).body);
+  const decompresse = createGunzip();
+  pipeline(source, decompresse, () => {});
+  return decompresse;
 }
 
 /**
@@ -162,22 +266,13 @@ async function recuperer(adresse) {
  * @param {{ depuis: string, dossier?: string, journal?: (message: string) => void }} options depuis : AAAAMMJJ
  */
 export async function veiller({ depuis, dossier, journal = () => {} }) {
-  const page = dossier ? readdirSync(dossier).join('\n') : (await recuperer(ARCHIVES)).toString('utf8');
-  const archives = archivesDepuis(page, depuis);
+  const page = dossier ? readdirSync(dossier).join('\n') : await (await recuperer(ARCHIVES)).text();
+  const archives = archivesALire(page, depuis);
   if (!archives.length) throw new Error(`aucune archive du Journal officiel depuis le ${depuis} : ${dossier ?? ARCHIVES}`);
   const decisions = new Map();
-  for (const nom of archives) {
-    const tampon = gunzipSync(dossier ? readFileSync(join(dossier, nom)) : await recuperer(ARCHIVES + nom));
-    for (const decision of decisionsDeLArchive(tampon)) {
-      const connue = decisions.get(decision.id);
-      if (connue) {
-        decision.nomenclatures = [...new Set([...connue.nomenclatures, ...decision.nomenclatures])];
-        decision.vigueur = [...new Set([...connue.vigueur, ...decision.vigueur])];
-      }
-      decisions.set(decision.id, decision);
-    }
-  }
-  journal(`archives lues : ${archives.length} (${archives[0].slice(5, 13)} à ${archives.at(-1).slice(5, 13)}) ; décisions de l'UNCAM sur la liste des actes : ${decisions.size}`);
+  for (const nom of archives) await lireArchive(await ouvrir(nom, dossier), { depuis, decisions });
+  const complete = archives[0].startsWith('Freemium') ? `, dont l'archive complète du ${archives[0].slice(21, 29)}` : '';
+  journal(`archives lues : ${archives.length}${complete}, pour la période depuis le ${depuis} ; décisions de l'UNCAM sur la liste des actes : ${decisions.size}`);
   return [...decisions.values()].sort((a, b) => a.publication.localeCompare(b.publication) || a.id.localeCompare(b.id));
 }
 
