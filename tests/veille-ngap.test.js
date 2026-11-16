@@ -55,6 +55,7 @@ const NABM = { titre: "Décision du 1er octobre 2026 de l\u2019Union nationale d
 const AVIS = { titre: "Avis relatif à la décision de l'Union nationale des caisses d'assurance maladie portant fixation du taux de participation de l'assuré" };
 const SANS_DATE = { titre: "Décision de l'Union nationale des caisses d'assurance maladie relative à la liste des actes et prestations pris en charge par l'assurance maladie", nor: '' };
 const ANCIENNE = { publication: '2026-09-01', signature: '2026-08-01', nor: 'SFHU0000001S' };
+const LIVRES = { publication: '2026-10-23', signature: '2026-10-07', nor: 'SFHU0000002S' };
 
 function archiveDuJour() {
   return construireTar([
@@ -65,7 +66,9 @@ function archiveDuJour() {
     article('03', 'JORFTEXT000000000002', "La nomenclature des actes de biologie médicale prévue à l'article L. 162-1-7 est ainsi modifiée.", NABM),
     article('04', 'JORFTEXT000000000002', 'La présente décision entrera en vigueur 14 jours après sa publication.', NABM),
     article('05', 'JORFTEXT000000000003', 'Ce taux vaut pour les actes de la NGAP.', AVIS),
-    article('06', 'JORFTEXT000000000004', 'Le livre III est ainsi modifié.', SANS_DATE),
+    article('06', 'JORFTEXT000000000004', 'Le tarif est ainsi modifié.', SANS_DATE),
+    article('08', 'JORFTEXT000000000006', "Le livre II de la décision du 11 mars 2005 susvisée est ainsi modifié : l'acte DBBF339 est inscrit.", LIVRES),
+    article('09', 'JORFTEXT000000000006', "L'article III-4-I de la décision UNCAM susvisée est modifié comme suit : l'article 2 du chapitre IV du titre XV est complété.", LIVRES),
     article('07', 'JORFTEXT000000000005', 'La NGAP est ainsi modifiée.', ANCIENNE),
   ]);
 }
@@ -103,8 +106,8 @@ test('les intitulés se comparent sans accents, majuscules ni apostrophes typogr
 
 test("la veille retient les décisions de l'UNCAM sur la liste des actes, avec les nomenclatures citées", async () => {
   const decisions = [...(await lireArchive(enFlux(archiveDuJour()), { depuis: '20261010' })).values()];
-  assert.deepEqual(decisions.map((d) => d.id), ['JORFTEXT000000000001', 'JORFTEXT000000000002', 'JORFTEXT000000000004'], "l'avis sur le taux de participation et la décision d'avant la période sont écartés");
-  const [ngap, nabm, inconnue] = decisions;
+  assert.deepEqual(decisions.map((d) => d.id), ['JORFTEXT000000000001', 'JORFTEXT000000000002', 'JORFTEXT000000000004', 'JORFTEXT000000000006'], "l'avis sur le taux de participation et la décision d'avant la période sont écartés");
+  const [ngap, nabm, inconnue, livres] = decisions;
   assert.deepEqual(ngap.nomenclatures, ['NGAP']);
   assert.equal(ngap.nor, 'SFHU2627886S');
   assert.equal(ngap.publication, '2026-10-22');
@@ -115,6 +118,8 @@ test("la veille retient les décisions de l'UNCAM sur la liste des actes, avec l
   assert.equal(nabm.publication, '2026-10-27');
   assert.deepEqual(nabm.vigueur, ['La présente décision entrera en vigueur 14 jours après sa publication.']);
   assert.deepEqual(inconnue.nomenclatures, []);
+  assert.deepEqual(livres.nomenclatures, ['CCAM', 'NGAP'], "le livre II est la CCAM, l'article III-4 du livre III est la NGAP");
+  assert.equal(ticketPour(livres).titre.endsWith('version à redemander'), true);
 
   const sansDate = await lireArchive(enFlux(archiveDuJour()));
   assert.equal(sansDate.has('JORFTEXT000000000005'), true, 'sans date de départ, toutes les décisions sont rendues');
@@ -159,7 +164,7 @@ test('une décision présente dans deux archives du même jour ne compte qu\'une
   writeFileSync(join(dossier, 'JORF_20261001-010101.tar.gz'), 'hors période, jamais ouvert');
   const messages = [];
   const decisions = await veiller({ depuis: '20261010', dossier, journal: (message) => messages.push(message) });
-  assert.deepEqual(decisions.map((d) => d.id), ['JORFTEXT000000000001', 'JORFTEXT000000000004', 'JORFTEXT000000000002'], 'triées par date de publication');
+  assert.deepEqual(decisions.map((d) => d.id), ['JORFTEXT000000000001', 'JORFTEXT000000000004', 'JORFTEXT000000000006', 'JORFTEXT000000000002'], 'triées par date de publication');
   assert.equal(decisions[0].vigueur.length, 1);
   assert.match(messages[0], /archives lues : 2, pour la période depuis le 20261010/);
   await assert.rejects(veiller({ depuis: '20270101', dossier }), /aucune archive du Journal officiel depuis le 20270101/);
@@ -172,7 +177,7 @@ test("quand les archives quotidiennes ont été retirées, la période se lit da
   writeFileSync(join(dossier, 'JORF_20261027-002650.tar.gz'), gzipSync(construireTar([article('08', 'JORFTEXT000000000002', 'La nomenclature des actes de biologie médicale est modifiée.', NABM)])));
   const messages = [];
   const decisions = await veiller({ depuis: '20261010', dossier, journal: (message) => messages.push(message) });
-  assert.deepEqual(decisions.map((d) => d.id), ['JORFTEXT000000000001', 'JORFTEXT000000000004', 'JORFTEXT000000000002'], "la décision d'avant la période, présente dans l'archive complète, est écartée");
+  assert.deepEqual(decisions.map((d) => d.id), ['JORFTEXT000000000001', 'JORFTEXT000000000004', 'JORFTEXT000000000006', 'JORFTEXT000000000002'], "la décision d'avant la période, présente dans l'archive complète, est écartée");
   assert.match(messages[0], /archives lues : 2, dont l'archive complète du 20261025/);
   writeFileSync(join(dossier, 'JORF_20261028-002650.tar.gz'), gzipSync(archiveDuJour()).subarray(0, 900));
   await assert.rejects(veiller({ depuis: '20261010', dossier }), "une archive tronquée fait échouer la veille au lieu de passer pour vide");

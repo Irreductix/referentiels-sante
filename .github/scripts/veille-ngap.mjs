@@ -18,11 +18,12 @@ const LEGIFRANCE = 'https://www.legifrance.gouv.fr/jorf/id/';
 const AMELI = 'https://www.ameli.fr/medecin/exercice-liberal/facturation-remuneration/consultations-actes/nomenclatures-codage/ngap';
 const MOIS = ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'];
 
-// Les trois nomenclatures que modifient les décisions « relatives à la liste des actes et prestations ».
+// Les trois nomenclatures que modifient les décisions « relatives à la liste des actes et prestations ». Les articles
+// citent souvent la liste elle-même : son livre II est la CCAM, l'article III-4 de son livre III est la NGAP.
 const NOMENCLATURES = [
-  ['NGAP', /nomenclature generale des actes professionnels|\bngap\b/],
+  ['NGAP', /nomenclature generale des actes professionnels|\bngap\b|\biii-4\b|\blivre iii\b/],
   ['NABM', /nomenclature des actes de biologie medicale|\bnabm\b/],
-  ['CCAM', /classification commune des actes medicaux|\bccam\b/],
+  ['CCAM', /classification commune des actes medicaux|\bccam\b|\blivre ii\b/],
 ];
 
 const utf8 = new TextDecoder('utf-8', { fatal: true });
