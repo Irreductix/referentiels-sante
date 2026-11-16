@@ -86,9 +86,39 @@ test('versXlsx : un classeur lisible, cellules en texte, en-tête figé et filtr
   const feuille = fichiers.get('xl/worksheets/sheet1.xml').toString('utf8');
   assert.ok(feuille.includes('<c r="A2" t="inlineStr"><is><t xml:space="preserve">010780112</t></is></c>'), 'le numéro FINESS reste un texte, zéro compris');
   assert.ok(feuille.includes('CLINIQUE A &amp; B &lt;SITE; NORD&gt;'), 'les caractères spéciaux sont échappés');
-  assert.ok(/<c r="T2"><v>46\.22<\/v><\/c>/.test(feuille), 'les coordonnées sont des nombres');
+  assert.ok(/<c r="U2"><v>46\.22<\/v><\/c>/.test(feuille), 'les coordonnées sont des nombres');
   assert.ok(feuille.includes('<pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/>'));
-  assert.ok(feuille.includes('<autoFilter ref="A1:U7"/>'));
+  assert.ok(feuille.includes('<autoFilter ref="A1:V7"/>'));
   assert.equal((feuille.match(/<row /g) || []).length, 7);
   assert.ok(fichiers.get('xl/workbook.xml').toString('utf8').includes('<sheet name="Etablissements" sheetId="1" r:id="rId1"/>'));
+});
+
+test('région : déduite du département, filtre, liste des régions présentes et colonne des exports', () => {
+  const index = E.lireIndex(INDEX);
+  assert.deepEqual(index.regions.map((r) => r.code + ' ' + r.nom + ':' + r.n), ['84 Auvergne-Rhône-Alpes:1', '44 Grand Est:1', '52 Pays de la Loire:4']);
+  assert.deepEqual(index.regions.find((r) => r.code === '52').departements, ['44', '49', '53', '72', '85']);
+  const finess = (c) => E.filtrer(index, c).map((e) => e.finessEt);
+  assert.equal(finess({ region: '52' }).length, 4);
+  assert.deepEqual(finess({ region: '84' }), ['010780112']);
+  assert.deepEqual(finess({ region: '52', categories: ['101'], soins: ['med'] }), ['440000453', '440000271']);
+  assert.deepEqual(finess({ region: '84', departement: '44' }), [], 'un département hors de la région ne donne rien');
+  assert.deepEqual(finess({ region: '76' }), [], 'une région sans établissement dans l\'index');
+
+  const t = E.tableau(E.filtrer(index, { region: '44' }), 'etablissements');
+  assert.equal(t.colonnes[t.colonnes.indexOf('Département') + 1], 'Région');
+  assert.equal(t.lignes[0][t.colonnes.indexOf('Région')], 'Grand Est');
+  const te = E.tableau(E.regrouper(E.filtrer(index, { region: '52' })), 'entites');
+  assert.equal(te.lignes[0][te.colonnes.indexOf('Région')], 'Pays de la Loire');
+  const geo = JSON.parse(E.versGeoJson(E.filtrer(index, { region: '84' })));
+  assert.equal(geo.features[0].properties.region, 'Auvergne-Rhône-Alpes');
+
+  // Chaque département n'appartient qu'à une région, et les 101 départements sont couverts.
+  const tous = E.REGIONS.flatMap((r) => r.departements);
+  assert.equal(tous.length, 101);
+  assert.equal(new Set(tous).size, 101);
+  assert.equal(E.REGIONS.find((r) => r.nom === 'Occitanie').departements.length, 13);
+  // Une collectivité d'outre-mer hors région reste sans région, sans gêner le reste.
+  const com = E.lireIndex(INDEX + INDEX.split('\n')[6].replace('570001234', '975000001').replace(';57;Moselle;', ';975;Saint-Pierre-et-Miquelon;') + '\n');
+  assert.equal(com.etablissements.find((e) => e.finessEt === '975000001').regionNom, '');
+  assert.equal(E.filtrer(com, { region: '44' }).length, 1);
 });

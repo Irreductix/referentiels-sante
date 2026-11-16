@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
-<title>Extraire des établissements FINESS : par département, catégorie, secteur, GHT ou activité de soins, vers Excel</title>
-<meta name="description" content="Composez une liste d'établissements FINESS en activité (département, commune, catégorie, public ou privé, groupement hospitalier de territoire, activités de soins exercées) et téléchargez-la en Excel, CSV ou GeoJSON. Tout se calcule dans votre navigateur.">
+<title>Extraire des établissements FINESS : par région ou département, catégorie, secteur, GHT ou activité de soins, vers Excel</title>
+<meta name="description" content="Composez une liste d'établissements FINESS en activité (région, département, commune, catégorie, public ou privé, groupement hospitalier de territoire, activités de soins exercées) et téléchargez-la en Excel, CSV ou GeoJSON. Tout se calcule dans votre navigateur.">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://referentiels-sante.irreductix.fr/extraire/">
 <link rel="icon" href="data:image/png;base64,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" sizes="64x64" type="image/png">
@@ -187,7 +187,7 @@
 <div>
 <span class="badge">Outil</span>
 <h1>Extraire des établissements</h1>
-<p class="intro">Composez votre liste d'établissements FINESS en activité : par département ou commune, catégorie, secteur public ou privé, groupement hospitalier de territoire, activités de soins exercées. Puis repartez avec un fichier Excel, CSV ou GeoJSON.</p>
+<p class="intro">Composez votre liste d'établissements FINESS en activité : par région, département ou commune, catégorie, secteur public ou privé, groupement hospitalier de territoire, activités de soins exercées. Puis repartez avec un fichier Excel, CSV ou GeoJSON.</p>
 </div>
 <aside class="carte apropos">
 <h2><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg> À propos de cet outil</h2>
@@ -209,6 +209,7 @@
 <button type="button" data-exemple="maternites">Maternités, public et privé</button>
 </div>
 <div class="grille" style="margin-top:14px">
+<div class="champ"><label for="region">Région</label><select id="region" disabled><option value="">toute la France</option></select></div>
 <div class="champ"><label for="departement">Département</label><select id="departement" disabled><option value="">toute la France</option></select></div>
 <div class="champ"><label for="lieu">Commune ou code postal</label><input type="search" id="lieu" placeholder="Ex. : nantes, 57000, 4410" autocomplete="off" disabled></div>
 <div class="champ"><label for="texte">Nom contient</label><input type="search" id="texte" placeholder="Ex. : hotel dieu, clinique, ccas" autocomplete="off" disabled></div>
@@ -301,8 +302,14 @@
 
   function etat(classe, texte) { $('etat').className = 'etat ' + classe; $('etat-texte').textContent = texte; }
   function activer() {
-    for (const id of ['departement', 'lieu', 'texte', 'domaine', 'categorie', 'ght', 'support', 'bouton-xlsx', 'bouton-csv', 'bouton-geojson']) $(id).disabled = false;
+    for (const id of ['region', 'departement', 'lieu', 'texte', 'domaine', 'categorie', 'ght', 'support', 'bouton-xlsx', 'bouton-csv', 'bouton-geojson']) $(id).disabled = false;
     for (const c of cases('secteur').concat(cases('soins'), cases('mode'))) c.disabled = false;
+  }
+  function remplirDepartements() {
+    const region = index.regions.find((r) => r.code === $('region').value); const choisi = $('departement').value;
+    $('departement').innerHTML = '<option value="">' + (region ? 'toute la région' : 'toute la France') + '</option>' + index.departements.filter((d) => !region || region.departements.includes(d.code))
+      .map((d) => '<option value="' + echapper(d.code) + '">' + echapper(d.code) + ' ' + echapper(d.libelle) + ', ' + nombre(d.n) + '</option>').join('');
+    $('departement').value = Array.prototype.some.call($('departement').options, (o) => o.value === choisi) ? choisi : '';
   }
   function remplirCategories() {
     const domaine = $('domaine').value; const choisie = $('categorie').value;
@@ -317,7 +324,8 @@
   }
   function installer(texte, provenance) {
     index = X.lireIndex(texte);
-    $('departement').innerHTML = '<option value="">toute la France</option>' + index.departements.map((d) => '<option value="' + echapper(d.code) + '">' + echapper(d.code) + ' ' + echapper(d.libelle) + ', ' + nombre(d.n) + '</option>').join('');
+    $('region').innerHTML = '<option value="">toute la France</option>' + index.regions.map((r) => '<option value="' + echapper(r.code) + '">' + echapper(r.nom) + ', ' + nombre(r.n) + '</option>').join('');
+    remplirDepartements();
     $('ght').innerHTML = '<option value="">tous, et hors GHT</option>' + index.ghts.map((g) => '<option value="' + echapper(g.nom) + '">' + echapper(g.nom) + '</option>').join('');
     remplirCategories();
     etat('ok', 'Index chargé : ' + nombre(index.nombre) + ' établissements en activité' + (provenance ? ', ' + provenance : '') + '.');
@@ -347,7 +355,7 @@
 
   function criteres() {
     return {
-      departement: $('departement').value, lieu: $('lieu').value, texte: $('texte').value, domaine: $('domaine').value,
+      region: $('region').value, departement: $('departement').value, lieu: $('lieu').value, texte: $('texte').value, domaine: $('domaine').value,
       categories: $('categorie').value ? [$('categorie').value] : [], ght: $('ght').value, support: $('support').checked,
       secteurs: cases('secteur').filter((c) => c.checked).map((c) => c.value), soins: cases('soins').filter((c) => c.checked).map((c) => c.value),
     };
@@ -385,11 +393,13 @@
   const differe = () => { clearTimeout(minuteur); minuteur = setTimeout(rafraichir, 150); };
   for (const id of ['lieu', 'texte']) $(id).addEventListener('input', differe);
   for (const id of ['departement', 'categorie', 'ght', 'support']) $(id).addEventListener('change', rafraichir);
+  $('region').addEventListener('change', () => { remplirDepartements(); rafraichir(); });
   $('domaine').addEventListener('change', () => { remplirCategories(); rafraichir(); });
   document.addEventListener('change', (e) => { if (e.target && (e.target.name === 'secteur' || e.target.name === 'soins' || e.target.name === 'mode')) rafraichir(); });
 
   function effacer() {
-    for (const id of ['departement', 'lieu', 'texte', 'domaine', 'ght']) $(id).value = '';
+    for (const id of ['region', 'departement', 'lieu', 'texte', 'domaine', 'ght']) $(id).value = '';
+    if (index) remplirDepartements();
     $('support').checked = false;
     for (const c of cases('secteur').concat(cases('soins'))) c.checked = false;
     remplirCategories(); $('categorie').value = '';

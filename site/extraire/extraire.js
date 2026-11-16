@@ -57,6 +57,29 @@
   }
   const trierTexte = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
+  // Régions (code INSEE) et leurs départements. Les collectivités d'outre-mer hors région (975 à 988) restent sans région.
+  const REGIONS = [
+    ['84', 'Auvergne-Rhône-Alpes', '01 03 07 15 26 38 42 43 63 69 73 74'],
+    ['27', 'Bourgogne-Franche-Comté', '21 25 39 58 70 71 89 90'],
+    ['53', 'Bretagne', '22 29 35 56'],
+    ['24', 'Centre-Val de Loire', '18 28 36 37 41 45'],
+    ['94', 'Corse', '2A 2B'],
+    ['44', 'Grand Est', '08 10 51 52 54 55 57 67 68 88'],
+    ['01', 'Guadeloupe', '971'],
+    ['03', 'Guyane', '973'],
+    ['32', 'Hauts-de-France', '02 59 60 62 80'],
+    ['11', 'Île-de-France', '75 77 78 91 92 93 94 95'],
+    ['04', 'La Réunion', '974'],
+    ['02', 'Martinique', '972'],
+    ['06', 'Mayotte', '976'],
+    ['28', 'Normandie', '14 27 50 61 76'],
+    ['75', 'Nouvelle-Aquitaine', '16 17 19 23 24 33 40 47 64 79 86 87'],
+    ['76', 'Occitanie', '09 11 12 30 31 32 34 46 48 65 66 81 82'],
+    ['52', 'Pays de la Loire', '44 49 53 72 85'],
+    ['93', "Provence-Alpes-Côte d'Azur", '04 05 06 13 83 84'],
+  ].map((r) => ({ code: r[0], nom: r[1], departements: r[2].split(' ') }));
+  const REGION_PAR_DEPARTEMENT = {};
+  for (const r of REGIONS) for (const d of r.departements) REGION_PAR_DEPARTEMENT[d] = r;
   function lireIndex(texte) {
     const lignes = lireCsv(texte).filter((l) => !(l.length === 1 && l[0] === ''));
     const entete = lignes.shift() || [];
@@ -66,7 +89,7 @@
       if (pos[c] === undefined) throw new Error('index inattendu : colonne ' + c + ' absente');
     }
     const g = (l, c) => (pos[c] === undefined ? '' : (l[pos[c]] || ''));
-    const departements = new Map(); const categories = new Map(); const ghts = new Map();
+    const departements = new Map(); const regions = new Map(); const categories = new Map(); const ghts = new Map();
     const etablissements = lignes.map((l) => {
       const e = {
         finessEt: g(l, 'finess_et'), finessEj: g(l, 'finess_ej'), nom: g(l, 'nom_long') || g(l, 'nom_court'), nomCourt: g(l, 'nom_court'), siret: g(l, 'siret'),
@@ -78,6 +101,9 @@
       };
       e.norm = normaliserTexte(e.nom + ' ' + e.nomCourt + ' ' + e.entite);
       e.normCommune = normaliserTexte(e.commune);
+      const region = REGION_PAR_DEPARTEMENT[e.departement];
+      e.region = region ? region.code : ''; e.regionNom = region ? region.nom : '';
+      if (region) regions.set(region.code, (regions.get(region.code) || 0) + 1);
       if (e.departement) {
         if (!departements.has(e.departement)) departements.set(e.departement, { code: e.departement, libelle: e.departementLibelle, n: 0 });
         departements.get(e.departement).n += 1;
@@ -91,13 +117,14 @@
     });
     return {
       etablissements, nombre: etablissements.length,
+      regions: REGIONS.filter((r) => regions.has(r.code)).map((r) => ({ code: r.code, nom: r.nom, departements: r.departements, n: regions.get(r.code) })),
       departements: Array.from(departements.values()).sort((a, b) => trierTexte(a.code.padStart(3, '0'), b.code.padStart(3, '0'))),
       categories: Array.from(categories.values()).sort((a, b) => trierTexte(normaliserTexte(a.libelle), normaliserTexte(b.libelle))),
       ghts: Array.from(ghts.entries()).map(([nom, n]) => ({ nom, n })).sort((a, b) => trierTexte(normaliserTexte(a.nom), normaliserTexte(b.nom))),
     };
   }
 
-  // Critères : departement, lieu (commune ou début de code postal), domaine, categories[], secteurs[], soins[] (toutes exigées),
+  // Critères : region, departement, lieu (commune ou début de code postal), domaine, categories[], secteurs[], soins[] (toutes exigées),
   // ght, support (entités support de GHT seulement), texte (mots du nom ou de l'entité). Un critère vide ne filtre pas.
   function filtrer(index, criteres) {
     const c = criteres || {};
@@ -109,6 +136,7 @@
     const secteurs = c.secteurs && c.secteurs.length ? new Set(c.secteurs) : null;
     const soins = c.soins && c.soins.length ? c.soins : null;
     const resultat = index.etablissements.filter((e) => {
+      if (c.region && e.region !== c.region) return false;
       if (c.departement && e.departement !== c.departement) return false;
       if (lieuChiffres && !e.codePostal.startsWith(lieuChiffres) && !e.codeCommune.startsWith(lieuChiffres)) return false;
       for (const m of motsLieu) if (e.normCommune.indexOf(m) < 0) return false;
@@ -129,7 +157,7 @@
   function regrouper(etablissements) {
     const parEntite = new Map();
     for (const e of etablissements) {
-      if (!parEntite.has(e.finessEj)) parEntite.set(e.finessEj, { finessEj: e.finessEj, entite: e.entite, statutJuridique: e.statutJuridique, secteur: e.secteur, ghtNom: e.ghtNom, ghtRole: e.ghtRole, departement: e.departement, nb: 0, communes: [], soins: new Set() });
+      if (!parEntite.has(e.finessEj)) parEntite.set(e.finessEj, { finessEj: e.finessEj, entite: e.entite, statutJuridique: e.statutJuridique, secteur: e.secteur, ghtNom: e.ghtNom, ghtRole: e.ghtRole, departement: e.departement, region: e.region, regionNom: e.regionNom, nb: 0, communes: [], soins: new Set() });
       const x = parEntite.get(e.finessEj);
       x.nb += 1;
       if (e.commune && !x.communes.includes(e.commune)) x.communes.push(e.commune);
@@ -145,13 +173,13 @@
       ['FINESS ET', (e) => e.finessEt], ['FINESS EJ', (e) => e.finessEj], ['Nom', (e) => e.nom], ['Catégorie', (e) => e.categorie],
       ['Libellé de catégorie', (e) => e.categorieLibelle], ['Domaine', (e) => DOMAINES[e.domaine] || e.domaine], ['Secteur', (e) => e.secteur],
       ['Adresse', (e) => e.adresse], ['Code postal', (e) => e.codePostal], ['Commune', (e) => e.commune], ['Code commune INSEE', (e) => e.codeCommune],
-      ['Département', (e) => e.departement], ['Téléphone', (e) => e.telephone], ['SIRET', (e) => e.siret], ['Entité juridique', (e) => e.entite],
+      ['Département', (e) => e.departement], ['Région', (e) => e.regionNom], ['Téléphone', (e) => e.telephone], ['SIRET', (e) => e.siret], ['Entité juridique', (e) => e.entite],
       ['Statut juridique', (e) => e.statutJuridique], ['GHT', (e) => e.ghtNom], ['Rôle dans le GHT', (e) => ROLES[e.ghtRole] || ''],
       ['Activités de soins', (e) => libellesSoins(e.soins)], ['Latitude', (e) => e.latitude, 'nombre'], ['Longitude', (e) => e.longitude, 'nombre'],
     ],
     entites: [
       ['FINESS EJ', (x) => x.finessEj], ['Entité juridique', (x) => x.entite], ['Statut juridique', (x) => x.statutJuridique], ['Secteur', (x) => x.secteur],
-      ['Département', (x) => x.departement], ['GHT', (x) => x.ghtNom], ['Rôle dans le GHT', (x) => ROLES[x.ghtRole] || ''],
+      ['Département', (x) => x.departement], ['Région', (x) => x.regionNom], ['GHT', (x) => x.ghtNom], ['Rôle dans le GHT', (x) => ROLES[x.ghtRole] || ''],
       ['Établissements retenus', (x) => String(x.nb), 'nombre'], ['Communes', (x) => x.communes.join(', ')], ['Activités de soins', (x) => libellesSoins(x.soins)],
     ],
   };
@@ -173,7 +201,7 @@
       if (e.latitude === '' || e.longitude === '') continue;
       features.push({
         type: 'Feature', geometry: { type: 'Point', coordinates: [Number(e.longitude), Number(e.latitude)] },
-        properties: { finess_et: e.finessEt, finess_ej: e.finessEj, nom: e.nom, categorie: e.categorie, categorie_libelle: e.categorieLibelle, secteur: e.secteur, adresse: e.adresse, code_postal: e.codePostal, commune: e.commune, departement: e.departement, entite_juridique: e.entite, ght: e.ghtNom, ght_role: e.ghtRole, soins: e.soins.join(' ') },
+        properties: { finess_et: e.finessEt, finess_ej: e.finessEj, nom: e.nom, categorie: e.categorie, categorie_libelle: e.categorieLibelle, secteur: e.secteur, adresse: e.adresse, code_postal: e.codePostal, commune: e.commune, departement: e.departement, region: e.regionNom, entite_juridique: e.entite, ght: e.ghtNom, ght_role: e.ghtRole, soins: e.soins.join(' ') },
       });
     }
     return JSON.stringify({ type: 'FeatureCollection', features });
@@ -276,5 +304,5 @@
     return archiverZip(fichiersXlsx(table, nomFeuille || 'Etablissements'));
   }
 
-  global.Extraire = { SOINS, DOMAINES, ROLES, lireCsv, normaliserTexte, lireIndex, filtrer, regrouper, tableau, versCsv, versGeoJson, versXlsx, feuilleXml, archiverZip, crc32 };
+  global.Extraire = { SOINS, DOMAINES, ROLES, REGIONS, lireCsv, normaliserTexte, lireIndex, filtrer, regrouper, tableau, versCsv, versGeoJson, versXlsx, feuilleXml, archiverZip, crc32 };
 })(typeof window !== 'undefined' ? window : globalThis);
