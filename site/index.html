@@ -137,8 +137,30 @@
   }
   h1 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.045em; line-height: 1.02; }
   .barre nav a:hover { color: #f2bd54; }
-  .hero .logo { max-width: 520px; background: none; padding: 0; border-radius: 0; }
+  .hero .logo { max-width: 420px; background: var(--ivory); padding: 16px 22px; border-radius: 14px; }
   .barre .village img { height: 44px; width: auto; display: block; margin-bottom: 6px; }
+  /* Retouches : contenu plus large, hero en deux colonnes, bouton vers Extraire. */
+  .col { max-width: 1280px; padding-inline: clamp(20px, 4vw, 56px); }
+  .paper .col > p, .paper .col > ul, .paper .col > ol, .paper .col > .note, .paper .col > pre { max-width: 82ch; }
+  .paper h2 { font-size: clamp(28px, 3vw, 38px); letter-spacing: -0.03em; }
+  .hero { padding-block: 56px 64px; }
+  .hero h1 { font-size: clamp(38px, 4.4vw, 62px); letter-spacing: -0.05em; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; margin: 28px 0 0; }
+  .bouton { display: inline-flex; align-items: center; min-height: 50px; padding: 12px 24px; border-radius: 999px; background: var(--ochre); color: #10131a; font-weight: 700; text-decoration: none; }
+  .bouton:hover { background: #f8bd38; color: #10131a; }
+  .bouton.second { background: none; color: var(--ivory); border: 1px solid #ffffff4d; }
+  .bouton.second:hover { border-color: var(--ivory); color: var(--ivory); }
+  .lien-fort { font-weight: 700; color: var(--ivory); }
+  .hero-cote { background: var(--panel); border: 1px solid var(--line); border-radius: 22px; padding: clamp(22px, 3vw, 34px); }
+  .hero-cote .etiquette { font-family: var(--mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: #e3b34e; margin-bottom: 12px; }
+  .hero-cote p { font-size: 15px; color: var(--muted); }
+  .hero-cote p:last-child { margin-bottom: 0; }
+  .hero-cote .commande { margin-top: 0; }
+  @media (max-width: 999px) { .hero-cote { margin-top: 36px; } }
+  @media (min-width: 1000px) { .hero .col { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: clamp(36px, 5vw, 80px); align-items: center; } }
+  .barre nav { align-items: center; }
+  .barre .nav-irx { border: 1px solid #ffffff55; border-radius: 999px; padding: 3px 14px; color: var(--ivory); }
+  .barre .nav-irx:hover { border-color: var(--ochre); color: var(--ivory); }
 </style>
 </head>
 <body>
@@ -155,7 +177,7 @@
 <a href="tarifs/">Tarifs GHS</a>
 <a href="medicaments/">Médicaments</a>
 <a href="nomenclatures/">Nomenclatures</a>
-<a href="https://irreductix.fr/outils">Les autres outils</a>
+<a class="nav-irx" href="https://irreductix.fr/">Le collectif Irréductix</a>
 </nav>
 </div>
 </header>
@@ -163,15 +185,21 @@
 <main>
 <section class="hero">
 <div class="col">
-<p class="logo"><img src="logo.png" width="1606" height="312" alt="referentiels-sante"></p>
+<div class="hero-texte">
+<p class="logo"><img src="logo.png" width="899" height="136" alt="referentiels-sante"></p>
 <h1>Le fichier FINESS en CSV, la CCAM, la <span class="insecable">CIM-10</span> et les médicaments en fichiers propres</h1>
 
 <p class="intro">referentiels-sante télécharge les référentiels publics de la santé à leur source officielle et les convertit en CSV lisibles dans Excel, une base de données ou un script, et en JSON pour FINESS+, les nomenclatures NOS, la CIM-10 et les tarifs GHS. L'outil est libre, gratuit et tient en une commande.</p>
 
+<p class="actions"><a class="bouton" href="extraire/">Extraire une liste d’établissements</a><a class="bouton second" href="controle/">Contrôler une liste FINESS</a><a class="lien-fort" href="https://irreductix.fr/telecharger/finess.zip">FINESS du mois en CSV</a></p>
+</div>
+<div class="hero-cote">
+<p class="etiquette">En une commande</p>
 <pre class="commande"><code>npx referentiels-sante finess</code></pre>
 
 <p>Cette commande récupère le flux FINESS+ du jour et écrit dans le dossier <code>data/finess</code> les quelque 175 000 établissements sanitaires, sociaux et médico-sociaux (dont environ 105 000 en activité), les entités juridiques et les groupements hospitaliers de territoire.</p>
 
+</div>
 </div>
 </section>
 
