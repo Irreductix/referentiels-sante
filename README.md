@@ -1,19 +1,19 @@
 # referentiels-sante
 
-<p align="center"><img src="docs/logo.png" alt="" width="360"></p>
+<p align="center"><img src="docs/logo.png" alt="referentiels-sante, un outil du collectif Irréductix" width="720"></p>
 
 <p align="center">
-<a href="https://referentiels-sante.irreductix.fr/controle/"><img src="https://img.shields.io/badge/Contr%C3%B4le_FINESS-v%C3%A9rifier_une_liste_dans_le_navigateur-dda34f?style=for-the-badge&labelColor=282722" alt="Contrôle FINESS"></a>
-<a href="https://referentiels-sante.irreductix.fr/extraire/"><img src="https://img.shields.io/badge/Extraire-une_liste_d'%C3%A9tablissements_vers_Excel-dda34f?style=for-the-badge&labelColor=282722" alt="Extraire"></a>
-<a href="https://referentiels-sante.irreductix.fr/tarifs/"><img src="https://img.shields.io/badge/Tarifs_GHS-comparer_deux_campagnes-dda34f?style=for-the-badge&labelColor=282722" alt="Tarifs GHS"></a>
-<a href="https://referentiels-sante.irreductix.fr/medicaments/"><img src="https://img.shields.io/badge/M%C3%A9dicaments-contr%C3%B4ler_une_liste_de_codes_CIP-dda34f?style=for-the-badge&labelColor=282722" alt="Médicaments"></a>
-<a href="https://referentiels-sante.irreductix.fr/nomenclatures/"><img src="https://img.shields.io/badge/Nomenclatures-CCAM%2C_NABM%2C_LPP_et_UCD_%C3%A0_une_date-dda34f?style=for-the-badge&labelColor=282722" alt="Nomenclatures"></a>
-<a href="https://referentiels-sante.irreductix.fr/"><img src="https://img.shields.io/badge/Site-mode_d'emploi_et_fichiers_du_mois-bdc6a7?style=for-the-badge&labelColor=282722" alt="Site"></a>
-<a href="https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess"><img src="https://img.shields.io/badge/data.gouv.fr-FINESS_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="FINESS en CSV sur data.gouv.fr"></a>
-<a href="https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle"><img src="https://img.shields.io/badge/data.gouv.fr-M%C3%A9dicaments_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="Base des médicaments en CSV sur data.gouv.fr"></a>
-<a href="https://www.data.gouv.fr/datasets/ngap-en-csv-actes-coefficients-lettres-cles"><img src="https://img.shields.io/badge/data.gouv.fr-NGAP_en_CSV-f5f0e4?style=for-the-badge&labelColor=282722" alt="NGAP en CSV sur data.gouv.fr"></a>
-<a href="https://www.npmjs.com/package/referentiels-sante"><img src="https://img.shields.io/npm/v/referentiels-sante?style=for-the-badge&labelColor=282722&color=c0beb0&label=npm" alt="npm"></a>
-<a href="https://irreductix.fr/"><img src="https://img.shields.io/badge/Irr%C3%A9ductix-le_collectif-282722?style=for-the-badge&labelColor=dda34f" alt="Irréductix"></a>
+<a href="https://referentiels-sante.irreductix.fr/controle/"><img src="https://img.shields.io/badge/Contr%C3%B4le_FINESS-v%C3%A9rifier_une_liste_dans_le_navigateur-eda809?style=for-the-badge&labelColor=10131a" alt="Contrôle FINESS"></a>
+<a href="https://referentiels-sante.irreductix.fr/extraire/"><img src="https://img.shields.io/badge/Extraire-une_liste_d'%C3%A9tablissements_vers_Excel-eda809?style=for-the-badge&labelColor=10131a" alt="Extraire"></a>
+<a href="https://referentiels-sante.irreductix.fr/tarifs/"><img src="https://img.shields.io/badge/Tarifs_GHS-comparer_deux_campagnes-eda809?style=for-the-badge&labelColor=10131a" alt="Tarifs GHS"></a>
+<a href="https://referentiels-sante.irreductix.fr/medicaments/"><img src="https://img.shields.io/badge/M%C3%A9dicaments-contr%C3%B4ler_une_liste_de_codes_CIP-eda809?style=for-the-badge&labelColor=10131a" alt="Médicaments"></a>
+<a href="https://referentiels-sante.irreductix.fr/nomenclatures/"><img src="https://img.shields.io/badge/Nomenclatures-CCAM%2C_NABM%2C_LPP_et_UCD_%C3%A0_une_date-eda809?style=for-the-badge&labelColor=10131a" alt="Nomenclatures"></a>
+<a href="https://referentiels-sante.irreductix.fr/"><img src="https://img.shields.io/badge/Site-mode_d'emploi_et_fichiers_du_mois-d7e2d8?style=for-the-badge&labelColor=10131a" alt="Site"></a>
+<a href="https://www.data.gouv.fr/datasets/finess-en-csv-conversion-mensuelle-de-finess"><img src="https://img.shields.io/badge/data.gouv.fr-FINESS_en_CSV-faf2e6?style=for-the-badge&labelColor=10131a" alt="FINESS en CSV sur data.gouv.fr"></a>
+<a href="https://www.data.gouv.fr/datasets/base-de-donnees-publique-des-medicaments-en-csv-conversion-mensuelle"><img src="https://img.shields.io/badge/data.gouv.fr-M%C3%A9dicaments_en_CSV-faf2e6?style=for-the-badge&labelColor=10131a" alt="Base des médicaments en CSV sur data.gouv.fr"></a>
+<a href="https://www.data.gouv.fr/datasets/ngap-en-csv-actes-coefficients-lettres-cles"><img src="https://img.shields.io/badge/data.gouv.fr-NGAP_en_CSV-faf2e6?style=for-the-badge&labelColor=10131a" alt="NGAP en CSV sur data.gouv.fr"></a>
+<a href="https://www.npmjs.com/package/referentiels-sante"><img src="https://img.shields.io/npm/v/referentiels-sante?style=for-the-badge&labelColor=10131a&color=c8c5ba&label=npm" alt="npm"></a>
+<a href="https://irreductix.fr/"><img src="https://img.shields.io/badge/Irr%C3%A9ductix-le_collectif-10131a?style=for-the-badge&labelColor=eda809" alt="Irréductix"></a>
 </p>
 
 **Les référentiels publics de la santé en France, convertis en CSV propres, et

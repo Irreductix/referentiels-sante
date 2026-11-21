@@ -123,13 +123,29 @@
   footer .village { font-family: var(--serif); font-size: 17px; color: var(--ivory); margin-bottom: 12px; }
   footer .village a { color: var(--ivory); text-decoration: none; }
   footer .village a:hover { color: var(--ochre); }
+
+  /* Charte Irréductix (novembre 2026) : palette du logo, titres en Georgia, Public Sans et Atkinson Hyperlegible Mono. */
+  @font-face { font-family: "Public Sans"; src: url("polices/public-sans.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+  @font-face { font-family: "Atkinson Hyperlegible Mono"; src: url("polices/atkinson-mono.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+  :root {
+    --bg: #10131a; --panel: #1a1e26; --ivory: #faf2e6; --muted: #c8c5ba; --ochre: #eda809; --sage: #d7e2d8; --line: #ffffff25;
+    --fond: #faf2e6; --carte: #fffcf7; --trait: #d7d0c2; --texte: #19231f; --texte-2: #56665e; --lien: #806022; --doux: #f3ecdf;
+    --ink: #19231f; --ink-2: #56665e;
+    --serif: Georgia, "Times New Roman", serif;
+    --sans: "Public Sans", "Segoe UI", system-ui, Arial, sans-serif;
+    --mono: "Atkinson Hyperlegible Mono", ui-monospace, Consolas, monospace;
+  }
+  h1 { font-family: var(--serif); font-weight: 400; letter-spacing: -0.045em; line-height: 1.02; }
+  .barre nav a:hover { color: #f2bd54; }
+  .hero .logo { max-width: 520px; background: none; padding: 0; border-radius: 0; }
+  .barre .village img { height: 44px; width: auto; display: block; margin-bottom: 6px; }
 </style>
 </head>
 <body>
 
 <header class="barre">
 <div class="col">
-<a class="village" href="https://irreductix.fr/" title="Le collectif Irréductix">Un outil du village <span>Irréductix</span></a>
+<a class="village" href="https://irreductix.fr/" title="Le collectif Irréductix"><img src="irreductix.svg" width="240" height="97" alt="Irréductix, le collectif"></a>
 <nav aria-label="Liens du projet">
 <a href="https://github.com/Irreductix/referentiels-sante">Code source</a>
 <a href="https://www.npmjs.com/package/referentiels-sante">npm</a>
@@ -147,7 +163,7 @@
 <main>
 <section class="hero">
 <div class="col">
-<p class="logo"><img src="logo.png" width="899" height="136" alt="referentiels-sante"></p>
+<p class="logo"><img src="logo.png" width="1606" height="312" alt="referentiels-sante"></p>
 <h1>Le fichier FINESS en CSV, la CCAM, la <span class="insecable">CIM-10</span> et les médicaments en fichiers propres</h1>
 
 <p class="intro">referentiels-sante télécharge les référentiels publics de la santé à leur source officielle et les convertit en CSV lisibles dans Excel, une base de données ou un script, et en JSON pour FINESS+, les nomenclatures NOS, la CIM-10 et les tarifs GHS. L'outil est libre, gratuit et tient en une commande.</p>
