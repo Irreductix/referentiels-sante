@@ -18,36 +18,36 @@
       ]
     },
     "lpp": {
-      "version": "910",
+      "version": "911",
       "fichiers": [
         {
-          "nom": "LPP910.zip",
-          "url": "http://www.codage.ext.cnamts.fr/codif/tips/download_file.php?filename=tips/LPP910.zip"
+          "nom": "LPP911.zip",
+          "url": "http://www.codage.ext.cnamts.fr/codif/tips/download_file.php?filename=tips/LPP911.zip"
         }
       ]
     },
     "ucd": {
-      "version": "00811",
+      "version": "00812",
       "fichiers": [
         {
-          "nom": "ucd_total_00811_20261112.dbf",
-          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/ucd_total_00811_20261112.dbf"
+          "nom": "ucd_total_00812_20261117.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/ucd_total_00812_20261117.dbf"
         },
         {
-          "nom": "ucd_maj_00811_20261112.dbf",
-          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/ucd_maj_00811_20261112.dbf"
+          "nom": "ucd_maj_00812_20261117.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/ucd_maj_00812_20261117.dbf"
         },
         {
-          "nom": "ucd_histo_prix_00811_20261112.dbf",
-          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/ucd_histo_prix_00811_20261112.dbf"
+          "nom": "ucd_histo_prix_00812_20261117.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/ucd_histo_prix_00812_20261117.dbf"
         },
         {
-          "nom": "retro_histo_taux_00811_20261112.dbf",
-          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/retro_histo_taux_00811_20261112.dbf"
+          "nom": "retro_histo_taux_00812_20261117.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/retro_histo_taux_00812_20261117.dbf"
         },
         {
-          "nom": "retro_histo_cout_sup_00811_20261112.dbf",
-          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/retro_histo_cout_sup_00811_20261112.dbf"
+          "nom": "retro_histo_cout_sup_00812_20261117.dbf",
+          "url": "http://www.codage.ext.cnamts.fr/codif/bdm_it/download_file.php?filename=bdm_it/retro_histo_cout_sup_00812_20261117.dbf"
         }
       ]
     }
